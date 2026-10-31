@@ -29,3 +29,12 @@ estimate_1rm([60, 80, 100], [0.95, 0.72, 0.50], lift="squat")
 3. For each rep: integrate accel top→top with zero-velocity resets at both ends
    (stationary) + linear de-drift; the concentric phase is the positive-velocity lobe.
 4. Load–velocity linear fit → e1RM at minimum velocity threshold.
+
+## Whole-workout recording (no per-set exports)
+Start one Sensor Logger recording at the start of the session and stop it at the end.
+```bash
+python -m vbt WristMotion.csv --session
+```
+Sets are split on rest periods of 20 s or more (`split_sets` in `vbt/session.py`; tune `min_rest_s`,
+`active_thresh`). Walking between stations can show up as a false "set". Most of
+those have no reps and get dropped.

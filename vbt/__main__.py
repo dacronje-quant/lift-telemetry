@@ -2,13 +2,21 @@
 import argparse
 from .io import load_watch_csv
 from .core import analyze
+from .session import analyze_session
 
 ap = argparse.ArgumentParser()
 ap.add_argument("csv")
 ap.add_argument("--units", default="g", choices=["g", "ms2"])
 ap.add_argument("--min-rom", type=float, default=0.10)
 ap.add_argument("--plot")
+ap.add_argument("--session", action="store_true", help="whole workout: auto-split into sets")
 args = ap.parse_args()
+if args.session:
+    for s in analyze_session(load_watch_csv(args.csv, args.units), min_rom_m=args.min_rom):
+        mv = ", ".join(f"{r['mean_velocity']:.2f}" for r in s["reps"])
+        print(f"Set {s['set']} @ {s['t_start']/60:.1f} min: {s['rep_count']} reps | MV {mv} m/s"
+              f" | loss {s['velocity_loss_pct']:.0f}%")
+    raise SystemExit
 res = analyze(load_watch_csv(args.csv, args.units), min_rom_m=args.min_rom)
 print(f"Reps: {res['rep_count']}")
 for r in res["reps"]:

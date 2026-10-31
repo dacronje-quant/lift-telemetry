@@ -20,3 +20,21 @@ def test_e1rm():
     v = [1.0 - 0.006 * l for l in loads]
     out = estimate_1rm(loads, v, mvt=0.3)
     assert abs(out["e1rm"] - 116.67) < 0.1
+
+
+def test_session_split():
+    from vbt import analyze_session
+    parts, t0, counts = [], 0.0, [5, 3, 6]
+    rng = np.random.default_rng(0)
+    for i, n in enumerate(counts):
+        d, _ = synth_set(n_reps=n, seed=i)
+        rest = 60.0
+        rt = np.arange(0, rest, 0.01)
+        quiet = {"t": rt, "acc": rng.normal(0, 0.02 * 9.8, (len(rt), 3)),
+                 "grav": np.tile(d["grav"][0], (len(rt), 1))}
+        for seg in (d, quiet):
+            parts.append({k: (seg[k] + t0 if k == "t" else seg[k]) for k in seg})
+            t0 = parts[-1]["t"][-1] + 0.01
+    data = {k: np.concatenate([p[k] for p in parts]) for k in ("t", "acc", "grav")}
+    sets = analyze_session(data)
+    assert [s["rep_count"] for s in sets] == counts

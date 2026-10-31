@@ -3,6 +3,8 @@ from .io import load_watch_csv
 from .core import analyze, vertical_acceleration, detect_reps
 from .loadvelocity import fit_load_velocity, estimate_1rm
 from .synthetic import synth_set
+from .session import split_sets, analyze_session
 
 __all__ = ["load_watch_csv", "analyze", "vertical_acceleration", "detect_reps",
-           "fit_load_velocity", "estimate_1rm", "synth_set"]
+           "fit_load_velocity", "estimate_1rm", "synth_set",
+           "split_sets", "analyze_session"]
