@@ -1,4 +1,4 @@
-# Apple Watch VBT & rep counter
+# lift-telemetry: Apple Watch VBT & rep counter
 
 Velocity-based training metrics and rep counting from Apple Watch motion data.
 This is a clean-room build from published VBT methods, not copied from Motra.

@@ -1,4 +1,4 @@
-# Statistics / vbt
+# lift-telemetry (Python package: vbt)
 
 Apple Watch velocity-based-training analysis. Workouts arrive as a Hevy share text plus a
 Sensor Logger export; each becomes `data/sessions/<id>/` and an interactive report.
