@@ -17,6 +17,9 @@ _ALIASES = {
     "gx": ["gravityX", "grav_x", "gx"],
     "gy": ["gravityY", "grav_y", "gy"],
     "gz": ["gravityZ", "grav_z", "gz"],
+    "rx": ["rotationRateX", "gyro_x", "rx"],
+    "ry": ["rotationRateY", "gyro_y", "ry"],
+    "rz": ["rotationRateZ", "gyro_z", "rz"],
 }
 
 
@@ -28,7 +31,8 @@ def _pick(df, key):
 
 
 def load_watch_csv(path, units="g"):
-    """Return dict with t (s), acc (N,3 m/s^2, gravity removed), grav (N,3 m/s^2).
+    """Return dict with t (s), acc (N,3 m/s^2, gravity removed), grav (N,3 m/s^2),
+    and gyro (N,3 rad/s) when rotation-rate columns exist.
 
     units: "g" (CoreMotion default) or "ms2" if the export is already m/s^2.
     """
@@ -41,4 +45,9 @@ def load_watch_csv(path, units="g"):
     grav = np.column_stack([_pick(df, k) for k in ("gx", "gy", "gz")])
     scale = G if units == "g" else 1.0
     order = np.argsort(t)
-    return {"t": t[order], "acc": acc[order] * scale, "grav": grav[order] * scale}
+    out = {"t": t[order], "acc": acc[order] * scale, "grav": grav[order] * scale}
+    try:
+        out["gyro"] = np.column_stack([_pick(df, k) for k in ("rx", "ry", "rz")])[order]
+    except KeyError:
+        pass
+    return out

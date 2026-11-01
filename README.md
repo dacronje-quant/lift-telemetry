@@ -38,3 +38,14 @@ python -m vbt WristMotion.csv --session
 Sets are split on rest periods of 20 s or more (`split_sets` in `vbt/session.py`; tune `min_rest_s`,
 `active_thresh`). Walking between stations can show up as a false "set". Most of
 those have no reps and get dropped.
+
+## Real session: 2026-11-01 (Full Body C)
+47-minute whole-workout recording, 22 sets / 7 exercises, aligned to the Hevy log.
+```bash
+python analysis/workout_2026_11_01.py path/to/WristMotion.csv   # -> analysis/out/workout_2026-11-01.json
+python analysis/build_report.py                                  # -> report/full-body-c-2026-11-01.html
+```
+* `data/sets_2026-11-01.json`: annotated set windows (recording clock, Hevy order).
+* `data/wristmotion_2026-11-01_10hz.csv.gz`: decimated derived signals (vertical accel, gravity, gyro). The raw 100 Hz zip is not committed.
+* `vbt/workout.py`: per-exercise rep segmentation (`analyze_set`; vertical position for barbell / squat / pulldown / lateral raise, forearm rotation for curls and pushdowns), per-rep ZUPT velocity, ROM, tempo, plausibility flags, motion-signature features (`set_features`) and a leave-one-set-out classifier (`loso_classify`).
+* `vbt/session.py::find_sets`: finds sets by rep rhythm. Use it when the wrist isn't still between sets (walking, loading plates), where `split_sets` fuses everything.
