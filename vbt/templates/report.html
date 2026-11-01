@@ -1,0 +1,635 @@
+<title>{{TITLE}} · Wrist Telemetry</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Source+Sans+3:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a training log — one long column of numbered panels, each a chart with its reading beside it; the session timeline is the spine. */
+:root{
+  --bg:#f6f7f8; --panel:#ffffff; --ink:#14181d; --ink-2:#4b545e; --ink-3:#7c8590; --rule:#dfe3e8; --grid:#eceff2;
+  --accent:#1c5cab; --chip:#eef2f6;
+  --good:#008300; --warn:#b56f00; --bad:#c43c3b;
+  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100; --s5:#e87ba4; --s6:#008300; --s7:#6250d6; --s8:#e34948; --s0:#7c8590;
+  --display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  --body:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#121518; --panel:#1a1e22; --ink:#eef0f2; --ink-2:#b4bcc5; --ink-3:#86909a; --rule:#2c3238; --grid:#252a2f;
+  --accent:#6da7ec; --chip:#232930; --good:#3aa63a; --warn:#d99a2b; --bad:#e66767;
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#d55181; --s6:#008300; --s7:#9085e9; --s8:#e66767; --s0:#86909a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121518; --panel:#1a1e22; --ink:#eef0f2; --ink-2:#b4bcc5; --ink-3:#86909a; --rule:#2c3238; --grid:#252a2f;
+  --accent:#6da7ec; --chip:#232930; --good:#3aa63a; --warn:#d99a2b; --bad:#e66767;
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#d55181; --s6:#008300; --s7:#9085e9; --s8:#e66767; --s0:#86909a; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 var(--body);margin:0}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 64px;display:grid;gap:28px}
+h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:.01em;text-wrap:balance;margin:0;line-height:1.05}
+h1{font-size:clamp(2.2rem,5vw,3.6rem);font-weight:700;text-transform:uppercase}
+h2{font-size:1.75rem;text-transform:uppercase}
+h3{font-size:1.15rem;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-2)}
+p{margin:0;max-width:68ch}
+.lede{color:var(--ink-2);font-size:1.05rem}
+.eyebrow{font-family:var(--mono);font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
+.mono,td.num,.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+header{display:grid;gap:14px;padding-bottom:8px;border-bottom:2px solid var(--ink)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule)}
+.kpi{background:var(--panel);padding:12px 14px;display:grid;gap:2px;min-width:0}
+.kpi b{font-family:var(--display);font-size:2rem;font-weight:600;line-height:1;font-variant-numeric:tabular-nums}
+.kpi span{font-size:.82rem;color:var(--ink-2)}
+section{display:grid;gap:14px}
+.sec-head{display:grid;gap:6px;border-top:1px solid var(--rule);padding-top:18px}
+.sec-head .eyebrow b{color:var(--ink)}
+.panel{background:var(--panel);border:1px solid var(--rule);border-radius:6px;padding:14px;min-width:0}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:14px}
+.cols>*{min-width:0}
+svg{display:block;width:100%;height:auto;overflow:visible}
+svg text{fill:var(--ink-2);font:11px var(--mono)}
+svg .ax line{stroke:var(--rule)}
+svg .grid line{stroke:var(--grid)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.85rem;color:var(--ink-2)}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-1px;margin-right:5px}
+.legend i.line{height:2px;border-radius:0;vertical-align:4px;width:16px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:500 .8rem var(--mono);padding:5px 8px;border-radius:4px;border:1px solid var(--rule);background:var(--chip);color:var(--ink);cursor:pointer;display:inline-flex;gap:6px;align-items:center}
+.chip:hover{border-color:var(--ink-3)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chip.off{opacity:.55;text-decoration:line-through}
+.chip .sw{width:8px;height:8px;border-radius:2px}
+button:focus-visible,.chip:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.btn{font:500 .8rem var(--mono);padding:5px 10px;border-radius:4px;border:1px solid var(--rule);background:var(--panel);color:var(--ink);cursor:pointer}
+.tw{overflow-x:auto;border:1px solid var(--rule);border-radius:6px;background:var(--panel)}
+table{border-collapse:collapse;width:100%;font-size:.88rem}
+th,td{padding:6px 10px;text-align:left;border-bottom:1px solid var(--grid);white-space:nowrap}
+th{font:500 .72rem var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);background:var(--panel)}
+td.num,th.num{text-align:right}
+tr.sel td{background:var(--chip)}
+tbody tr.click{cursor:pointer}
+.pill{font:500 .72rem var(--mono);padding:2px 7px;border-radius:999px;border:1px solid currentColor;white-space:nowrap}
+.pill.match{color:var(--good)} .pill.off1{color:var(--warn)} .pill.off2{color:var(--bad)} .pill.muted{color:var(--ink-3)}
+.note{font-size:.9rem;color:var(--ink-2)}
+.callout{border-left:3px solid var(--ink);padding:4px 0 4px 14px;display:grid;gap:8px;align-content:start}
+.callout ul{margin:0;padding-left:1.1em;display:grid;gap:6px;max-width:68ch}
+.callout .read{display:grid;gap:8px}
+.callout .tag{font:500 .7rem var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:14px}
+.facts>div{display:grid;gap:4px;align-content:start}
+.facts b{font-family:var(--display);font-size:1.25rem;font-weight:600;text-transform:uppercase}
+#tip{position:fixed;pointer-events:none;background:var(--ink);color:var(--bg);font:12px/1.45 var(--mono);padding:7px 9px;border-radius:4px;max-width:280px;z-index:20;opacity:0;transition:opacity .08s}
+.sig-wrap{overflow-x:auto}
+.sig-grid{display:grid;grid-template-columns:130px repeat(3,minmax(0,1fr));gap:8px 12px;align-items:center;min-width:640px}
+.sig-grid .rowlab{font-family:var(--display);font-size:1.05rem;text-transform:uppercase;display:grid;gap:2px}
+.sig-grid .rowlab small{font:400 .72rem var(--mono);color:var(--ink-3);text-transform:none}
+.drill-head{display:flex;flex-wrap:wrap;gap:10px 22px;align-items:baseline}
+.drill-head .big{font-family:var(--display);font-size:1.6rem;font-weight:600;text-transform:uppercase}
+.stat{display:grid;gap:0}
+.stat b{font-family:var(--mono);font-size:1.05rem;font-weight:500}
+.stat span{font-size:.75rem;color:var(--ink-3);text-transform:uppercase;letter-spacing:.06em;font-family:var(--mono)}
+ol.methods{margin:0;padding-left:1.2em;display:grid;gap:8px;max-width:78ch}
+.empty{color:var(--ink-3);font-style:italic}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow" id="hdrEyebrow"></div>
+  <h1 id="hdrTitle"></h1>
+  <p class="lede" id="hdrLede"></p>
+  <div class="kpis" id="kpis"></div>
+</header>
+
+<section id="sec-review">
+  <div class="sec-head"><div class="eyebrow"><b>0</b> · Worth a look</div><h2>What to check first</h2>
+  <p class="note">Sets where the watch and the log disagree, sets the detector placed with low confidence, and sets it couldn't find. Click one to open it below.</p></div>
+  <div class="chips" id="reviewChips"></div>
+</section>
+
+<section>
+  <div class="sec-head"><div class="eyebrow"><b>1</b> · Session timeline</div><h2 id="tlHead">The session</h2>
+  <p class="note">Grey band: min–max of vertical acceleration per half second; dark line: the same signal low-passed at 2 Hz. The strip under it encodes wrist orientation as colour: gravity's x, y, z components map to red, green, blue, so each exercise shows as its own hue. Coloured bands are the logged sets. Drag across the chart to zoom, double-click or press <i>Full session</i> to reset, and click a band to open that set.</p></div>
+  <div class="panel" style="display:grid;gap:10px">
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:space-between">
+      <div class="legend" id="exLegend"></div>
+      <button class="btn" id="tlReset" type="button">Full session</button>
+    </div>
+    <div id="timeline"></div>
+  </div>
+</section>
+
+<section id="drill">
+  <div class="sec-head"><div class="eyebrow"><b>2</b> · Set drill-down</div><h2>Every rep, one set at a time</h2>
+  <p class="note">Top: relative wrist height. Shaded spans are reps from rest point to rest point; ticks mark each turnaround, and orange ticks are reps whose range of motion or speed doesn't fit the rest of the set (usually unracking or re-racking), which are left out of the velocity numbers. Middle: wrist orientation. Bottom: mean concentric velocity per rep.</p></div>
+  <div class="chips" id="setChips" role="group" aria-label="Choose a set"></div>
+  <div class="panel" style="display:grid;gap:12px">
+    <div class="drill-head" id="drillHead"></div>
+    <div id="drillPos"></div>
+    <div id="drillGrav"></div>
+    <div class="legend" id="gravLegend"><span><i class="line" style="background:var(--ink)"></i>gravity x</span><span><i class="line" style="background:var(--ink-2)"></i>gravity y (dashed)</span><span><i class="line" style="background:var(--ink-3)"></i>gravity z (dotted)</span></div>
+    <div id="drillMV"></div>
+    <div class="tw"><table id="repTable"></table></div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><div class="eyebrow"><b>3</b> · Logged vs sensed</div><h2>Did you miscount?</h2>
+  <p class="note">Each set gives two counts from the watch: all rep-like cycles, and the clean ones after dropping cycles whose depth or speed doesn't fit (nearly always unracking, a setup pull or re-racking). When the logged count lies between the two, log and watch agree. "Threshold range" is the all-cycles count as the detection threshold moves from 25% to 45% of a typical rep. For one-leg or one-arm exercises logged per side, each bout is compared separately. Click a row to open the set.</p></div>
+  <div class="cols">
+    <div class="panel"><div id="countChart"></div><div class="legend" style="margin-top:8px"><span><i style="background:var(--ink-3)"></i>logged in Hevy</span><span><i style="background:var(--ink)"></i>clean reps on the watch</span><span><i style="border:1px dashed var(--ink)"></i>plus edge cycles</span></div></div>
+    <div class="callout" id="countText"></div>
+  </div>
+  <div class="tw"><table id="countTable"></table></div>
+</section>
+
+<section>
+  <div class="sec-head"><div class="eyebrow"><b>4</b> · Velocity & fatigue</div><h2>How fast each rep moved</h2>
+  <p class="note">Mean concentric velocity of the wrist, rep by rep (m/s), one panel and scale per exercise. Lines are sets in order, from lightest (first) to darkest (last).</p></div>
+  <div class="cols" id="velMultiples"></div>
+  <div class="cols">
+    <div class="panel"><h3>Velocity loss vs logged RPE</h3><div id="vlRpe"></div><p class="note">Velocity loss = fastest rep vs the mean of the last two. One dot per set with an RPE in Hevy (unilateral sets left out).</p></div>
+    <div class="callout" id="velText"></div>
+  </div>
+</section>
+
+<section id="sec-lv">
+  <div class="sec-head"><div class="eyebrow"><b>5</b> · Load–velocity</div><h2>Ramps as a strength test</h2>
+  <p class="note">For lifts done at three or more loads: fit best-rep velocity against load and extrapolate to the lift's minimum velocity threshold for an estimated 1RM.</p></div>
+  <div class="cols" id="lvPanels"></div>
+  <div class="legend"><span><i style="background:var(--ink);border-radius:50%"></i>fastest rep in the set (fit)</span><span><i style="background:var(--ink-3);border-radius:50%"></i>set mean</span><span><i class="line" style="background:var(--accent)"></i>linear fit</span><span><i class="line" style="background:var(--bad)"></i>minimum velocity threshold</span></div>
+  <div class="callout" id="lvText"></div>
+</section>
+
+<section id="sec-history">
+  <div class="sec-head"><div class="eyebrow"><b>6</b> · Over time</div><h2>Across sessions</h2>
+  <p class="note">Every analysed workout adds to the library. For each exercise logged in more than one session: the top working load, and the best rep velocity at that load. Rising load at the same or higher velocity means you got stronger.</p></div>
+  <div class="cols" id="histPanels"></div>
+</section>
+
+<section>
+  <div class="sec-head"><div class="eyebrow"><b>7</b> · Rest, time under tension, density</div><h2>Where the time went</h2></div>
+  <div class="cols">
+    <div class="panel"><h3>Time under tension per set</h3><div id="tutChart"></div><div class="legend"><span><i style="background:var(--ink)"></i>concentric</span><span><i style="background:var(--ink-3)"></i>eccentric</span><span><i style="background:var(--rule)"></i>pauses and turnarounds</span></div></div>
+    <div class="panel"><h3>Rest before the next set</h3><div id="restChart"></div><div class="legend"><span><i style="background:var(--ink-2)"></i>same exercise next</span><span><i style="background:var(--accent)"></i>switching exercise</span></div></div>
+  </div>
+  <div class="facts" id="densityFacts"></div>
+</section>
+
+<section>
+  <div class="sec-head"><div class="eyebrow"><b>8</b> · Motion signatures</div><h2>What each exercise looks like to the watch</h2>
+  <p class="note">Every clean rep is stretched to 0–100% of the rep and averaged (line = mean, band = ±1 SD). Columns: wrist height change, wrist orientation (gravity on the watch's x, y, z axes), and rotation rate around them.</p></div>
+  <div class="panel sig-wrap"><div class="sig-grid" id="sigGrid"></div></div>
+  <div class="legend"><span><i class="line" style="background:var(--ink)"></i>x axis</span><span><i class="line" style="background:var(--ink-2)"></i>y axis (dashed)</span><span><i class="line" style="background:var(--ink-3)"></i>z axis (dotted)</span></div>
+  <div class="tw"><table id="sigTable"></table></div>
+</section>
+
+<section id="sec-clf">
+  <div class="sec-head"><div class="eyebrow"><b>9</b> · Exercise classifier</div><h2>Can the watch name the exercise?</h2>
+  <p class="note">Sixteen motion features per set (orientation, rotation, translation). <b>Within this session</b>: leave-one-set-out, so each set is labelled by a model trained on the others. <b>Across sessions</b>: a model trained only on earlier workouts labels today's sets. That second number is the honest one, and it grows as the library does.</p></div>
+  <div class="cols">
+    <div class="panel"><h3>Leave-one-set-out accuracy</h3><div id="accChart"></div><div class="legend"><span><i style="background:var(--ink)"></i>nearest centroid</span><span><i style="background:var(--ink-3)"></i>1-nearest neighbour</span><span><i style="background:var(--accent)"></i>random forest (all features)</span></div></div>
+    <div class="panel"><h3>Confusion matrix</h3><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:6px 0"><label class="eyebrow" for="cmSel">Model</label><select id="cmSel" class="btn"></select></div><div id="cmChart"></div></div>
+  </div>
+  <div class="cols">
+    <div class="panel"><h3>Sets in feature space (PCA)</h3><div id="pcaChart"></div><p class="note">First two principal components of the standardised features. Numbers are Hevy set indices.</p></div>
+    <div class="panel"><h3>What the random forest leans on</h3><div id="impChart"></div></div>
+  </div>
+  <div class="callout" id="clfText"></div>
+</section>
+
+<section>
+  <div class="sec-head"><div class="eyebrow"><b>10</b> · Finding the sets</div><h2>How the sets were located</h2>
+  <p class="note">The detector reads the Hevy log in order and searches the recording for runs of regular reps that fit each logged set's rep count, with consistent wrist orientation and range of motion between sets of the same exercise and plausible rest gaps. It needs no hand marking. When a human has checked the windows, the report uses those and shows how close the detector came.</p></div>
+  <div class="panel"><div id="detChart"></div></div>
+  <div class="callout" id="detText"></div>
+</section>
+
+<section>
+  <div class="sec-head"><div class="eyebrow"><b>11</b> · Methods & caveats</div><h2>How this was made, and what not to trust</h2></div>
+  <div class="cols" style="align-items:start">
+    <div style="display:grid;gap:10px"><h3>Pipeline</h3><ol class="methods" id="methodsList"></ol></div>
+    <div style="display:grid;gap:10px"><h3>Caveats</h3><ol class="methods">
+      <li><b>Wrist ≠ bar.</b> The watch measures the forearm it's strapped to. On barbell presses and pulls the wrist follows the bar closely; on curls, extensions and raises it travels an arc, so "velocity" is the wrist's vertical speed, not the load's. Compare within an exercise, never across.</li>
+      <li><b>One arm only.</b> Unilateral and alternating work is only partly visible, and machines or bodyweight moves where the hands don't travel may not show up at all.</li>
+      <li><b>Absolute velocities run a little low.</b> Smoothing and zero-velocity resets bias mean velocity downward; trends within a set or ramp are more reliable than any single number.</li>
+      <li><b>e1RM</b> from a single day's ramp with an assumed minimum velocity threshold: read it as about ±10 kg.</li>
+      <li><b>Small n.</b> Within-session classifier numbers are optimistic until enough sessions build up for the across-session test.</li>
+      <li><b>Turnaround ambiguity.</b> Unracking, setup pulls and re-racking can look like reps, and fast touch-and-go reps can merge. Flagged reps are shown, not hidden.</li>
+    </ol></div>
+  </div>
+  <p class="note">Code: <span class="mono">vbt/</span> in dacronje-quant/Statistics. <span class="mono">python -m vbt.pipeline run <span id="sidSpan"></span></span> rebuilds this page.</p>
+</section>
+</div>
+<div id="tip" role="tooltip"></div>
+
+<script id="data" type="application/json">/*DATA*/</script>
+<script>
+(function(){
+const D = JSON.parse(document.getElementById('data').textContent);
+const S = D.sets, M = D.meta, sm = D.summary, NOTES = D.notes||{}, FIND = D.findings||{};
+const EXS = Object.values(D.exercises).sort((a,b)=>a.slot-b.slot);
+const EXM = D.exercises;
+const col = id => `var(--s${EXM[id].slot<=8?EXM[id].slot:0})`;
+const NAME = id => EXM[id].name;
+const NS='http://www.w3.org/2000/svg';
+const clockOf = s => { if(M.start_local_s==null) return mmss(s); const v=(M.start_local_s+s)%86400; return `${String(Math.floor(v/3600)).padStart(2,'0')}:${String(Math.floor(v%3600/60)).padStart(2,'0')}`; };
+const fmt = (x,n=2) => x==null||!isFinite(x)?'–':(+x).toFixed(n);
+const kgf = x => x==null?'–':(+x).toString();
+const mmss = s => `${Math.floor(s/60)}:${String(Math.round(s%60)).padStart(2,'0')}`;
+const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function el(tag,attrs={},parent){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+function h(tag,attrs={},html=''){const e=document.createElement(tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(html)e.innerHTML=html;return e;}
+function lin(d0,d1,r0,r1){const f=v=>r0+(v-d0)/(d1-d0||1)*(r1-r0);f.inv=p=>d0+(p-r0)/(r1-r0)*(d1-d0);f.d=[d0,d1];return f;}
+function ticks(a,b,n=5){const span=b-a||1,step0=span/n,mag=Math.pow(10,Math.floor(Math.log10(step0))),err=step0/mag;const step=mag*(err>=7.5?10:err>=3.5?5:err>=1.5?2:1);const out=[];for(let v=Math.ceil(a/step)*step;v<=b+1e-9;v+=step)out.push(+v.toFixed(10));return out;}
+const tip=document.getElementById('tip');
+function showTip(e,html){tip.innerHTML=html;tip.style.opacity=1;const w=tip.offsetWidth,hh=tip.offsetHeight;let x=e.clientX+14,y=e.clientY+14;if(x+w>innerWidth-8)x=e.clientX-w-14;if(y+hh>innerHeight-8)y=e.clientY-hh-14;tip.style.left=x+'px';tip.style.top=y+'px';}
+function hideTip(){tip.style.opacity=0;}
+function onTip(node,fn){node.addEventListener('mousemove',e=>showTip(e,fn()));node.addEventListener('mouseleave',hideTip);}
+function setLabel(s){return `${kgf(s.kg)} kg × ${s.logged_reps}${s.per_unit?'/side':''}`;}
+function W(id){return Math.max(300,document.getElementById(id).clientWidth||600);}
+function axes(g,x,y,H,Wd,m,{xt,yt,xf=v=>v,yf=v=>v,xl,yl}={}){
+  const gg=el('g',{class:'grid'},g); (yt||ticks(...y.d,4)).forEach(v=>el('line',{x1:m.l,x2:Wd-m.r,y1:y(v),y2:y(v)},gg));
+  const ax=el('g',{class:'ax'},g); el('line',{x1:m.l,x2:Wd-m.r,y1:H-m.b,y2:H-m.b},ax);
+  (xt||ticks(...x.d,6)).forEach(v=>{el('text',{x:x(v),y:H-m.b+15,'text-anchor':'middle'},g).textContent=xf(v);});
+  (yt||ticks(...y.d,4)).forEach(v=>{el('text',{x:m.l-6,y:y(v)+4,'text-anchor':'end'},g).textContent=yf(v);});
+  if(xl) el('text',{x:Wd-m.r,y:H-2,'text-anchor':'end'},g).textContent=xl;
+  if(yl) el('text',{x:m.l,y:m.t-6,'text-anchor':'start'},g).textContent=yl;
+}
+function pathOf(xs,ys,x,y){let d='';let pen=false;for(let i=0;i<xs.length;i++){const v=ys[i];if(v==null){pen=false;continue;}d+=(pen?'L':'M')+x(xs[i]).toFixed(1)+','+y(v).toFixed(1);pen=true;}return d;}
+function readBlock(key){const fs=FIND[key]||[];const nt=(NOTES.sections||{})[key];
+  return (nt?`<div class="read"><span class="tag">Coach's read</span>${nt}</div>`:'')+(fs.length?`<div class="read"><span class="tag">From the numbers</span><ul>${fs.map(f=>`<li>${esc(f)}</li>`).join('')}</ul></div>`:'');}
+const seen=S.filter(s=>!s.skipped);
+
+/* ---------- header ---------- */
+document.getElementById('hdrTitle').textContent=M.report_title||M.title;
+const dur=sm.recording_s/60;
+const dateStr=M.start_local?new Date(M.start_local).toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'short',year:'numeric',timeZone:'UTC'}):M.date;
+document.getElementById('hdrEyebrow').textContent=`Apple Watch · WristMotion · ${M.date}${M.start_local_s!=null?` · ${clockOf(0)}–${clockOf(sm.recording_s)}`:''}${M.timezone?' '+M.timezone:''}`;
+document.getElementById('hdrLede').innerHTML=(NOTES.headline?`${NOTES.headline} `:'')+`${esc(M.title)}. A ${Math.round(dur)}-minute recording from the watch lined up against the Hevy log: ${sm.n_sets} sets of ${sm.n_exercises} exercises, ${sm.n_seen} found in the signal. Each set's reps are counted and timed, with wrist velocity per rep.`;
+document.getElementById('sidSpan').textContent=M.session_id;
+const lvUse=Object.entries(D.load_velocity||{}).filter(([k,v])=>v.usable);
+const kp=[[`${sm.n_seen}/${sm.n_sets}`,`sets located in the recording (${M.windows_source==='auto'?'automatic':'checked by hand'})`],
+  [`${sm.logged_reps} / ${Math.round(sm.sensor_reps_cmp)}`,'reps logged / sensed'],
+  [`${sm.n_match+sm.n_ambiguous} of ${sm.n_sets}`,`sets consistent with the log (${sm.n_match} exact)`],
+  [`${fmt(sm.tut_s/60,1)} min`,`under tension, ${sm.work_density_pct}% of working time`],
+  [sm.median_rest_s!=null?`${Math.round(sm.median_rest_s)} s`:'–','median rest between sets']];
+lvUse.slice(0,2).forEach(([k,v])=>kp.push([`≈${Math.round(v.fit_best.e1rm)} kg`,`${NAME(k)} e1RM from the ramp`]));
+const kd=document.getElementById('kpis');kp.forEach(([b,s])=>kd.appendChild(h('div',{class:'kpi'},`<b>${b}</b><span>${s}</span>`)));
+const lg=document.getElementById('exLegend');EXS.forEach(e=>lg.appendChild(h('span',{},`<i style="background:${col(e.id)}"></i>${esc(e.name)}`)));
+document.getElementById('tlHead').textContent=`${Math.round(dur)} minutes of wrist motion`;
+
+/* ---------- review chips ---------- */
+const rv=document.getElementById('reviewChips');
+const lowScore=s=>s.auto_score!=null&&s.auto_score<1.5&&M.windows_source==='auto';
+const toReview=S.filter(s=>s.skipped||s.flag==='watch fewer'||s.flag==='watch more'||lowScore(s));
+if(!toReview.length) rv.appendChild(h('span',{class:'note'},'Nothing stands out: every set was found and agrees with the log.'));
+toReview.forEach(s=>{const why=s.skipped?'not found':s.flag==='watch fewer'?`watch −${s.delta}`:s.flag==='watch more'?`watch +${s.delta}`:'low detector confidence';
+  const b=h('button',{class:'chip'+(s.skipped?' off':''),type:'button'},`<span class="sw" style="background:${col(s.ex)}"></span>#${s.i} ${esc(NAME(s.ex))} · ${why}`);
+  b.addEventListener('click',()=>{if(!s.skipped){select(S.indexOf(s));document.getElementById('drill').scrollIntoView();}});rv.appendChild(b);});
+
+/* ---------- timeline ---------- */
+const TL=D.timeline; const T0=TL.t0, TEND=TL.t0+TL.lo.length*TL.dt; let view=[T0,TEND]; let current=Math.max(0,S.findIndex(s=>!s.skipped));
+function drawTimeline(){
+  const host=document.getElementById('timeline');host.innerHTML='';
+  const Wd=W('timeline'),H=300,m={l:36,r:8,t:22,b:58};
+  const svg=el('svg',{viewBox:`0 0 ${Wd} ${H}`,role:'img','aria-label':'Session timeline of vertical wrist acceleration with the logged sets marked'},host);
+  const x=lin(view[0],view[1],m.l,Wd-m.r), y=lin(-9,9,H-m.b-30,m.t);
+  const i0=Math.max(0,Math.floor((view[0]-T0)/TL.dt)), i1=Math.min(TL.lo.length,Math.ceil((view[1]-T0)/TL.dt));
+  const step=Math.max(1,Math.floor((i1-i0)/(Wd*1.2)));
+  const tAt=i=>T0+i*TL.dt;
+  seen.forEach(s=>{const a=s.span[0],b=s.span[1];if(b<view[0]||a>view[1])return;
+    const xa=Math.max(m.l,x(a)),xb=Math.min(Wd-m.r,x(b));const cur=S.indexOf(s)===current;
+    const r=el('rect',{x:xa,y:m.t,width:Math.max(2,xb-xa),height:H-m.b-30-m.t,fill:col(s.ex),'fill-opacity':cur?.32:.16,stroke:cur?col(s.ex):'none','stroke-width':1.5,style:'cursor:pointer','data-set':s.i},svg);
+    onTip(r,()=>`<b>Set ${s.i} · ${esc(NAME(s.ex))}</b><br>${setLabel(s)}${s.rpe?` @ RPE ${s.rpe}`:''}${s.warmup?' (warm-up)':''}<br>${clockOf(a)}–${clockOf(b)} · sensed ${s.sensor_reps}<br>click to open`);
+    r.addEventListener('click',()=>{select(S.indexOf(s));document.getElementById('drill').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});});
+    if(xb-xa>26){el('text',{x:(xa+xb)/2,y:m.t-6,'text-anchor':'middle',style:'font-weight:500'},svg).textContent=`${s.ex}${s.i}`;}
+  });
+  let up='',dn='';for(let i=i0;i<i1;i+=step){let lo=Infinity,hi=-Infinity;for(let j=i;j<Math.min(i+step,i1);j++){lo=Math.min(lo,TL.lo[j]);hi=Math.max(hi,TL.hi[j]);}const xx=x(tAt(i)).toFixed(1);up+=(up?'L':'M')+xx+','+y(Math.min(9,hi)).toFixed(1);dn='L'+xx+','+y(Math.max(-9,lo)).toFixed(1)+dn;}
+  if(up) el('path',{d:up+dn+'Z',fill:'var(--ink-3)','fill-opacity':.35,stroke:'none'},svg);
+  const xs=[],ys=[];for(let i=i0;i<i1;i+=step){xs.push(tAt(i));ys.push(TL.den[i]);}
+  el('path',{d:pathOf(xs,ys,x,y),fill:'none',stroke:'var(--ink)','stroke-width':1.2},svg);
+  const by=H-m.b-22, bh=16; const bw=Math.max(1,(Wd-m.l-m.r)/Math.max(1,(i1-i0)/step));
+  for(let i=i0;i<i1;i+=step){const r=Math.round((TL.gx[i]+1)*127.5),gg=Math.round((TL.gy[i]+1)*127.5),b=Math.round((TL.gz[i]+1)*127.5);el('rect',{x:x(tAt(i)).toFixed(1),y:by,width:(bw+.6).toFixed(1),height:bh,fill:`rgb(${r},${gg},${b})`},svg);}
+  el('text',{x:m.l,y:by-3},svg).textContent='orientation (gravity x,y,z → R,G,B)';
+  const span=view[1]-view[0], tstep=span>1800?300:span>600?120:span>200?30:span>60?10:5;
+  const xt=[];for(let v=Math.ceil(view[0]/tstep)*tstep;v<=view[1];v+=tstep)xt.push(v);
+  axes(svg,x,y,H,Wd,m,{xt,yt:[-8,-4,0,4,8],xf:v=>clockOf(v),yl:'vertical accel, m/s²'});
+  const sel=el('rect',{y:m.t,height:H-m.b-m.t,fill:'var(--accent)','fill-opacity':.15,width:0},svg);
+  const cross=el('line',{y1:m.t,y2:H-m.b,stroke:'var(--ink-3)','stroke-dasharray':'3 3',opacity:0},svg);
+  let x0=null; const pt=e=>{const r=svg.getBoundingClientRect();return (e.clientX-r.left)*Wd/r.width;};
+  svg.addEventListener('pointerdown',e=>{if(e.target.dataset&&e.target.dataset.set)return;x0=pt(e);try{svg.setPointerCapture(e.pointerId);}catch(_){}});
+  svg.addEventListener('pointermove',e=>{const p=pt(e);cross.setAttribute('x1',p);cross.setAttribute('x2',p);cross.setAttribute('opacity',1);
+    if(x0!=null){sel.setAttribute('x',Math.min(x0,p));sel.setAttribute('width',Math.abs(p-x0));}});
+  svg.addEventListener('pointerleave',()=>cross.setAttribute('opacity',0));
+  svg.addEventListener('pointerup',e=>{if(x0==null)return;const p=pt(e);const a0=x0;x0=null;if(Math.abs(p-a0)>8){view=[Math.max(T0,x.inv(Math.min(a0,p))),Math.min(TEND,x.inv(Math.max(a0,p)))];drawTimeline();}else sel.setAttribute('width',0);});
+  svg.addEventListener('dblclick',()=>{view=[T0,TEND];drawTimeline();});
+}
+document.getElementById('tlReset').addEventListener('click',()=>{view=[T0,TEND];drawTimeline();});
+
+/* ---------- drill-down ---------- */
+const chips=document.getElementById('setChips');
+S.forEach((s,i)=>{const b=h('button',{class:'chip'+(s.skipped?' off':''),type:'button',id:'chip'+s.i,'aria-pressed':'false',title:`${NAME(s.ex)} ${setLabel(s)}${s.skipped?' (not found)':''}`},`<span class="sw" style="background:${col(s.ex)}"></span>${s.ex}${s.i}`);if(!s.skipped)b.addEventListener('click',()=>select(i));else b.disabled=true;chips.appendChild(b);});
+function flagPill(s){const m={match:['match','✓ match'],ambiguous:['off1','≈ within ambiguity'],'watch fewer':['off2',`watch −${s.delta}`],'watch more':['off2',`watch +${s.delta}`],'not seen':['muted','not found']}[s.flag]||['muted',s.flag];return `<span class="pill ${m[0]}">${m[1]}</span>`;}
+function sensedTxt(s){return s.skipped?'–':s.per_unit?`${s.bouts.join(' + ')}`:`${s.sensor_reps}`;}
+function cleanTxt(s){return s.skipped?'–':s.per_unit?`${s.bouts_clean.join(' + ')}`:`${s.clean_reps}`;}
+function select(i){if(S[i].skipped)return;current=i;S.forEach((s,j)=>document.getElementById('chip'+s.i).setAttribute('aria-pressed',j===i));drawDrill();drawTimeline();
+  document.querySelectorAll('#countTable tbody tr').forEach(r=>r.classList.toggle('sel',+r.dataset.k===i));
+  try{localStorage.setItem('vbt-'+M.session_id,i);}catch(e){}}
+function hoverLayer(svg,x,Wd,H,m,tt,fn){
+  const ln=el('line',{y1:m.t,y2:H-m.b,stroke:'var(--ink-3)','stroke-width':1,opacity:0},svg);
+  const r=el('rect',{x:m.l,y:m.t,width:Wd-m.l-m.r,height:H-m.t-m.b,fill:'transparent'},svg);
+  r.addEventListener('mousemove',e=>{const b=svg.getBoundingClientRect();const p=(e.clientX-b.left)*Wd/b.width;const t=x.inv(p);let k=Math.round((t-tt[0])/(tt[1]-tt[0]));k=Math.max(0,Math.min(tt.length-1,k));ln.setAttribute('x1',x(tt[k]));ln.setAttribute('x2',x(tt[k]));ln.setAttribute('opacity',1);showTip(e,fn(k));});
+  r.addEventListener('mouseleave',()=>{ln.setAttribute('opacity',0);hideTip();});
+}
+function drawDrill(){
+  const s=S[current],tr=s.trace,n=tr.pos.length,tt=Array.from({length:n},(_,k)=>tr.t0+k*tr.dt);
+  document.getElementById('drillHead').innerHTML=`<span class="big" style="border-bottom:3px solid ${col(s.ex)}">Set ${s.i} · ${esc(NAME(s.ex))}</span>
+   <span class="stat"><b>${setLabel(s)}</b><span>Hevy${s.warmup?' · warm-up':''}${s.rpe?' · RPE '+s.rpe:''}</span></span>
+   <span class="stat"><b>${sensedTxt(s)} / ${cleanTxt(s)}</b><span>all cycles / clean</span></span>
+   <span class="stat"><b>${fmt(s.mean_velocity)} m/s</b><span>mean conc. velocity</span></span>
+   <span class="stat"><b>${s.velocity_loss_pct==null?'–':fmt(s.velocity_loss_pct,0)+'%'}</b><span>velocity loss</span></span>
+   <span class="stat"><b>${fmt(s.tut_s,1)} s</b><span>time under tension</span></span>
+   <span class="stat"><b>${clockOf(s.span[0])}</b><span>start</span></span> ${flagPill(s)}`;
+  const Wd=W('drillPos'),m={l:40,r:10,t:18,b:22};
+  const x=lin(tt[0],tt[n-1],m.l,Wd-m.r);
+  let host=document.getElementById('drillPos');host.innerHTML='';let H=220;
+  let svg=el('svg',{viewBox:`0 0 ${Wd} ${H}`,role:'img','aria-label':`Wrist height during set ${s.i}`},host);
+  const pmax=Math.max(10,...tr.pos.map(v=>Math.abs(v||0))); const y=lin(-pmax,pmax,H-m.b,m.t);
+  s.reps.forEach((r,k)=>{el('rect',{x:x(r.t_start),y:m.t,width:Math.max(1,x(r.t_end)-x(r.t_start)),height:H-m.b-m.t,fill:col(s.ex),'fill-opacity':k%2?.08:.16},svg);});
+  axes(svg,x,y,H,Wd,m,{xf:v=>mmss(v),yl:'wrist height, cm (x: recording clock, m:ss)'});
+  el('path',{d:pathOf(tt,tr.pos,x,y),fill:'none',stroke:'var(--ink)','stroke-width':2},svg);
+  s.reps.forEach(r=>{const xx=x(r.t_turn);el('line',{x1:xx,x2:xx,y1:m.t,y2:m.t+10,stroke:r.ok?'var(--ink)':'var(--s2)','stroke-width':3,'stroke-linecap':'round'},svg);
+    el('text',{x:xx,y:m.t-4,'text-anchor':'middle'},svg).textContent=r.n;});
+  hoverLayer(svg,x,Wd,H,m,tt,k=>{const t=tt[k];const r=s.reps.find(r=>t>=r.t_start&&t<=r.t_end);return `${mmss(t)} · height ${fmt(tr.pos[k],1)} cm<br>accel ${fmt(tr.a[k])} m/s²`+(r?`<br><b>rep ${r.n}</b> MV ${fmt(r.mean_velocity)} m/s · ROM ${fmt(r.rom*100,0)} cm${r.ok?'':' · flagged'}`:'');});
+  host=document.getElementById('drillGrav');host.innerHTML='';H=150;
+  svg=el('svg',{viewBox:`0 0 ${Wd} ${H}`,role:'img','aria-label':`Wrist orientation during set ${s.i}`},host);
+  const yg=lin(-1.05,1.05,H-m.b,m.t);
+  axes(svg,x,yg,H,Wd,m,{yt:[-1,0,1],xf:v=>mmss(v),yl:'gravity on watch axes, g'});
+  [['gx','var(--ink)',''],['gy','var(--ink-2)','5 3'],['gz','var(--ink-3)','1.5 3']].forEach(([k,c,da])=>el('path',{d:pathOf(tt,tr[k],x,yg),fill:'none',stroke:c,'stroke-width':1.6,'stroke-dasharray':da},svg));
+  hoverLayer(svg,x,Wd,H,m,tt,k=>`${mmss(tt[k])}<br>g = (${fmt(tr.gx[k])}, ${fmt(tr.gy[k])}, ${fmt(tr.gz[k])})<br>ω = (${fmt(tr.wx[k],1)}, ${fmt(tr.wy[k],1)}, ${fmt(tr.wz[k],1)}) rad/s`);
+  host=document.getElementById('drillMV');host.innerHTML='';H=150;const mm={l:40,r:10,t:18,b:24};
+  svg=el('svg',{viewBox:`0 0 ${Wd} ${H}`,role:'img','aria-label':`Mean concentric velocity per rep, set ${s.i}`},host);
+  const nr=s.reps.length||1, xb=lin(0,nr,mm.l,Wd-mm.r), vmax=Math.max(.3,...s.reps.map(r=>r.mean_velocity))*1.12, yb=lin(0,vmax,H-mm.b,mm.t);
+  axes(svg,xb,yb,H,Wd,mm,{xt:[],yl:'mean concentric velocity, m/s',yf:v=>v.toFixed(1)});
+  const bw=Math.min(46,(Wd-mm.l-mm.r)/nr-4);
+  s.reps.forEach((r,k)=>{const cx=xb(k+.5);const top=yb(r.mean_velocity),bot=yb(0);
+    const p=el('path',{d:`M${cx-bw/2},${bot}V${top+4}q0,-4 4,-4h${bw-8}q4,0 4,4V${bot}Z`,fill:r.ok?col(s.ex):'none',stroke:r.ok?'none':'var(--s2)','stroke-dasharray':r.ok?'':'3 2','stroke-width':1.5},svg);
+    onTip(p,()=>`<b>Rep ${r.n}</b>${r.ok?'':' (flagged)'}<br>MV ${fmt(r.mean_velocity)} · peak ${fmt(r.peak_velocity)} m/s<br>ROM ${fmt(r.rom*100,0)} cm · rotation ${fmt(r.rotation_deg,0)}°<br>con ${fmt(r.concentric_s,2)} s · ecc ${fmt(r.eccentric_s,2)} s`);
+    el('text',{x:cx,y:H-mm.b+15,'text-anchor':'middle'},svg).textContent=r.n;
+    if(nr<=14){el('text',{x:cx,y:top-5,'text-anchor':'middle'},svg).textContent=fmt(r.mean_velocity);}
+  });
+  const rows=s.reps.map(r=>`<tr><td class="num">${r.n}</td><td class="num">${mmss(r.t_turn)}</td><td class="num">${fmt(r.mean_velocity)}</td><td class="num">${fmt(r.peak_velocity)}</td><td class="num">${fmt(r.rom*100,0)}</td><td class="num">${fmt(r.concentric_s,2)}</td><td class="num">${fmt(r.eccentric_s,2)}</td><td class="num">${fmt(r.rep_s,2)}</td><td class="num">${fmt(r.rotation_deg,0)}</td><td>${r.ok?'clean':'<span class="pill off1">flagged</span>'}</td></tr>`).join('');
+  document.getElementById('repTable').innerHTML=`<thead><tr><th class="num">Rep</th><th class="num">At</th><th class="num">MV m/s</th><th class="num">Peak m/s</th><th class="num">ROM cm</th><th class="num">Conc s</th><th class="num">Ecc s</th><th class="num">Rep s</th><th class="num">Rotation °</th><th>Status</th></tr></thead><tbody>${rows}</tbody>`;
+}
+
+/* ---------- counts ---------- */
+function drawCounts(){
+  const host=document.getElementById('countChart');host.innerHTML='';const Wd=W('countChart'),H=260,m={l:30,r:8,t:14,b:40};
+  const svg=el('svg',{viewBox:`0 0 ${Wd} ${H}`,role:'img','aria-label':'Logged vs sensed reps per set'},host);
+  const ymax=Math.max(10,...S.map(s=>Math.max(s.logged_reps,s.per_unit&&s.bouts?Math.max(...s.bouts):s.sensor_reps)))+1;
+  const x=lin(0,S.length,m.l,Wd-m.r),y=lin(0,ymax,H-m.b,m.t);axes(svg,x,y,H,Wd,m,{xt:[]});
+  const bw=Math.max(2,((Wd-m.l-m.r)/S.length-4)/2);
+  S.forEach((s,k)=>{const cx=x(k+.5);
+    el('path',{d:`M${cx-bw-1},${y(0)}V${y(s.logged_reps)+2}q0,-2 2,-2h${bw-4}q2,0 2,2V${y(0)}Z`,fill:'var(--ink-3)'},svg);
+    if(!s.skipped){const hi=s.per_unit?Math.max(...s.bouts):s.sensor_reps,lo=s.per_unit?Math.min(...s.bouts_clean):s.clean_reps;
+      el('path',{d:`M${cx+1},${y(0)}V${y(lo)+2}q0,-2 2,-2h${bw-4}q2,0 2,2V${y(0)}Z`,fill:'var(--ink)'},svg);
+      if(hi>lo)el('rect',{x:cx+1.5,y:y(hi),width:bw-1,height:y(lo)-y(hi)-1,fill:'none',stroke:'var(--ink)','stroke-dasharray':'2 2'},svg);}
+    el('text',{x:cx,y:H-m.b+14,'text-anchor':'middle',style:`fill:${col(s.ex)};font-weight:600`},svg).textContent=s.i;
+    if(s.flag==='watch fewer'||s.flag==='watch more'||s.skipped){el('text',{x:cx,y:H-m.b+28,'text-anchor':'middle',style:'fill:var(--bad)'},svg).textContent=s.skipped?'?':(s.flag==='watch more'?'+':'−')+s.delta;}
+    const hit=el('rect',{x:cx-bw-2,y:m.t,width:2*bw+4,height:H-m.t-m.b,fill:'transparent',style:'cursor:pointer'},svg);
+    onTip(hit,()=>`<b>Set ${s.i} · ${esc(NAME(s.ex))}</b><br>logged ${s.logged_reps}${s.per_unit?'/side':''}<br>`+(s.skipped?'not found in the recording':`all cycles ${sensedTxt(s)} · clean ${cleanTxt(s)}<br>threshold range ${s.sensor_range[0]}–${s.sensor_range[1]}`));
+    hit.addEventListener('click',()=>{if(!s.skipped){select(k);document.getElementById('drill').scrollIntoView();}});
+  });
+  const rows=S.map((s,k)=>`<tr class="click" data-k="${k}"><td class="num">${s.i}</td><td><span class="chip" style="cursor:inherit;padding:2px 6px"><span class="sw" style="background:${col(s.ex)}"></span>${esc(NAME(s.ex))}</span></td><td class="num">${kgf(s.kg)}</td><td class="num">${s.rpe??'–'}</td><td class="num">${s.logged_reps}${s.per_unit?'/side':''}</td><td class="num">${sensedTxt(s)}</td><td class="num">${cleanTxt(s)}</td><td class="num">${s.skipped?'–':s.sensor_range[0]+'–'+s.sensor_range[1]}</td><td>${flagPill(s)}</td></tr>`).join('');
+  const t=document.getElementById('countTable');t.innerHTML=`<thead><tr><th class="num">Set</th><th>Exercise</th><th class="num">kg</th><th class="num">RPE</th><th class="num">Logged</th><th class="num">All cycles</th><th class="num">Clean</th><th class="num">Threshold range</th><th>Verdict</th></tr></thead><tbody>${rows}</tbody>`;
+  t.querySelectorAll('tbody tr').forEach(r=>r.addEventListener('click',()=>{const k=+r.dataset.k;if(!S[k].skipped){select(k);document.getElementById('drill').scrollIntoView();}}));
+  document.getElementById('countText').innerHTML=readBlock('counts');
+}
+
+/* ---------- velocity ---------- */
+function drawVel(){
+  const host=document.getElementById('velMultiples');host.innerHTML='';
+  const exs=EXS.filter(e=>seen.some(s=>s.ex===e.id&&s.reps.some(r=>r.ok)));
+  exs.forEach(e=>{const p=h('div',{class:'panel'});p.appendChild(h('h3',{},esc(e.name)));p.appendChild(h('div',{id:'vm-'+e.id}));host.appendChild(p);});
+  exs.forEach(e=>{const sets=seen.filter(s=>s.ex===e.id);const d=document.getElementById('vm-'+e.id);
+    const Wd=Math.max(300,d.clientWidth||340),H=180,m={l:36,r:66,t:14,b:26};
+    const svg=el('svg',{viewBox:`0 0 ${Wd} ${H}`,role:'img','aria-label':`${e.name} velocity per rep`},d);
+    const nmax=Math.max(2,...sets.map(s=>s.reps.length));const vals=sets.flatMap(s=>s.reps.filter(r=>r.ok).map(r=>r.mean_velocity));
+    const x=lin(1,nmax,m.l,Wd-m.r),y=lin(0,Math.max(.2,...vals)*1.1,H-m.b,m.t);
+    axes(svg,x,y,H,Wd,m,{xt:ticks(1,nmax,6).filter(v=>Number.isInteger(v)),yf:v=>v.toFixed(1),xl:'rep'});
+    sets.forEach((s,j)=>{const op=sets.length>1?.35+.65*j/(sets.length-1):1;const ok=s.reps.filter(r=>r.ok);
+      el('path',{d:pathOf(ok.map(r=>r.n),ok.map(r=>r.mean_velocity),x,y),fill:'none',stroke:col(e.id),'stroke-width':2,'stroke-opacity':op},svg);
+      ok.forEach(r=>{const c=el('circle',{cx:x(r.n),cy:y(r.mean_velocity),r:4,fill:col(e.id),'fill-opacity':op,stroke:'var(--panel)','stroke-width':2},svg);
+        onTip(c,()=>`<b>Set ${s.i}</b> ${setLabel(s)}<br>rep ${r.n}: ${fmt(r.mean_velocity)} m/s`);});
+      const last=ok[ok.length-1];if(last){el('text',{x:x(last.n)+7,y:y(last.mean_velocity)+4},svg).textContent=`S${s.i} ${kgf(s.kg)}kg`;}
+    });
+  });
+  const d=document.getElementById('vlRpe');d.innerHTML='';const Wd=W('vlRpe'),H=240,m={l:40,r:12,t:16,b:30};
+  const pts=seen.filter(s=>s.rpe&&s.velocity_loss_pct!=null);
+  if(!pts.length){d.innerHTML='<p class="empty">No sets with both an RPE and a velocity-loss value.</p>';}
+  else{const svg=el('svg',{viewBox:`0 0 ${Wd} ${H}`,role:'img','aria-label':'Velocity loss against RPE'},d);
+    const rmin=Math.min(5.5,...pts.map(s=>s.rpe-.5)),rmax=Math.max(9,...pts.map(s=>s.rpe+.5));
+    const x=lin(rmin,rmax,m.l,Wd-m.r),y=lin(0,50,H-m.b,m.t);axes(svg,x,y,H,Wd,m,{xt:ticks(rmin,rmax,5).filter(Number.isInteger),yt:[0,10,20,30,40,50],yf:v=>v+'%',xl:'RPE'});
+    const jit={};pts.forEach(s=>{const k=s.rpe;jit[k]=(jit[k]||0)+1;const jx=(jit[k]-1)*7-10;
+      const c=el('circle',{cx:x(s.rpe)+jx,cy:y(Math.min(50,s.velocity_loss_pct)),r:6,fill:col(s.ex),stroke:'var(--panel)','stroke-width':2},svg);
+      onTip(c,()=>`<b>Set ${s.i} · ${esc(NAME(s.ex))}</b><br>RPE ${s.rpe} · loss ${fmt(s.velocity_loss_pct,0)}%`);
+      el('text',{x:x(s.rpe)+jx+9,y:y(Math.min(50,s.velocity_loss_pct))+4},svg).textContent=s.i;});}
+  document.getElementById('velText').innerHTML=readBlock('velocity');
+}
+
+/* ---------- load-velocity ---------- */
+function drawLV(){
+  const host=document.getElementById('lvPanels');host.innerHTML='';const LV=D.load_velocity||{};
+  const keys=Object.keys(LV);
+  if(!keys.length){document.getElementById('sec-lv').hidden=true;return;}
+  keys.forEach(id=>{const p=h('div',{class:'panel'});p.appendChild(h('h3',{},esc(NAME(id))));p.appendChild(h('div',{id:'lv-'+id}));host.appendChild(p);});
+  keys.forEach(id=>{const L=LV[id],f=L.fit_best;const d=document.getElementById('lv-'+id);
+    const Wd=Math.max(300,d.clientWidth||400),H=240,m={l:40,r:16,t:16,b:30};const svg=el('svg',{viewBox:`0 0 ${Wd} ${H}`,role:'img','aria-label':`${NAME(id)} load-velocity profile`},d);
+    const lmin=Math.floor((Math.min(...L.loads)-10)/10)*10, xmax=L.usable?Math.ceil((f.e1rm+10)/10)*10:Math.ceil((Math.max(...L.loads)+20)/10)*10;
+    const vmax=Math.max(.8,...L.best)*1.05;
+    const x=lin(lmin,xmax,m.l,Wd-m.r),y=lin(0,vmax,H-m.b,m.t);axes(svg,x,y,H,Wd,m,{yf:v=>v.toFixed(1),xl:'load, kg'});
+    el('line',{x1:m.l,x2:Wd-m.r,y1:y(f.mvt),y2:y(f.mvt),stroke:'var(--bad)','stroke-dasharray':'5 4','stroke-width':1.5},svg);
+    el('text',{x:Wd-m.r,y:y(f.mvt)-5,'text-anchor':'end'},svg).textContent=`MVT ${f.mvt} m/s`;
+    const fx=[lmin,L.usable?f.e1rm:xmax];el('line',{x1:x(fx[0]),x2:x(fx[1]),y1:y(f.intercept+f.slope*fx[0]),y2:y(f.intercept+f.slope*fx[1]),stroke:'var(--accent)','stroke-width':2,'stroke-dasharray':L.usable?'':'2 4'},svg);
+    L.loads.forEach((l,k)=>{const off=L.loads.filter((v,j)=>v===l&&j<k).length*8;
+      [[L.mean[k],'var(--ink-3)'],[L.best[k],'var(--ink)']].forEach(([v,c],q)=>{const ci=el('circle',{cx:x(l)+off,cy:y(v),r:5,fill:c,stroke:'var(--panel)','stroke-width':2},svg);onTip(ci,()=>`${kgf(l)} kg · ${q?'fastest rep':'set mean'} ${fmt(v)} m/s`);});});
+    if(L.usable){el('circle',{cx:x(f.e1rm),cy:y(f.mvt),r:6,fill:'none',stroke:'var(--accent)','stroke-width':2},svg);
+      el('text',{x:x(f.e1rm)-8,y:y(f.mvt)+18,'text-anchor':'end',style:'font-weight:500;fill:var(--ink)'},svg).textContent=`e1RM ≈ ${Math.round(f.e1rm)} kg`;}
+    el('text',{x:m.l+6,y:m.t+8},svg).textContent=`fit r² = ${fmt(f.r2,2)}${L.usable?'':' (no usable slope)'}`;
+  });
+  document.getElementById('lvText').innerHTML=readBlock('load_velocity');
+}
+
+/* ---------- history ---------- */
+function drawHistory(){
+  const host=document.getElementById('histPanels');host.innerHTML='';const HI=D.history||{};const labs=Object.keys(HI);
+  if(!labs.length){host.innerHTML='<p class="empty">This is the first analysed session for these exercises. Trends appear from the second workout on.</p>';return;}
+  labs.forEach((lab,qi)=>{const ex=Object.values(EXM).find(e=>e.label===lab);const p=h('div',{class:'panel'});p.appendChild(h('h3',{},esc(ex?ex.name:lab)));const d=h('div',{id:'hi-'+qi});p.appendChild(d);host.appendChild(p);
+    const rows=Object.entries(HI[lab]).map(([sid,v])=>({sid,...v})).sort((a,b)=>a.sid<b.sid?-1:1);
+    const Wd=Math.max(300,d.clientWidth||340),H=180,m={l:40,r:44,t:16,b:26};
+    const svg=el('svg',{viewBox:`0 0 ${Wd} ${H}`,role:'img','aria-label':`${lab} top load over sessions`},d);
+    const x=lin(0,Math.max(1,rows.length-1),m.l,Wd-m.r);const kmax=Math.max(...rows.map(r=>r.top_kg))*1.15||1;const y=lin(0,kmax,H-m.b,m.t);
+    axes(svg,x,y,H,Wd,m,{xt:rows.map((_,i)=>i),xf:i=>rows[i].date.slice(5),yl:'top load, kg'});
+    el('path',{d:pathOf(rows.map((_,i)=>i),rows.map(r=>r.top_kg),x,y),fill:'none',stroke:ex?col(ex.id):'var(--ink)','stroke-width':2},svg);
+    rows.forEach((r,i)=>{const c=el('circle',{cx:x(i),cy:y(r.top_kg),r:5,fill:ex?col(ex.id):'var(--ink)',stroke:'var(--panel)','stroke-width':2},svg);
+      onTip(c,()=>`<b>${r.date}</b><br>top ${kgf(r.top_kg)} kg · best velocity there ${fmt(r.v_at_top)} m/s<br>${r.sets} sets · ${Math.round(r.volume)} kg volume`);
+      if(r.v_at_top)el('text',{x:x(i)+7,y:y(r.top_kg)-6},svg).textContent=`${fmt(r.v_at_top)} m/s`;});
+  });
+}
+
+/* ---------- TUT & rest ---------- */
+function drawTUT(){
+  let d=document.getElementById('tutChart');d.innerHTML='';let Wd=W('tutChart'),H=230,m={l:34,r:8,t:14,b:26};
+  let svg=el('svg',{viewBox:`0 0 ${Wd} ${H}`,role:'img','aria-label':'Time under tension per set'},d);
+  const tmax=Math.max(20,...seen.map(s=>s.tut_s||0))*1.1;
+  const x=lin(0,seen.length,m.l,Wd-m.r),y=lin(0,tmax,H-m.b,m.t);axes(svg,x,y,H,Wd,m,{xt:[],yf:v=>v+'s'});
+  const bw=Math.max(2,(Wd-m.l-m.r)/seen.length-3);
+  seen.forEach((s,k)=>{const cx=x(k)+1.5;let acc=0;const pause=Math.max(0,(s.tut_s||0)-s.con_s-s.ecc_s);
+    [[s.con_s,'var(--ink)'],[s.ecc_s,'var(--ink-3)'],[pause,'var(--rule)']].forEach(([v,c],q)=>{const y0=y(acc),y1=y(acc+v);el('rect',{x:cx,y:y1,width:bw,height:Math.max(0,y0-y1-(q<2?2:0)),fill:c,rx:q===2?2:0},svg);acc+=v;});
+    el('text',{x:cx+bw/2,y:H-m.b+14,'text-anchor':'middle',style:`fill:${col(s.ex)};font-weight:600`},svg).textContent=s.i;
+    const hit=el('rect',{x:cx,y:m.t,width:bw,height:H-m.t-m.b,fill:'transparent'},svg);
+    onTip(hit,()=>`<b>Set ${s.i} · ${esc(NAME(s.ex))}</b><br>TUT ${fmt(s.tut_s,1)} s · concentric ${fmt(s.con_s,1)} · eccentric ${fmt(s.ecc_s,1)}<br>${fmt(s.tut_s/Math.max(1,s.sensor_reps),1)} s per rep`);});
+  d=document.getElementById('restChart');d.innerHTML='';Wd=W('restChart');
+  svg=el('svg',{viewBox:`0 0 ${Wd} ${H}`,role:'img','aria-label':'Rest between sets'},d);
+  const pairs=seen.slice(0,-1).map((s,k)=>[s,seen[k+1]]);
+  const rmax=Math.max(120,...pairs.map(([s])=>s.rest_after_s||0))*1.08;
+  const xr=lin(0,Math.max(1,pairs.length),m.l,Wd-m.r),yr=lin(0,rmax,H-m.b,m.t);axes(svg,xr,yr,H,Wd,m,{xt:[],yt:ticks(0,rmax,4),yf:v=>v+'s'});
+  const bw2=Math.max(2,(Wd-m.l-m.r)/Math.max(1,pairs.length)-3);
+  pairs.forEach(([s,nx],k)=>{const sw=nx.ex!==s.ex;const cx=xr(k)+1.5;
+    const r=el('path',{d:`M${cx},${yr(0)}V${yr(s.rest_after_s)+3}q0,-3 3,-3h${bw2-6}q3,0 3,3V${yr(0)}Z`,fill:sw?'var(--accent)':'var(--ink-2)'},svg);
+    onTip(r,()=>`after set ${s.i} → set ${nx.i}<br>${Math.round(s.rest_after_s)} s rest${sw?'<br>exercise change':''}`);
+    el('text',{x:cx+bw2/2,y:H-m.b+14,'text-anchor':'middle'},svg).textContent=s.i;});
+  const rests=pairs.map(([s])=>s.rest_after_s),same=pairs.filter(([s,n])=>n.ex===s.ex).map(([s])=>s.rest_after_s);
+  const med=a=>{if(!a.length)return null;const b=[...a].sort((p,q)=>p-q);return b[Math.floor(b.length/2)];};
+  const tutEx={},repEx={};seen.forEach(s=>{tutEx[s.ex]=(tutEx[s.ex]||0)+(s.tut_s||0);repEx[s.ex]=(repEx[s.ex]||0)+s.sensor_reps;});
+  const topEx=Object.entries(tutEx).sort((a,b)=>b[1]-a[1])[0];
+  const imax=rests.indexOf(Math.max(...rests)), imin=rests.indexOf(Math.min(...rests));
+  document.getElementById('densityFacts').innerHTML=`
+   <div><b>${fmt(sm.tut_s/60,1)} min of ${fmt(sm.work_span_min,0)}</b><p class="note">${sm.work_density_pct}% of the time from first rep to last was spent moving a load. The rest was rest, walking and setup.</p></div>
+   ${rests.length?`<div><b>Rest ≈ ${Math.round(med(same.length?same:rests))} s ${same.length?'within an exercise':'between sets'}</b><p class="note">Median ${Math.round(med(rests))} s overall, from ${Math.round(rests[imin])} s (after set ${pairs[imin][0].i}) to ${Math.round(rests[imax])} s (after set ${pairs[imax][0].i}, ${pairs[imax][1].ex!==pairs[imax][0].ex?'an exercise change':'same exercise'}).</p></div>`:''}
+   ${topEx?`<div><b>${esc(NAME(topEx[0]))}: ${Math.round(topEx[1])} s under load</b><p class="note">The most time under tension of any exercise, at ${fmt(topEx[1]/Math.max(1,repEx[topEx[0]]),1)} s per rep across its sets.</p></div>`:''}
+   <div><b>${Math.round(sm.volume_kg).toLocaleString('en')} kg volume load</b><p class="note">Logged kg × logged reps, both sides counted for per-side exercises.</p></div>
+   ${(NOTES.sections||{}).rest?`<div class="callout" style="grid-column:1/-1"><div class="read"><span class="tag">Coach's read</span>${NOTES.sections.rest}</div></div>`:''}`;
+}
+
+/* ---------- signatures ---------- */
+function describe(id){const ss=seen.filter(s=>s.ex===id);if(!ss.length)return '';const av=k=>ss.reduce((a,s)=>a+(s.features[k]||0),0)/ss.length;
+  const g=[av('g_x'),av('g_y'),av('g_z')];const ax=['x','y','z'];const i=g.map(Math.abs).indexOf(Math.max(...g.map(Math.abs)));
+  const pose=Math.abs(g[i])>.8?`Gravity sits on ${g[i]>0?'+':'−'}${ax[i]} (${Math.abs(g[i])>.9?'a fixed':'a steady'} wrist pose)`:`Gravity is spread across axes (${g.map(v=>fmt(v,1)).join(', ')})`;
+  const rot=av('rot_range_deg');const rotT=rot>45?`large forearm rotation (~${Math.round(rot)}°)`:rot>20?`moderate rotation (~${Math.round(rot)}°)`:`little rotation (~${Math.round(rot)}°)`;
+  return `${pose}, ${rotT}, ~${Math.round(av('rom_cm'))} cm height range, ${fmt(av('period_s'),1)} s rhythm.`;}
+function drawSig(){
+  const g=document.getElementById('sigGrid');g.innerHTML='';
+  g.appendChild(h('div'));['Wrist height, cm','Orientation (gravity, g)','Rotation rate, rad/s'].forEach(t=>g.appendChild(h('div',{class:'eyebrow'},t)));
+  EXS.forEach(e=>{const sg=D.signatures[e.id];if(!sg)return;g.appendChild(h('div',{class:'rowlab'},`<span style="border-left:4px solid ${col(e.id)};padding-left:6px">${esc(e.name)}</span><small>${sg.n_reps} reps · ${fmt(sg.rep_s,1)} s</small>`));
+    [['pos'],['gx','gy','gz'],['wx','wy','wz']].forEach((keys,ci)=>{const c=h('div');g.appendChild(c);
+      const Wd=260,H=96,m={l:28,r:4,t:6,b:12};const svg=el('svg',{viewBox:`0 0 ${Wd} ${H}`,role:'img','aria-label':`${e.name} ${keys.join(',')}`},c);
+      const lim=ci===0?Math.max(20,Math.ceil(Math.max(...sg.pos.mean.map((v,i)=>Math.abs(v)+sg.pos.sd[i]))/10)*10):ci===1?1:4;const x=lin(0,59,m.l,Wd-m.r),y=lin(-lim,lim,H-m.b,m.t);
+      [-lim,0,lim].forEach(v=>{el('line',{x1:m.l,x2:Wd-m.r,y1:y(v),y2:y(v),stroke:'var(--grid)'},svg);el('text',{x:m.l-4,y:y(v)+4,'text-anchor':'end',style:'font-size:9px'},svg).textContent=v;});
+      const xs=Array.from({length:60},(_,i)=>i);const styles=[['var(--ink)',''],['var(--ink-2)','5 3'],['var(--ink-3)','1.5 3']];
+      keys.forEach((k,q)=>{const mu=sg[k].mean,sd=sg[k].sd;const clip=v=>Math.max(-lim,Math.min(lim,v));
+        let d='';xs.forEach(i=>d+=(i?'L':'M')+x(i)+','+y(clip(mu[i]+sd[i])));for(let i=59;i>=0;i--)d+='L'+x(i)+','+y(clip(mu[i]-sd[i]));
+        el('path',{d:d+'Z',fill:keys.length===1?col(e.id):'var(--ink-3)','fill-opacity':keys.length===1?.25:.10},svg);
+        el('path',{d:pathOf(xs,mu.map(clip),x,y),fill:'none',stroke:keys.length===1?col(e.id):styles[q][0],'stroke-width':keys.length===1?2.2:1.6,'stroke-dasharray':keys.length===1?'':styles[q][1]},svg);});
+      const hl=el('rect',{x:m.l,y:m.t,width:Wd-m.l-m.r,height:H-m.t-m.b,fill:'transparent'},svg);
+      hl.addEventListener('mousemove',ev=>{const b=svg.getBoundingClientRect();const i=Math.max(0,Math.min(59,Math.round(x.inv((ev.clientX-b.left)*Wd/b.width))));showTip(ev,`<b>${esc(e.name)}</b> · ${Math.round(i/59*100)}% of rep<br>`+keys.map(k=>`${k}: ${fmt(sg[k].mean[i])} ± ${fmt(sg[k].sd[i])}`).join('<br>'));});
+      hl.addEventListener('mouseleave',hideTip);});});
+  const nd=NOTES.signature_desc||{};
+  document.getElementById('sigTable').innerHTML=`<thead><tr><th>Exercise</th><th>Reading</th><th class="num">Mean gravity (x, y, z)</th><th class="num">Rotation 5–95%</th><th class="num">Height range</th><th class="num">Rep period</th><th>Main rotation axis</th></tr></thead><tbody>${EXS.filter(e=>seen.some(s=>s.ex===e.id)).map(e=>{const ss=seen.filter(s=>s.ex===e.id);const av=k=>ss.reduce((a,s)=>a+(s.features[k]||0),0)/ss.length;const gr=[av('gyro_rms_x'),av('gyro_rms_y'),av('gyro_rms_z')];
+    return `<tr><td><span class="chip" style="cursor:inherit;padding:2px 6px"><span class="sw" style="background:${col(e.id)}"></span>${esc(e.name)}</span></td><td style="white-space:normal;min-width:280px;max-width:440px">${esc(nd[e.label]||describe(e.id))}</td><td class="num">${fmt(av('g_x'))}, ${fmt(av('g_y'))}, ${fmt(av('g_z'))}</td><td class="num">${fmt(av('rot_range_deg'),0)}°</td><td class="num">${fmt(av('rom_cm'),0)} cm</td><td class="num">${fmt(av('period_s'),1)} s</td><td class="mono">${'xyz'[gr.indexOf(Math.max(...gr))]}</td></tr>`;}).join('')}</tbody>`;
+}
+
+/* ---------- classifier ---------- */
+function drawClf(){
+  const C=D.classifier,SL=C.set_level||{};const idx=C.set_index||[];const SI=i=>S.find(s=>s.i===i);
+  let txt='';
+  if(C.cross_session){const cs=C.cross_session;txt+=`<p><b>Across sessions:</b> a model trained only on ${cs.n_sessions} earlier session(s) (${cs.n_train_sets} sets) labels ${cs.acc!=null?Math.round(cs.acc*100)+'%':'–'} of today's ${cs.n_test} known-exercise sets correctly.${cs.unknown_labels.length?` New to the library today: ${cs.unknown_labels.map(esc).join(', ')}.`:''}</p>`;}
+  else txt+=`<p><b>Across sessions:</b> not available yet. The library needs at least one other analysed session sharing these exercises.</p>`;
+  if(!C.within_ok){document.getElementById('accChart').innerHTML='<p class="empty">Needs at least two exercises with two or more sets each.</p>';
+    ['cmChart','pcaChart','impChart'].forEach(i=>document.getElementById(i).innerHTML='');document.getElementById('clfText').innerHTML=txt+readBlock('classifier');return;}
+  let d=document.getElementById('accChart');d.innerHTML='';let Wd=W('accChart'),H=230,m={l:118,r:40,t:10,b:24};
+  let svg=el('svg',{viewBox:`0 0 ${Wd} ${H}`,role:'img','aria-label':'Classifier accuracy by feature group'},d);
+  const groups=[['all','all 16 features'],['orientation','orientation (3)'],['rotation','rotation (8)'],['translation','translation (5)']];
+  const y=lin(0,groups.length,m.t,H-m.b),x=lin(0,1,m.l,Wd-m.r);
+  [0,.25,.5,.75,1].forEach(v=>{el('line',{x1:x(v),x2:x(v),y1:m.t,y2:H-m.b,stroke:'var(--grid)'},svg);el('text',{x:x(v),y:H-6,'text-anchor':'middle'},svg).textContent=Math.round(v*100)+'%';});
+  const chance=1/new Set(C.labels).size;el('line',{x1:x(chance),x2:x(chance),y1:m.t,y2:H-m.b,stroke:'var(--bad)','stroke-dasharray':'3 3'},svg);
+  el('text',{x:x(chance)+4,y:H-m.b-4},svg).textContent='chance';
+  groups.forEach(([g,lab],k)=>{el('text',{x:m.l-8,y:y(k+.5)+4,'text-anchor':'end'},svg).textContent=lab;
+    const bars=[[`${g}|centroid`,'var(--ink)'],[`${g}|knn`,'var(--ink-3)']];if(g==='all'&&SL['all|rf'])bars.push(['all|rf','var(--accent)']);
+    const bh=(y(1)-y(0)-10)/bars.length;
+    bars.forEach(([key,c],q)=>{if(!SL[key])return;const v=SL[key].acc;const yy=y(k)+5+q*bh;el('rect',{x:m.l,y:yy,width:Math.max(1,x(v)-m.l),height:bh-2,fill:c,rx:2},svg);
+      el('text',{x:x(v)+4,y:yy+bh/2+3},svg).textContent=Math.round(v*100)+'%';});});
+  const sel=document.getElementById('cmSel');if(!sel.options.length){Object.keys(SL).forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=k.replace('|',' · ')+` (${Math.round(SL[k].acc*100)}%)`;sel.appendChild(o);});sel.value='all|centroid';sel.addEventListener('change',drawCM);}
+  drawCM();
+  d=document.getElementById('pcaChart');d.innerHTML='';
+  if(C.pca){Wd=W('pcaChart');H=280;m={l:34,r:12,t:12,b:28};
+  svg=el('svg',{viewBox:`0 0 ${Wd} ${H}`,role:'img','aria-label':'PCA of set features'},d);
+  const P=C.pca.xy;const xs=P.map(p=>p[0]),ys=P.map(p=>p[1]);
+  const xp=lin(Math.min(...xs)-.6,Math.max(...xs)+.6,m.l,Wd-m.r),yp=lin(Math.min(...ys)-.6,Math.max(...ys)+.6,H-m.b,m.t);
+  axes(svg,xp,yp,H,Wd,m,{xf:v=>v.toFixed(0),yf:v=>v.toFixed(0),xl:`PC1 (${Math.round(C.pca.var[0]*100)}%)`,yl:`PC2 (${Math.round(C.pca.var[1]*100)}%)`});
+  EXS.forEach(e=>{const ii=C.labels.map((l,k)=>k).filter(k=>C.labels[k]===e.id);if(!ii.length)return;const cx=ii.reduce((a,k)=>a+P[k][0],0)/ii.length,cy=ii.reduce((a,k)=>a+P[k][1],0)/ii.length;
+    ii.forEach(k=>el('line',{x1:xp(cx),y1:yp(cy),x2:xp(P[k][0]),y2:yp(P[k][1]),stroke:col(e.id),'stroke-opacity':.4},svg));
+    el('text',{x:xp(cx),y:yp(cy)-10,'text-anchor':'middle',style:'fill:var(--ink);font-weight:500'},svg).textContent=e.id;});
+  P.forEach((p,k)=>{const s=SI(idx[k]);const c=el('circle',{cx:xp(p[0]),cy:yp(p[1]),r:7,fill:col(s.ex),stroke:'var(--panel)','stroke-width':2},svg);
+    onTip(c,()=>`<b>Set ${s.i} · ${esc(NAME(s.ex))}</b><br>PC1 ${fmt(p[0])} · PC2 ${fmt(p[1])}`);
+    el('text',{x:xp(p[0])+9,y:yp(p[1])+4,style:'font-size:10px'},svg).textContent=s.i;});}
+  d=document.getElementById('impChart');d.innerHTML='';
+  if(C.rf_importance){const imp=Object.entries(C.rf_importance).sort((a,b)=>b[1]-a[1]);Wd=W('impChart');H=imp.length*18+20;m={l:110,r:44,t:4,b:16};
+    svg=el('svg',{viewBox:`0 0 ${Wd} ${H}`,role:'img','aria-label':'Random forest feature importance'},d);
+    const xi=lin(0,imp[0][1]*1.1,m.l,Wd-m.r);const grp=f=>Object.entries(C.groups).find(([g,l])=>l.includes(f))[0];
+    const gc={orientation:'var(--ink)',rotation:'var(--ink-2)',translation:'var(--ink-3)'};
+    imp.forEach(([f,v],k)=>{const yy=m.t+k*18;el('text',{x:m.l-6,y:yy+12,'text-anchor':'end'},svg).textContent=f;el('rect',{x:m.l,y:yy+3,width:Math.max(1,xi(v)-m.l),height:12,fill:gc[grp(f)],rx:2},svg);el('text',{x:xi(v)+4,y:yy+13},svg).textContent=(v*100).toFixed(0)+'%';});
+    d.appendChild(h('div',{class:'legend',style:'margin-top:6px'},`<span><i style="background:var(--ink)"></i>orientation</span><span><i style="background:var(--ink-2)"></i>rotation</span><span><i style="background:var(--ink-3)"></i>translation</span>`));}
+  const best=Object.entries(SL).sort((a,b)=>b[1].acc-a[1].acc)[0];
+  const wrong=(SL['all|centroid']?SL['all|centroid'].pred:[]).map((p,k)=>[SI(idx[k]),p]).filter(([s,p])=>s.ex!==p);
+  txt+=`<p><b>Within this session:</b> ${['orientation','rotation','translation'].map(g=>SL[g+'|centroid']?`${g} features alone ${Math.round(Math.max(SL[g+'|centroid'].acc,SL[g+'|knn'].acc)*100)}%`:'').filter(Boolean).join(', ')}; best overall ${best[0].replace('|',' · ')} at ${Math.round(best[1].acc*100)}%.${wrong.length?` All-features centroid errors: ${wrong.map(([s,p])=>`set ${s.i} (${esc(NAME(s.ex))} → ${esc(NAME(p))})`).join(', ')}.`:' The all-features centroid model labels every set correctly.'}${C.rep_level&&C.rep_level.acc!=null?` Labelling single reps (leaving out whole sets) gets ${Math.round(C.rep_level.acc*100)}%; a majority vote per set gets ${Math.round(C.rep_level.set_vote_acc*100)}%.`:''}</p>`;
+  document.getElementById('clfText').innerHTML=txt+readBlock('classifier');
+}
+function drawCM(){const C=D.classifier,key=document.getElementById('cmSel').value,pred=C.set_level[key].pred,lab=C.labels;
+  const ids=EXS.map(e=>e.id).filter(id=>lab.includes(id));
+  const d=document.getElementById('cmChart');d.innerHTML='';const Wd=W('cmChart'),cell=Math.min(40,(Wd-80)/ids.length),H=cell*ids.length+70,m={l:70,t:54};
+  const svg=el('svg',{viewBox:`0 0 ${Wd} ${H}`,role:'img','aria-label':'Confusion matrix'},d);
+  const cnt={};lab.forEach((a,i)=>{const k=a+'|'+pred[i];cnt[k]=(cnt[k]||0)+1;});
+  el('text',{x:m.l+cell*ids.length/2,y:12,'text-anchor':'middle'},svg).textContent='predicted →';
+  ids.forEach((p,j)=>{el('text',{x:m.l+j*cell+cell/2,y:m.t-8,'text-anchor':'middle',style:'font-size:10px'},svg).textContent=p;});
+  ids.forEach((a,i)=>{el('text',{x:m.l-6,y:m.t+i*cell+cell/2+4,'text-anchor':'end',style:'font-size:10px'},svg).textContent=a;
+    const tot=lab.filter(l=>l===a).length;
+    ids.forEach((p,j)=>{const v=cnt[a+'|'+p]||0;
+      el('rect',{x:m.l+j*cell+1,y:m.t+i*cell+1,width:cell-2,height:cell-2,rx:3,fill:v?(i===j?'var(--accent)':'var(--bad)'):'var(--grid)','fill-opacity':v?.25+.75*v/tot:1},svg);
+      if(v)el('text',{x:m.l+j*cell+cell/2,y:m.t+i*cell+cell/2+4,'text-anchor':'middle',style:'fill:var(--ink);font-weight:500'},svg).textContent=v;});});
+  el('text',{x:m.l-6,y:m.t-8,'text-anchor':'end',style:'font-size:10px'},svg).textContent='true ↓';
+}
+
+/* ---------- detection ---------- */
+function drawDet(){
+  const det=D.detection||{},d=document.getElementById('detChart');d.innerHTML='';const Wd=W('detChart'),H=120,m={l:86,r:8,t:10,b:24};
+  const svg=el('svg',{viewBox:`0 0 ${Wd} ${H}`,role:'img','aria-label':'Set windows used vs automatically detected'},d);
+  const x=lin(T0,TEND,m.l,Wd-m.r);
+  const used=M.windows_source==='auto'?'detected':'checked';
+  [[used,20],['auto (log-guided)',60]].forEach(([l,yy])=>el('text',{x:m.l-8,y:yy+14,'text-anchor':'end'},svg).textContent=l);
+  seen.forEach(s=>{const r=el('rect',{x:x(s.window[0]),y:20,width:Math.max(2,x(s.window[1])-x(s.window[0])),height:22,fill:col(s.ex),rx:2},svg);onTip(r,()=>`Set ${s.i} · ${esc(NAME(s.ex))}<br>${clockOf(s.window[0])}–${clockOf(s.window[1])}`);});
+  (det.auto||[]).forEach((a,k)=>{if(a.skipped||a.t_start==null)return;const row=(det.rows||[])[k];const ok=row?row.found:true;const s=S[k];
+    const r=el('rect',{x:x(a.t_start),y:60,width:Math.max(2,x(a.t_end)-x(a.t_start)),height:22,fill:ok?col(s.ex):'none','fill-opacity':ok?.55:1,stroke:ok?'none':'var(--bad)','stroke-width':1.5,rx:2},svg);
+    onTip(r,()=>`auto: set ${k+1} · ${esc(NAME(s.ex))}<br>${clockOf(a.t_start)}–${clockOf(a.t_end)} · score ${fmt(a.score,2)}${row?`<br>overlap with checked window: IoU ${fmt(row.iou,2)}${ok?'':' (wrong place)'}`:''}`);});
+  const xt=[];const stp=(TEND-T0)>1800?600:300;for(let v=Math.ceil(T0/stp)*stp;v<=TEND;v+=stp)xt.push(v);xt.forEach(v=>el('text',{x:x(v),y:H-4,'text-anchor':'middle'},svg).textContent=clockOf(v));
+  let t='';
+  if(M.windows_source==='auto'){const low=S.filter(lowScore),sk=S.filter(s=>s.skipped);
+    t=`<p><b>The set windows on this page were found automatically.</b> ${sk.length?`${sk.length} logged set(s) couldn't be placed (${sk.map(s=>'#'+s.i).join(', ')}). `:''}${low.length?`${low.length} set(s) were placed with low confidence (${low.map(s=>'#'+s.i).join(', ')}) and are worth a look.`:'Every set was placed with reasonable confidence.'} Confirmed or corrected windows become ground truth for the next round of algorithm tuning.</p>`;}
+  else if(det.recall!=null){t=`<p><b>The windows on this page were checked by hand.</b> The automatic detector, given only the Hevy log and the recording, found ${Math.round(det.recall*S.length)} of ${S.length} sets in the right place (mean overlap IoU ${fmt(det.mean_iou,2)}; hand windows are deliberately generous, so IoU stays below 1).</p>`;}
+  document.getElementById('detText').innerHTML=t+readBlock('detection');
+}
+
+/* ---------- methods ---------- */
+document.getElementById('methodsList').innerHTML=[
+  `<b>Data.</b> Sensor Logger WristMotion: user acceleration and gravity (g), rotation rate (rad/s)${M.raw_rate_hz?` at ${M.raw_rate_hz} Hz${M.n_raw_samples?`, ${M.n_raw_samples.toLocaleString('en')} samples`:''}`:''}, stored at 25 Hz after an 8 Hz anti-alias filter (all lifting motion is below 6 Hz).${M.start_local?` Recording started ${M.start_local.replace('T',' ').slice(0,19)} (${esc(M.timezone||'')})${M.hevy_minus_recording_s!=null?`; Hevy's start time is ${Math.abs(Math.round(M.hevy_minus_recording_s/60))} min ${M.hevy_minus_recording_s<0?'earlier':'later'}`:''}.`:''}`,
+  `<b>Vertical axis.</b> User acceleration projected onto −gravity gives "up" in the world frame without needing yaw.`,
+  `<b>Set windows.</b> ${M.windows_source==='auto'?'Found automatically by the log-guided detector (section 10).':'Checked by hand; the automatic detector is benchmarked against them (section 10).'}`,
+  `<b>Reps.</b> Each exercise counts from the signal that shows its reps most cleanly: wrist height for presses, pulls, squats and raises, forearm rotation for curls and pushdowns, and the most regular signal for exercises without a profile. A rep is one turnaround inside the longest run of regularly spaced extrema; per-side exercises keep one run per side.`,
+  `<b>Velocity.</b> Each rep is integrated rest point to rest point with velocity forced to zero at both ends and linear drift removed. The concentric phase is the velocity lobe in the lift's direction.`,
+  `<b>Classifier.</b> Nearest-centroid and 1-NN with z-scoring fitted inside each fold, plus a random forest. Rep-level models leave out whole sets. The across-session model uses only earlier workouts.`].map(x=>`<li>${x}</li>`).join('');
+
+/* ---------- boot ---------- */
+let saved=current;try{const v=localStorage.getItem('vbt-'+M.session_id);if(v!=null&&S[+v]&&!S[+v].skipped)saved=+v;}catch(e){}
+function all(){drawTimeline();drawCounts();if(seen.length)select(saved);drawVel();drawLV();drawHistory();drawTUT();drawSig();drawClf();drawDet();}
+all();
+let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{drawTimeline();if(seen.length)drawDrill();drawCounts();drawVel();drawLV();drawHistory();drawTUT();drawClf();drawDet();},150);});
+})();
+</script>

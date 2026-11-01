@@ -39,13 +39,20 @@ Sets are split on rest periods of 20 s or more (`split_sets` in `vbt/session.py`
 `active_thresh`). Walking between stations can show up as a false "set". Most of
 those have no reps and get dropped.
 
-## Real session: 2026-11-01 (Full Body C)
-47-minute whole-workout recording, 22 sets / 7 exercises, aligned to the Hevy log.
+## One workout → one report
 ```bash
-python analysis/workout_2026_11_01.py path/to/WristMotion.csv   # -> analysis/out/workout_2026-11-01.json
-python analysis/build_report.py                                  # -> report/full-body-c-2026-11-01.html
+python -m vbt.pipeline new --sensor Hevy_Workout.zip --hevy hevy.txt   # ingest + detect + analyse + HTML
+python -m vbt.pipeline review 2026-11-01 review.png                    # rep-marker grid for a quick check
+python -m vbt.pipeline run --all                                       # re-run everything after a code change
+python -m vbt.evaluate --record                                        # benchmark vs human-checked sessions
 ```
-* `data/sets_2026-11-01.json`: annotated set windows (recording clock, Hevy order).
-* `data/wristmotion_2026-11-01_10hz.csv.gz`: decimated derived signals (vertical accel, gravity, gyro). The raw 100 Hz zip is not committed.
-* `vbt/workout.py`: per-exercise rep segmentation (`analyze_set`; vertical position for barbell / squat / pulldown / lateral raise, forearm rotation for curls and pushdowns), per-rep ZUPT velocity, ROM, tempo, plausibility flags, motion-signature features (`set_features`) and a leave-one-set-out classifier (`loso_classify`).
-* `vbt/session.py::find_sets`: finds sets by rep rhythm. Use it when the wrist isn't still between sets (walking, loading plates), where `split_sets` fuses everything.
+* `data/sessions/<id>/`: `hevy.txt`, `sensor_25hz.csv.gz` (anti-aliased 25 Hz copy of WristMotion),
+  `meta.json`, `sets.json` (set windows: `auto` or human `reviewed`/`manual`), `notes.json`
+  (optional commentary), `analysis.json` (compact results that feed the cross-session library).
+* `reports/<id>.html`: the interactive report.
+* `vbt/align.py`: finds the logged sets in the recording, guided by the Hevy log (rep counts, rhythm,
+  wrist orientation and ROM consistency, rest gaps, plus an exercise model trained on earlier sessions).
+  No hand marking needed.
+* `vbt/workout.py`: per-exercise rep segmentation, per-rep velocity/ROM/tempo, plausibility flags,
+  features, classifier. `vbt/library.py`: cross-session data. `vbt/evaluate.py`: scoreboard.
+* Workflow for new workouts: `.claude/skills/workout-report/SKILL.md`. Improvement loop: `docs/IMPROVING.md`.

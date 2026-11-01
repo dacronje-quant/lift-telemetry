@@ -1,3 +1,4 @@
+import json
 import numpy as np
 from vbt import synth_set, analyze, estimate_1rm
 
@@ -101,7 +102,7 @@ def test_exercise_key_and_hevy_names():
     from vbt import exercise_key
     from vbt.hevy import parse_hevy_text
     from pathlib import Path
-    sets = parse_hevy_text((Path(__file__).parents[1] / "data/hevy_2026-11-01.txt").read_text())
+    sets = parse_hevy_text((Path(__file__).parents[1] / "data/sessions/2026-11-01/hevy.txt").read_text())
     keys = [exercise_key(s["exercise"]) for s in sets]
     assert None not in keys and len(sets) == 22
     assert keys.count("bench") == 4 and keys.count("lateral") == 2
@@ -125,3 +126,119 @@ def test_set_features_orientation():
     g = data["grav"][0] / np.linalg.norm(data["grav"][0])
     assert np.allclose([f["g_x"], f["g_y"], f["g_z"]], g, atol=1e-6)
     assert 30 < f["rom_cm"] < 70
+
+
+# ---------------------------------------------------------------- pipeline pieces
+
+def test_align_finds_sets_in_noisy_session():
+    """Log-guided detection on synthetic sets separated by fidgeting rests."""
+    from vbt.align import detect_sets, evaluate_alignment
+    counts = [6, 5, 8, 6]
+    data, wins = _noisy_session(counts, rest_s=70.0, seed=3)
+    logged = [{"exercise": "Bench Press (Barbell)", "label": "Bench Press (Barbell)",
+               "exercise_key": "bench", "reps": n, "kg": 60.0} for n in counts]
+    found, _ = detect_sets(data, logged)
+    truth = [{"t_start": a, "t_end": b} for a, b in wins]
+    ev = evaluate_alignment(found, truth)
+    assert ev["recall"] == 1.0
+    assert all(f["n_sensed"] >= n - 1 for f, n in zip(found, counts))
+
+
+def test_evaluate_alignment_scores():
+    from vbt.align import evaluate_alignment
+    truth = [{"t_start": 0, "t_end": 10}, {"t_start": 50, "t_end": 60}]
+    good = [{"skipped": False, "t_start": 1, "t_end": 9}, {"skipped": False, "t_start": 50, "t_end": 62}]
+    swapped = [{"skipped": False, "t_start": 50, "t_end": 60}, {"skipped": True, "t_start": None, "t_end": None}]
+    assert evaluate_alignment(good, truth)["recall"] == 1.0
+    assert evaluate_alignment(swapped, truth)["recall"] == 0.0
+
+
+def test_count_verdict_interval():
+    from vbt import count_verdict
+    reps = [{"t_turn": float(i), "ok": i not in (0, 6)} for i in range(7)]  # 7 cycles, 5 clean
+    assert count_verdict(reps, 7)[0] == "match"
+    assert count_verdict(reps, 5)[0] == "ambiguous"
+    assert count_verdict(reps, 9)[:2] == ("watch fewer", 2)
+    assert count_verdict(reps, 3)[:2] == ("watch more", 2)
+    legs = [{"t_turn": t, "ok": True} for t in (0, 2, 4, 6, 20, 22, 24, 26)]
+    v, d, bouts, clean = count_verdict(legs, 4, n_bouts=2)
+    assert v == "match" and bouts == [4, 4]
+
+
+def test_exercise_keys_cover_common_lifts():
+    from vbt import exercise_key
+    assert exercise_key("Squat (Barbell)") == "squat"
+    assert exercise_key("Romanian Deadlift (Dumbbell)") == "rdl"
+    assert exercise_key("Overhead Press (Barbell)") == "ohp"
+    assert exercise_key("Leg Press (Machine)") == "machine"
+    assert exercise_key("Bicep Curl (Cable)") == "curl"
+    assert exercise_key("Something New") == "auto"
+
+
+def test_report_title_and_codes():
+    from vbt.pipeline import report_title, short_code
+    assert report_title("Sunday — Full Body C | Enhanced Comeback W1–2") == "Full Body C"
+    assert report_title("Push Day") == "Push Day"
+    taken = set()
+    a = short_code("Bench Press (Barbell)", taken, "bench"); taken.add(a)
+    b = short_code("Incline Bench Press (Dumbbell)", taken, "bench")
+    assert a == "BP" and b != a
+
+
+def test_ingest_roundtrip(tmp_path):
+    """Zip with a Sensor Logger-style WristMotion.csv -> 25 Hz session folder."""
+    import zipfile
+    import pandas as pd
+    from vbt import synth_set, load_watch_csv
+    from vbt.ingest import ingest, COLS
+    data, _ = synth_set(n_reps=5, seed=1)
+    G = 9.80665
+    t = data["t"] + 1.5
+    df = pd.DataFrame({"time": (1.79e18 + t * 1e9).astype("int64"), "seconds_elapsed": t})
+    for i, ax in enumerate("XYZ"):
+        df[f"rotationRate{ax}"] = 0.0
+        df[f"gravity{ax}"] = data["grav"][:, i] / G
+        df[f"acceleration{ax}"] = data["acc"][:, i] / G
+    z = tmp_path / "rec.zip"
+    with zipfile.ZipFile(z, "w") as f:
+        f.writestr("WristMotion.csv", df.to_csv(index=False))
+        f.writestr("Metadata.csv", "version,device name,recording epoch time,recording time,"
+                   "recording timezone\n4,Watch,1793525926050,2026-11-01_09-38-46,Europe/Stockholm\n")
+    hevy = "Test Day\nSunday, Nov 01, 2026 at 10:37am\n\nBench Press (Barbell)\nSet 1: 60 kg x 5\n"
+    d = ingest(z, hevy, root=tmp_path / "sessions")
+    assert d.name == "2026-11-01"
+    small = load_watch_csv(d / "sensor_25hz.csv.gz", keep_clock=True)
+    assert abs(small["t"][0] - 1.5) < 0.05
+    assert abs(np.median(np.diff(small["t"])) - 0.04) < 1e-6
+    meta = json.loads((d / "meta.json").read_text())
+    assert meta["timezone"] == "Europe/Stockholm" and meta["hevy_minus_recording_s"] == -106
+    assert set(COLS) <= set(pd.read_csv(d / "sensor_25hz.csv.gz").columns)
+
+
+def test_pipeline_end_to_end(tmp_path):
+    """Synthetic noisy session -> ingest -> run (auto windows) -> analysis.json."""
+    import zipfile
+    import pandas as pd
+    from vbt.ingest import ingest
+    from vbt.pipeline import run
+    counts = [6, 5, 7]
+    data, _ = _noisy_session(counts, rest_s=60.0, seed=5)
+    G = 9.80665
+    t = data["t"] + 2.0
+    df = pd.DataFrame({"time": (1.79e18 + t * 1e9).astype("int64"), "seconds_elapsed": t})
+    for i, ax in enumerate("XYZ"):
+        df[f"rotationRate{ax}"] = 0.0
+        df[f"gravity{ax}"] = data["grav"][:, i] / G
+        df[f"acceleration{ax}"] = data["acc"][:, i] / G
+    z = tmp_path / "rec.zip"
+    with zipfile.ZipFile(z, "w") as f:
+        f.writestr("WristMotion.csv", df.to_csv(index=False))
+    hevy = ("Push A\nMonday, Nov 02, 2026 at 6:05pm\n\nBench Press (Barbell)\n"
+            + "".join(f"Set {i + 1}: 60 kg x {n}\n" for i, n in enumerate(counts)))
+    root = tmp_path / "sessions"
+    d = ingest(z, hevy, root=root)
+    out = run(d.name, root=root, html=False, quiet=True)
+    assert out["summary"]["n_seen"] == 3
+    assert [s["sensor_reps"] >= n - 1 for s, n in zip(out["sets"], counts)] == [True] * 3
+    assert json.loads((d / "sets.json").read_text())["source"] == "auto"
+    assert (d / "analysis.json").exists()

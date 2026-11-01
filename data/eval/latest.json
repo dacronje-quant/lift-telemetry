@@ -1,0 +1,28 @@
+{
+ "when": "2026-11-01T12:28:18+00:00",
+ "commit": "2056dba",
+ "n_trusted_sessions": 1,
+ "detection": {
+  "recall": 1.0,
+  "mean_iou": 0.759
+ },
+ "sessions": [
+  {
+   "session": "2026-11-01",
+   "n_sets": 22,
+   "prior_model": false,
+   "recall": 1.0,
+   "mean_iou": 0.759,
+   "missed": [],
+   "rep_count_mae": 0.409,
+   "verdict_consistent": 0.591,
+   "recall_unlogged_set": 0.857,
+   "recall_invisible_set": 1.0,
+   "invisible_set_skipped": false
+  }
+ ],
+ "classifier_loso": {
+  "note": "needs >= 2 analysed sessions",
+  "n_sessions": 1
+ }
+}

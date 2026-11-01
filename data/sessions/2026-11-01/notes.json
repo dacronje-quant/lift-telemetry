@@ -1,0 +1,18 @@
+{
+ "headline": "",
+ "sections": {
+  "counts": "<p><b>The log holds up.</b> Bench set 3 and deadlifts 2–4 show one or two extra cycles, and every one of them is a shallow or oddly fast cycle at the start or end of the set: unracking, re-racking, the setup pull, setting the bar down. Where the watch sees fewer reps than logged it's almost always one fewer, which is more likely the detector (a first rep blending into setup) than you.</p><p>The two that deserve a second thought: hammer curl set 18 (12 logged, 10 rotations of the watch arm; that fits if you alternated arms) and the 60 kg deadlift warm-up, which shows 6 clean pulls for 5 logged and looks like the one real miscount of the day.</p>",
+  "velocity": "<p>Hammer curls show the clearest fatigue: wrist speed drops set by set while the rep rhythm stretches from about 2.3 s to 3.8 s as RPE climbs 7 → 8.5. Pushdowns do the same, more quietly. Within-set velocity loss only loosely follows RPE because most sets stopped well short of failure (RPE 6–7.5); one fast first rep can swing the number, as on pulldown set 14.</p>",
+  "load_velocity": "<p>The bench ramp lines up almost perfectly, but the extrapolated 1RM probably reads 5–10 kg low: smoothing and zero-velocity resets trim velocity, and the line is projected well past the heaviest set. Deadlift warm-ups weren't pulled with maximal intent, so speed didn't fall with load. Next time, pull one heavier set (≥ 85%) as fast as possible to get a usable deadlift profile.</p>",
+  "classifier": "<p>Wrist orientation is the strongest clue: how the watch hangs during the lift. Deadlift and Bulgarian split squat share the hanging-arm pose, which is where the confusions are. Rotation features separate the elbow-hinge lifts (curl, pushdown, lateral raise).</p>"
+ },
+ "signature_desc": {
+  "Bench Press (Barbell)": "Watch face turned sideways, gravity almost entirely on +x. Nearly pure vertical travel and very little rotation.",
+  "Deadlift (Barbell)": "Arm hanging, gravity on −x. The longest reps, with the pause at the floor.",
+  "Bulgarian Split Squat (Dumbbell)": "The same hanging arm as the deadlift, with less rotation and a quick 2 s rhythm in two bouts, one per leg.",
+  "Pulldown (Wide Parellel Grip)": "Arm overhead (+x). The concentric goes downwards and the wrist tilts slightly with each pull.",
+  "Triceps Rope Pushdown": "The forearm swings from roughly horizontal to hanging, so gravity sweeps across x and y about 45° per rep.",
+  "Hammer Curl (Dumbbell)": "The biggest rotation of any lift (~70°): the forearm goes from hanging to upright and gravity on x flips sign at the top.",
+  "Lateral Raise (Dumbbell)": "A large vertical arc (~75 cm) with the wrist rolling about 60°. The fastest wrist of the session."
+ }
+}

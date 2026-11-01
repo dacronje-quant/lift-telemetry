@@ -30,17 +30,20 @@ def _pick(df, key):
     raise KeyError(f"No column for {key}; tried {_ALIASES[key]}")
 
 
-def load_watch_csv(path, units="g"):
+def load_watch_csv(path, units="g", keep_clock=False):
     """Return dict with t (s), acc (N,3 m/s^2, gravity removed), grav (N,3 m/s^2),
     and gyro (N,3 rad/s) when rotation-rate columns exist.
 
     units: "g" (CoreMotion default) or "ms2" if the export is already m/s^2.
+    keep_clock: keep Sensor Logger's seconds_elapsed as-is instead of starting at 0
+        (set windows and annotations are stored on that clock).
     """
     df = pd.read_csv(path)
     t = _pick(df, "t")
     if "seconds_elapsed" not in df.columns and t.max() > 1e12:  # ns epoch
         t = t / 1e9
-    t = t - t[0]
+    if not keep_clock:
+        t = t - t[0]
     acc = np.column_stack([_pick(df, k) for k in ("ax", "ay", "az")])
     grav = np.column_stack([_pick(df, k) for k in ("gx", "gy", "gz")])
     scale = G if units == "g" else 1.0

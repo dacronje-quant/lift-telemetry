@@ -1,7 +1,7 @@
 {
- "recording": "Hevy_Workout-2026-11-01_09-38-46 / WristMotion.csv",
- "clock": "seconds_elapsed (recording start 2026-11-01 09:38:46 UTC = 10:38:46 Europe/Stockholm)",
- "method": "Set windows located by visual inspection of wrist orientation (gravity vector) and drift-free vertical position, in Hevy order; generous bounds, the rep detector picks the reps inside.",
+ "source": "manual",
+ "clock": "Sensor Logger seconds_elapsed",
+ "note": "Set windows located by visual inspection of wrist orientation (gravity vector) and drift-free vertical position, in Hevy order; generous bounds, the rep detector picks the reps inside.",
  "sets": [
   {
    "hevy_index": 1,

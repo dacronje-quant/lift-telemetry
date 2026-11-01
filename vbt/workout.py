@@ -18,32 +18,97 @@ from .core import vertical_acceleration
 
 G = 9.80665
 
-# channel: rep-counting signal ("pos" vertical position, "gx" gravity on watch X)
+# channel: rep-counting signal: "pos" vertical position, "gx"/"gy"/"gz" gravity on a
+#          watch axis (forearm rotation), "auto" = pick the most regular one
 # rest:    "top" / "bottom" = where the rep starts and ends (ZUPT boundary)
 # conc:    +1 concentric moves the wrist up, -1 down
 # bouts:   independent groups of reps in one set (split squat: left + right leg)
+# mvt:     minimum velocity threshold for e1RM (m/s); None = no 1RM model
+# visible: False when the watch wrist barely moves (machines, bodyweight on the
+#          hands); the aligner may skip such sets cheaply
 PROFILES = {
     "bench":    dict(channel="pos", rest="top", conc=+1, bouts=1, mvt=0.17),
     "deadlift": dict(channel="pos", rest="bottom", conc=+1, bouts=1, mvt=0.15),
+    "rdl":      dict(channel="pos", rest="top", conc=+1, bouts=1, mvt=None),
+    "squat":    dict(channel="pos", rest="top", conc=+1, bouts=1, mvt=0.30),
+    "ohp":      dict(channel="pos", rest="bottom", conc=+1, bouts=1, mvt=0.19),
     "bss":      dict(channel="pos", rest="top", conc=+1, bouts=2, mvt=None),
+    "lunge":    dict(channel="pos", rest="top", conc=+1, bouts=2, mvt=None),
+    "hipthrust": dict(channel="pos", rest="bottom", conc=+1, bouts=1, mvt=None),
     "pulldown": dict(channel="pos", rest="top", conc=-1, bouts=1, mvt=None),
+    "row":      dict(channel="auto", rest="bottom", conc=+1, bouts=1, mvt=None),
     "pushdown": dict(channel="gx", rest="top", conc=-1, bouts=1, mvt=None),
     "curl":     dict(channel="gx", rest="bottom", conc=+1, bouts=1, mvt=None),
     "lateral":  dict(channel="pos", rest="bottom", conc=+1, bouts=1, mvt=None),
+    "extension": dict(channel="auto", rest="bottom", conc=+1, bouts=1, mvt=None),
+    "fly":      dict(channel="auto", rest="bottom", conc=+1, bouts=1, mvt=None),
+    "machine":  dict(channel="auto", rest="bottom", conc=+1, bouts=1, mvt=None, visible=False),
+    "bodyweight": dict(channel="auto", rest="bottom", conc=+1, bouts=1, mvt=None, visible=False),
+    "auto":     dict(channel="auto", rest="bottom", conc=+1, bouts=1, mvt=None),
 }
 
-_KEYWORDS = [("bench", "bench"), ("deadlift", "deadlift"), ("split squat", "bss"),
-             ("pulldown", "pulldown"), ("pushdown", "pushdown"), ("curl", "curl"),
-             ("lateral", "lateral")]
+# first match wins, so specific phrases go before generic ones
+_KEYWORDS = [("romanian", "rdl"), ("rdl", "rdl"), ("stiff leg", "rdl"),
+             ("split squat", "bss"), ("lunge", "lunge"), ("step up", "lunge"),
+             ("leg press", "machine"), ("leg extension", "machine"), ("leg curl", "machine"),
+             ("calf", "machine"), ("hip abduction", "machine"), ("hip adduction", "machine"),
+             ("pull up", "bodyweight"), ("pull-up", "bodyweight"), ("chin up", "bodyweight"),
+             ("chin-up", "bodyweight"), ("dip", "bodyweight"), ("push up", "bodyweight"),
+             ("push-up", "bodyweight"), ("plank", "bodyweight"), ("crunch", "bodyweight"),
+             ("hip thrust", "hipthrust"), ("glute bridge", "hipthrust"),
+             ("deadlift", "deadlift"), ("bench", "bench"), ("chest press", "bench"),
+             ("squat", "squat"), ("overhead press", "ohp"), ("shoulder press", "ohp"),
+             ("military press", "ohp"), ("pulldown", "pulldown"), ("pull down", "pulldown"),
+             ("pushdown", "pushdown"), ("push down", "pushdown"), ("row", "row"),
+             ("curl", "curl"), ("lateral raise", "lateral"), ("front raise", "lateral"),
+             ("raise", "lateral"), ("skull", "extension"), ("triceps extension", "extension"),
+             ("overhead extension", "extension"), ("fly", "fly"), ("flye", "fly")]
 
 
 def exercise_key(name):
-    """Map a Hevy exercise name to a PROFILES key (None if unknown)."""
-    low = (name or "").lower()
+    """Map a Hevy exercise name to a PROFILES key ("auto" if unknown)."""
+    low = (name or "").lower().replace("(", " ").replace(")", " ")
     for kw, key in _KEYWORDS:
         if kw in low:
             return key
-    return None
+    return "auto"
+
+
+def split_bouts(reps, n_bouts):
+    """Split a rep list at gaps > 2x the median turnaround spacing (unilateral work)."""
+    if n_bouts < 2 or len(reps) < 3:
+        return [list(reps)]
+    tt = np.array([r["t_turn"] for r in reps])
+    gaps = np.diff(tt)
+    cut = np.flatnonzero(gaps > 2.0 * np.median(gaps))
+    edges = [0, *(cut + 1), len(reps)]
+    return [list(reps[edges[j]:edges[j + 1]]) for j in range(len(edges) - 1)]
+
+
+def count_verdict(reps, logged, n_bouts=1):
+    """Compare a logged rep count with what the watch saw.
+
+    Each unit (the set, or each bout of a unilateral set) has an ambiguity
+    interval [clean cycles, all cycles]: flagged edge cycles (unrack, setup
+    pull, re-rack) may or may not be reps. Returns (verdict, delta, bouts, bouts_clean)
+    with verdict in match / ambiguous / watch fewer / watch more.
+    """
+    units = split_bouts(reps, n_bouts)
+    bouts = [len(u) for u in units]
+    clean = [sum(r["ok"] for r in u) for u in units]
+    verdicts = []
+    for lo_n, hi_n in zip(clean, bouts):
+        if hi_n == logged:
+            verdicts.append(("match", 0))
+        elif lo_n <= logged <= hi_n:
+            verdicts.append(("ambiguous", 0))
+        elif logged > hi_n:
+            verdicts.append(("watch fewer", logged - hi_n))
+        else:
+            verdicts.append(("watch more", lo_n - logged))
+    rank = {"match": 0, "ambiguous": 1, "watch fewer": 2, "watch more": 2}
+    v, delta = max(verdicts, key=lambda x: (rank[x[0]], x[1]))
+    return v, delta, bouts, clean
 
 
 def _bp(x, fs, lo=0.2, hi=3.0):
@@ -166,17 +231,35 @@ def analyze_set(data, t0, t1, exercise, fs=100.0):
     data: dict with t, acc, grav (m/s^2, N x 3) and optional gyro (rad/s, N x 3).
     exercise: PROFILES key.
     """
-    prof = PROFILES[exercise]
+    prof = PROFILES.get(exercise, PROFILES["auto"])
     d = resample(data, t0, t1, fs)
     t, acc, grav = d["t"], d["acc"], d["grav"]
     g_hat = grav / np.linalg.norm(grav, axis=1, keepdims=True)
     a_up = vertical_acceleration(acc, grav)
     pos = position(a_up, fs)
-    chan = pos if prof["channel"] == "pos" else _bp(g_hat[:, 0], fs, 0.1, 2.0)
-    # turnaround = the extreme opposite the rest point
-    turn_sign = -1 if prof["rest"] == "top" else 1
-    turns = find_turnarounds(turn_sign * chan / (np.std(chan) + 1e-12), fs,
-                             bouts=prof["bouts"], t0=t0, t1=t1, t=t)
+    signals = {"pos": pos}
+    for i, ax in enumerate("xyz"):
+        signals["g" + ax] = _bp(g_hat[:, i], fs, 0.1, 2.0)
+    if prof["channel"] == "auto":
+        # unknown exercise: the channel + rest polarity with the longest regular run wins
+        best = None
+        for name, sig in signals.items():
+            for rest in ("top", "bottom"):
+                ts = -1 if rest == "top" else 1
+                tr = find_turnarounds(ts * sig / (np.std(sig) + 1e-12), fs, bouts=prof["bouts"],
+                                      t0=t0, t1=t1, t=t)
+                if best is None or len(tr) > len(best[2]):
+                    best = (name, rest, tr)
+        channel, rest, turns = best
+        turn_sign = -1 if rest == "top" else 1
+        chan = signals[channel]
+    else:
+        channel, rest = prof["channel"], prof["rest"]
+        chan = signals[channel]
+        # turnaround = the extreme opposite the rest point
+        turn_sign = -1 if rest == "top" else 1
+        turns = find_turnarounds(turn_sign * chan / (np.std(chan) + 1e-12), fs,
+                                 bouts=prof["bouts"], t0=t0, t1=t1, t=t)
     a_f = _lp(a_up, fs, 6.0)
     reps = []
     if len(turns):
@@ -208,7 +291,8 @@ def analyze_set(data, t0, t1, exercise, fs=100.0):
         mvm = np.median([r.mean_velocity for r in reps])
         for r in reps:
             r.ok = bool(0.5 * rom <= r.rom <= 1.8 * rom and r.mean_velocity >= 0.5 * mvm)
-    out = {"exercise": exercise, "t": t, "pos": pos, "chan": chan, "a_up": a_f,
+    out = {"exercise": exercise, "channel": channel, "rest": rest, "t": t, "pos": pos,
+           "chan": chan, "a_up": a_f,
            "turns": turns, "reps": [asdict(r) for r in reps], "rep_count": len(reps)}
     good = [r for r in reps if r.ok]
     if good:
