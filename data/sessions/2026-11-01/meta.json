@@ -1,17 +1,31 @@
 {
+ "session_id": "2026-11-01",
+ "title": "Sunday — Full Body C | Enhanced Comeback W1–2",
+ "log_source": "hevy",
+ "log_start_local": "2026-11-01T10:37:00",
+ "sensor": "Apple Watch via Sensor Logger, wrist placement",
+ "sensor_info": {
+  "device": "Watch7.20",
+  "timezone": "Europe/Stockholm",
+  "platform": "watchos",
+  "app": "Sensor Logger",
+  "app_version": "1.68",
+  "format": "sensorlogger-watch",
+  "placement": "wrist",
+  "has_gyro": true,
+  "gravity": "device",
+  "heart_rate_samples": 11,
+  "n_samples": 282971
+ },
  "device": "Watch7.20",
  "timezone": "Europe/Stockholm",
- "app_version": "1.68",
  "start_utc": "2026-11-01T09:38:46.050000+00:00",
- "session_id": "2026-11-01",
- "title": "Sunday \u2014 Full Body C | Enhanced Comeback W1\u20132",
- "hevy_start_local": "2026-11-01T10:37:00",
  "raw_rate_hz": 100.45,
  "stored_rate_hz": 25.0,
- "duration_s": 2818.9,
+ "duration_s": 2817.1,
  "first_sample_s": 1.819,
  "n_raw_samples": 282971,
  "source": "w.zip",
  "start_local": "2026-11-01T10:38:46.050000+01:00",
- "hevy_minus_recording_s": -106
+ "log_minus_recording_s": -106
 }

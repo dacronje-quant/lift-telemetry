@@ -1,13 +1,13 @@
 """One workout in, one report out.
 
-    python -m vbt.pipeline new --sensor Hevy_Workout.zip --hevy workout.txt
+    python -m vbt.pipeline new --sensor recording.zip --log workout.txt
     python -m vbt.pipeline run 2026-11-01            # re-analyse an existing session
     python -m vbt.pipeline run --all                 # after an algorithm change
     python -m vbt.pipeline review 2026-11-01 out.png # rep-marker grid for a human check
 
 Steps for a session folder (see vbt.ingest):
 1. set windows: sets.json if a human checked them ("manual"/"reviewed"),
-   otherwise Hevy-guided detection (vbt.align) with an exercise model
+   otherwise log-guided detection (vbt.align) with an exercise model
    trained on all *other* sessions, saved as source "auto";
 2. per-set reps, velocity, tempo, verdict vs. the logged count;
 3. session-level summary, motion signatures, classifier checks,
@@ -25,7 +25,7 @@ from pathlib import Path
 import numpy as np
 
 from .io import load_watch_csv
-from .hevy import parse_hevy_text
+from .logs import parse_log
 from .core import vertical_acceleration
 from .workout import (PROFILES, FEATURES, FEATURE_GROUPS, analyze_set, set_features,
                       loso_classify, exercise_key, count_verdict, resample, _lp)
@@ -39,6 +39,8 @@ SESSIONS = ROOT / "data/sessions"
 REPORTS = ROOT / "reports"
 TEMPLATE = Path(__file__).resolve().parent / "templates/report.html"
 TRUSTED = ("manual", "reviewed")
+LOG_NAMES = {"hevy": "Hevy log", "strong": "Strong log", "csv": "workout log", "text": "workout notes",
+             "json": "workout log"}
 
 
 def kg(x):
@@ -81,8 +83,9 @@ def report_title(title_line):
     return t.split(" | ")[0].strip()[:48]
 
 
-def logged_sets(hevy_text):
-    sets = parse_hevy_text(hevy_text)
+def logged_sets(log):
+    """log: dict from log.json (or raw log text for older sessions)."""
+    sets = [dict(s) for s in log["sets"]] if isinstance(log, dict) else parse_log(log)[0]
     for s in sets:
         s["exercise_key"] = exercise_key(s["exercise"])
         s["label"] = s["exercise"]
@@ -92,12 +95,17 @@ def logged_sets(hevy_text):
 def load_session(sid, root=SESSIONS):
     d = Path(root) / sid
     meta = json.loads((d / "meta.json").read_text()) if (d / "meta.json").exists() else {}
-    hevy_text = (d / "hevy.txt").read_text()
+    if (d / "log.json").exists():
+        log = json.loads((d / "log.json").read_text())
+    else:                                   # sessions ingested before vbt.logs existed
+        text = next(d.glob("hevy.txt"), None) or next(d.glob("log_source.*"))
+        sets, info = parse_log(text.read_text())
+        log = {**info, "sets": sets}
     data = load_watch_csv(d / "sensor_25hz.csv.gz", keep_clock=True)
-    return d, meta, hevy_text, data
+    return d, meta, log, data
 
 
-def windows_for(d, data, logged, sid, redetect=False, root=SESSIONS, benchmark=True):
+def windows_for(d, data, logged, sid, redetect=False, root=SESSIONS, benchmark=True, placement="wrist"):
     """(windows used for analysis, automatic detection result or None).
 
     Human-checked windows ("manual"/"reviewed") always win; with benchmark=True
@@ -108,29 +116,29 @@ def windows_for(d, data, logged, sid, redetect=False, root=SESSIONS, benchmark=T
     if existing and existing.get("source") in TRUSTED and not redetect and not benchmark:
         return existing, None
     prior = library.exercise_model(library.load_rows(root, exclude=sid))
-    found, _ = detect_sets(data, logged, prior_model=prior)
+    found, _ = detect_sets(data, logged, prior_model=prior, placement=placement)
     rec = {"source": "auto", "clock": "Sensor Logger seconds_elapsed",
            "detector": "vbt.align.detect_sets", "prior_model": prior is not None,
-           "sets": [{"hevy_index": i + 1, **{k: v for k, v in a.items() if k != "window"}}
+           "sets": [{"log_index": i + 1, **{k: v for k, v in a.items() if k != "window"}}
                     for i, a in enumerate(found)]}
     if not existing or existing.get("source") not in TRUSTED:
         f.write_text(json.dumps(rec, indent=1))
     return (existing if existing and existing.get("source") in TRUSTED else rec), rec
 
 
-def _count_range(data, t0, t1, key):
+def _count_range(data, t0, t1, key, placement="wrist"):
     counts = []
     orig = W.find_turnarounds
     try:
         for rp in (0.25, 0.35, 0.45):
             W.find_turnarounds = lambda *a, _rp=rp, **k: orig(*a, **{**k, "rel_prom": _rp})
-            counts.append(analyze_set(data, t0, t1, key)["rep_count"])
+            counts.append(analyze_set(data, t0, t1, key, placement=placement)["rep_count"])
     finally:
         W.find_turnarounds = orig
     return [min(counts), max(counts)]
 
 
-def analyze_sets(data, logged, wins, groups):
+def analyze_sets(data, logged, wins, groups, placement="wrist"):
     sets, rep_rows = [], []
     for i, (h, w) in enumerate(zip(logged, wins["sets"])):
         g = groups[h["label"]]
@@ -143,7 +151,7 @@ def analyze_sets(data, logged, wins, groups):
                          "flag": "not seen", "delta": None, "sensor_reps": 0})
             continue
         t0, t1 = w["t_start"], w["t_end"]
-        res = analyze_set(data, t0, t1, g["key"])
+        res = analyze_set(data, t0, t1, g["key"], placement=placement)
         reps = res["reps"]
         flag, delta, bouts, bouts_clean = count_verdict(reps, h["reps"], prof["bouts"]) if reps \
             else ("watch fewer", h["reps"], [0], [0])
@@ -157,7 +165,7 @@ def analyze_sets(data, logged, wins, groups):
         s = {**base, "skipped": False, "window": [t0, t1], "span": [R(span[0], 2), R(span[1], 2)],
              "auto_score": w.get("score"), "channel": res.get("channel"),
              "sensor_reps": len(reps), "clean_reps": sum(r["ok"] for r in reps),
-             "sensor_range": _count_range(data, t0, t1, g["key"]),
+             "sensor_range": _count_range(data, t0, t1, g["key"], placement),
              "bouts": bouts, "bouts_clean": bouts_clean, "flag": flag, "delta": delta,
              "mean_velocity": R(res.get("mean_velocity")), "best_velocity": R(res.get("best_mean_velocity")),
              "velocity_loss_pct": R(res.get("velocity_loss_pct"), 1),
@@ -351,15 +359,15 @@ def findings(out):
     fewer = [s for s in S if s["flag"] == "watch fewer"]
     more = [s for s in S if s["flag"] == "watch more"]
     if fewer:
-        c.append(f"The watch saw fewer reps than logged on {len(fewer)} set(s) "
+        c.append(f"The sensor saw fewer reps than logged on {len(fewer)} set(s) "
                  f"({', '.join(f'#{s['i']} −{s['delta']}' for s in fewer)}). Usually a first rep blended "
-                 "into setup or two fast reps merged; for one-arm exercises the watch only sees its own arm.")
+                 "into setup or two fast reps merged; for one-arm work a wrist sensor only sees its own side.")
     if more:
-        c.append(f"The watch saw more on {len(more)} set(s) "
+        c.append(f"The sensor saw more on {len(more)} set(s) "
                  f"({', '.join(f'#{s['i']} +{s['delta']}' for s in more)}): worth a second look at the log.")
     if sm["n_not_seen"]:
         c.append(f"{sm['n_not_seen']} logged set(s) weren't found in the recording "
-                 "(exercises where the watch arm barely moves, or a set that was logged but not done).")
+                 "(exercises where the sensor barely moves, or a set that was logged but not done).")
     f["counts"] = c
     v = []
     for g in G.values():
@@ -403,11 +411,12 @@ def build_html(out, path):
 
 def run(sid, root=SESSIONS, redetect=False, html=True, quiet=False):
     warnings.filterwarnings("ignore", category=RuntimeWarning)
-    d, meta, hevy_text, data = load_session(sid, root)
-    logged = logged_sets(hevy_text)
-    wins, auto = windows_for(d, data, logged, sid, redetect, root)
+    d, meta, log, data = load_session(sid, root)
+    logged = logged_sets(log)
+    placement = (meta.get("sensor_info") or {}).get("placement") or "wrist"
+    wins, auto = windows_for(d, data, logged, sid, redetect, root, placement=placement)
     if len(wins["sets"]) != len(logged):
-        raise ValueError(f"{sid}: sets.json has {len(wins['sets'])} sets, Hevy log has {len(logged)}")
+        raise ValueError(f"{sid}: sets.json has {len(wins['sets'])} sets, the workout log has {len(logged)}")
     # exercise groups in order of first appearance -> colour slot, short code
     groups, taken = {}, set()
     for h in logged:
@@ -417,7 +426,7 @@ def run(sid, root=SESSIONS, redetect=False, html=True, quiet=False):
             groups[h["label"]] = {"id": code, "name": re.sub(r"\s*\(.*?\)", "", h["label"]).strip() or h["label"],
                                   "label": h["label"], "key": h["exercise_key"], "slot": len(groups) + 1,
                                   "visible": PROFILES.get(h["exercise_key"], PROFILES["auto"]).get("visible", True)}
-    sets, rep_rows = analyze_sets(data, logged, wins, groups)
+    sets, rep_rows = analyze_sets(data, logged, wins, groups, placement)
     exercises = {g["id"]: g for g in groups.values()}
     summary = summarize(sets, data)
     when = None
@@ -426,7 +435,7 @@ def run(sid, root=SESSIONS, redetect=False, html=True, quiet=False):
         when = datetime.fromisoformat(meta["start_utc"]).astimezone(ZoneInfo(meta.get("timezone") or "UTC"))
     except Exception:
         pass
-    title_line = hevy_text.strip().splitlines()[0] if hevy_text.strip() else sid
+    title_line = log.get("title") or meta.get("title") or sid
     m = {"session_id": sid, "title": title_line,
          "report_title": report_title(title_line) or sid,
          "date": sid[:10], "device": meta.get("device"), "timezone": meta.get("timezone"),
@@ -435,7 +444,11 @@ def run(sid, root=SESSIONS, redetect=False, html=True, quiet=False):
                           if when else None,
          "clock0_s": R(meta.get("first_sample_s", data["t"][0]), 3),
          "raw_rate_hz": meta.get("raw_rate_hz"), "n_raw_samples": meta.get("n_raw_samples"),
-         "hevy_minus_recording_s": meta.get("hevy_minus_recording_s"),
+         "log_minus_recording_s": meta.get("log_minus_recording_s", meta.get("hevy_minus_recording_s")),
+         "log_source": LOG_NAMES.get(log.get("source") or meta.get("log_source"), "workout log"),
+         "sensor": meta.get("sensor") or "Apple Watch via Sensor Logger, wrist placement",
+         "placement": (meta.get("sensor_info") or {}).get("placement", "wrist"),
+         "gravity": (meta.get("sensor_info") or {}).get("gravity", "device"),
          "windows_source": wins.get("source")}
     out = {"meta": m, "summary": summary, "exercises": exercises, "sets": sets,
            "timeline": timeline(data), "signatures": signatures(sets, groups),
@@ -508,10 +521,21 @@ def review_png(sid, path, root=SESSIONS):
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="python -m vbt.pipeline")
     sub = ap.add_subparsers(dest="cmd", required=True)
-    n = sub.add_parser("new", help="ingest a Sensor Logger export + Hevy text, then run")
-    n.add_argument("--sensor", required=True, help="Sensor Logger zip, folder or WristMotion.csv")
-    n.add_argument("--hevy", required=True, help="text file with the Hevy share text")
-    n.add_argument("--id", help="session id (default: Hevy date)")
+    n = sub.add_parser("new", help="ingest a sensor recording + a workout log, then run")
+    n.add_argument("--sensor", required=True,
+                   help="zip, folder or CSV: Sensor Logger (watch/phone) or any IMU CSV")
+    n.add_argument("--log", "--hevy", dest="log", required=True,
+                   help="workout log file: Hevy share text, Strong CSV, any CSV, typed notes or JSON")
+    n.add_argument("--log-format", default="auto", choices=["auto", "hevy", "strong", "csv", "text", "json"])
+    n.add_argument("--units", choices=["kg", "lb"], help="unit for weights written without one")
+    n.add_argument("--sensor-format", default="auto",
+                   choices=["auto", "sensorlogger-watch", "sensorlogger-phone", "imu-csv"])
+    n.add_argument("--accel-convention", choices=["gravity", "specific_force"],
+                   help="raw accel sign: 'gravity' (Apple: -1 g up at rest) or 'specific_force' "
+                        "(Android/most IMUs: +1 g up). Default from the source, else specific_force")
+    n.add_argument("--placement", choices=["wrist", "bar", "hand", "other"],
+                   help="where the sensor was worn (default: wrist for watches)")
+    n.add_argument("--id", help="session id (default: the log's date)")
     n.add_argument("--overwrite", action="store_true")
     r = sub.add_parser("run", help="(re)analyse session(s)")
     r.add_argument("sid", nargs="?")
@@ -523,7 +547,8 @@ def main(argv=None):
     a = ap.parse_args(argv)
     if a.cmd == "new":
         from .ingest import ingest
-        d = ingest(a.sensor, Path(a.hevy).read_text(), SESSIONS, a.id, a.overwrite)
+        d = ingest(a.sensor, a.log, SESSIONS, a.id, a.overwrite, a.log_format, a.sensor_format,
+                   a.accel_convention, a.placement, a.units)
         print("session:", d)
         run(d.name)
     elif a.cmd == "run":

@@ -102,7 +102,7 @@ def test_exercise_key_and_hevy_names():
     from vbt import exercise_key
     from vbt.hevy import parse_hevy_text
     from pathlib import Path
-    sets = parse_hevy_text((Path(__file__).parents[1] / "data/sessions/2026-11-01/hevy.txt").read_text())
+    sets = parse_hevy_text((Path(__file__).parents[1] / "data/sessions/2026-11-01/log_source.txt").read_text())
     keys = [exercise_key(s["exercise"]) for s in sets]
     assert None not in keys and len(sets) == 22
     assert keys.count("bench") == 4 and keys.count("lateral") == 2
@@ -211,7 +211,7 @@ def test_ingest_roundtrip(tmp_path):
     assert abs(small["t"][0] - 1.5) < 0.05
     assert abs(np.median(np.diff(small["t"])) - 0.04) < 1e-6
     meta = json.loads((d / "meta.json").read_text())
-    assert meta["timezone"] == "Europe/Stockholm" and meta["hevy_minus_recording_s"] == -106
+    assert meta["timezone"] == "Europe/Stockholm" and meta["log_minus_recording_s"] == -106
     assert set(COLS) <= set(pd.read_csv(d / "sensor_25hz.csv.gz").columns)
 
 
@@ -242,3 +242,87 @@ def test_pipeline_end_to_end(tmp_path):
     assert [s["sensor_reps"] >= n - 1 for s, n in zip(out["sets"], counts)] == [True] * 3
     assert json.loads((d / "sets.json").read_text())["source"] == "auto"
     assert (d / "analysis.json").exists()
+
+
+# ---------------------------------------------------------------- any log, any sensor
+
+def test_log_formats():
+    from vbt.logs import parse_log
+    s, i = parse_log("Push day\nNov 3, 2026 at 6:15pm\n\nBench press\n60kg x 5\n70 x 5 @8\n"
+                     "3x5 @ 80kg\nPull-ups: 3 x 8\nLateral raise: 8kg x 12, 8kg x 10\n")
+    assert i["source"] == "text" and i["start_local"] == "2026-11-03T18:15:00"
+    assert [(x["exercise"], x["kg"], x["reps"]) for x in s[:5]] == [
+        ("Bench press", 60, 5), ("Bench press", 70, 5), ("Bench press", 80, 5),
+        ("Bench press", 80, 5), ("Bench press", 80, 5)]
+    assert s[1]["rpe"] == 8 and sum(x["exercise"] == "Pull-ups" for x in s) == 3
+    strong = ("Date,Workout Name,Exercise Name,Set Order,Weight,Reps,RPE\n"
+              "2026-10-30 18:00:00,Legs,Squat (Barbell),1,100,5,7\n"
+              "2026-11-02 07:30:00,Upper,Bench Press (Barbell),1,80,6,\n"
+              "2026-11-02 07:30:00,Upper,Plank,1,0,0,\n")
+    s, i = parse_log(strong)
+    assert i["source"] == "strong" and len(s) == 1 and s[0]["kg"] == 80
+    s, _ = parse_log("exercise;weight;unit;reps\nDeadlift;225;lb;5\n")
+    assert abs(s[0]["kg"] - 102.06) < 0.01
+    s, _ = parse_log("Leg day\nSquat: 225x5\n", default_unit="lb")
+    assert abs(s[0]["kg"] - 102.06) < 0.01
+    s, _ = parse_log('[{"exercise": "Row", "weight": 60, "reps": 10}]')
+    assert s[0]["kg"] == 60 and s[0]["set"] == 1
+
+
+def _raw_imu_frame(data, gyro_deg=True):
+    """Synthetic set as an Android-style IMU CSV: specific force in m/s^2, gyro, ms clock."""
+    import pandas as pd
+    G = 9.80665
+    raw = -(data["acc"] + data["grav"])            # canonical raw = gravity + user; flip sign
+    return pd.DataFrame({"timestamp_ms": data["t"] * 1000 + 5000,
+                         "acc_x": raw[:, 0], "acc_y": raw[:, 1], "acc_z": raw[:, 2],
+                         "gyro_x": 0.0, "gyro_y": 0.0, "gyro_z": 0.0})
+
+
+def test_generic_imu_csv_matches_device_motion(tmp_path):
+    from vbt import synth_set, analyze_set
+    from vbt.sensors import load_sensor
+    data, true_mv = synth_set(n_reps=6, seed=4)
+    p = tmp_path / "imu.csv"
+    _raw_imu_frame(data).to_csv(p, index=False)
+    for with_gyro in (True, False):
+        df = __import__("pandas").read_csv(p)
+        if not with_gyro:
+            df = df[["timestamp_ms", "acc_x", "acc_y", "acc_z"]]
+        df.to_csv(p, index=False)
+        can, info = load_sensor(p)
+        assert info["format"] == "imu-csv" and info["gravity"].startswith("estimated")
+        G = 9.80665
+        g = can[["gravityX", "gravityY", "gravityZ"]].to_numpy()
+        g_true = data["grav"][0] / G
+        assert np.degrees(np.arccos(np.clip(np.median(g @ g_true), -1, 1))) < 3
+        d = {"t": can.seconds_elapsed.to_numpy(), "grav": g * G,
+             "acc": can[["accelerationX", "accelerationY", "accelerationZ"]].to_numpy() * G}
+        res = analyze_set(d, d["t"][0] + 0.5, d["t"][-1] - 0.5, "bench")
+        assert res["rep_count"] == 6
+        mv = np.array([r["mean_velocity"] for r in res["reps"]])
+        # accelerometer-only is a documented compromise: velocity is less accurate
+        assert np.abs(mv - true_mv).mean() < (0.08 if with_gyro else 0.15)
+
+
+def test_bar_placement_counts_curls_from_height():
+    from vbt.workout import profile_for
+    assert profile_for("curl", "wrist")["channel"] == "gx"
+    assert profile_for("curl", "bar")["channel"] == "pos"
+
+
+def test_pipeline_generic_inputs(tmp_path):
+    """Generic IMU CSV + typed notes -> report data, no Apple or Hevy involved."""
+    from vbt.ingest import ingest
+    from vbt.pipeline import run
+    counts = [6, 5, 7]
+    data, _ = _noisy_session(counts, rest_s=60.0, seed=7)
+    p = tmp_path / "imu.csv"
+    _raw_imu_frame(data).to_csv(p, index=False)
+    notes = "Upper A\nNov 4, 2026 at 7:00am\n\nBench press\n" + "".join(f"60kg x {n}\n" for n in counts)
+    d = ingest(p, notes, root=tmp_path / "sessions")
+    assert json.loads((d / "log.json").read_text())["source"] == "text"
+    out = run(d.name, root=tmp_path / "sessions", html=False, quiet=True)
+    assert out["summary"]["n_seen"] == 3
+    assert out["meta"]["log_source"] == "workout notes"
+    assert all(abs(s["sensor_reps"] - n) <= 1 for s, n in zip(out["sets"], counts))

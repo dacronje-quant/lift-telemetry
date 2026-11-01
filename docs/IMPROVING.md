@@ -1,6 +1,6 @@
 # Improving detection and analysis
 
-Every reviewed workout is a labelled example. The loop:
+Every reviewed workout, from any sensor and any log, is a labelled example. The loop:
 
 1. **Add a session** (`python -m vbt.pipeline new …`) and review it (`… review`), fixing
    `sets.json` where the detector was wrong, then mark it `"source": "reviewed"`.
@@ -42,6 +42,12 @@ treat the numbers as optimistic until more reviewed sessions exist.
 5. **Velocity accuracy**: compare with a known reference once (e.g. a phone-filmed bar path or
    a VBT device) to calibrate the per-exercise bias.
 6. **Per-exercise MVTs** and e1RM trends once a lift has been ramped in several sessions.
+
+7. **New sources**: the first real recording from a phone, a bar-mounted sensor or another
+   IMU will need a check of sign convention, axis units and placement handling
+   (`vbt/sensors.py`); add it as a test fixture once verified.
+8. **New log formats**: add a parser to `vbt/logs.py` with a test whenever a new app's export
+   shows up.
 
 ## Data that would help most
 - Keep the watch on the same wrist and fit every session.

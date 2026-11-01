@@ -66,7 +66,7 @@ _KEYWORDS = [("romanian", "rdl"), ("rdl", "rdl"), ("stiff leg", "rdl"),
 
 
 def exercise_key(name):
-    """Map a Hevy exercise name to a PROFILES key ("auto" if unknown)."""
+    """Map a logged exercise name (any app) to a PROFILES key ("auto" if unknown)."""
     low = (name or "").lower().replace("(", " ").replace(")", " ")
     for kw, key in _KEYWORDS:
         if kw in low:
@@ -225,21 +225,37 @@ def _rep_velocity(a_up, fs, conc):
     return v, slice(lo, hi + 1), ecc
 
 
-def analyze_set(data, t0, t1, exercise, fs=100.0):
+def profile_for(exercise, placement="wrist"):
+    """Exercise profile adjusted for where the sensor sits.
+
+    Profiles are written for a wrist-worn sensor. On the bar (or a bar clip) the
+    sensor moves with the load and doesn't rotate with the forearm, so every lift
+    is counted from vertical position.
+    """
+    prof = dict(PROFILES.get(exercise, PROFILES["auto"]))
+    if placement == "bar" and prof["channel"] in ("gx", "gy", "gz"):
+        prof["channel"] = "pos"
+    return prof
+
+
+def analyze_set(data, t0, t1, exercise, fs=100.0, placement="wrist"):
     """Count reps and compute per-rep kinematics for one set window.
 
     data: dict with t, acc, grav (m/s^2, N x 3) and optional gyro (rad/s, N x 3).
     exercise: PROFILES key.
     """
-    prof = PROFILES.get(exercise, PROFILES["auto"])
+    prof = profile_for(exercise, placement)
     d = resample(data, t0, t1, fs)
     t, acc, grav = d["t"], d["acc"], d["grav"]
     g_hat = grav / np.linalg.norm(grav, axis=1, keepdims=True)
     a_up = vertical_acceleration(acc, grav)
     pos = position(a_up, fs)
     signals = {"pos": pos}
+    # rotation-counted reps follow the fast orientation when the source has one
+    # (accelerometer-only sensors), otherwise gravity
+    o_hat = d["orient"] / np.linalg.norm(d["orient"], axis=1, keepdims=True) if "orient" in d else g_hat
     for i, ax in enumerate("xyz"):
-        signals["g" + ax] = _bp(g_hat[:, i], fs, 0.1, 2.0)
+        signals["g" + ax] = _bp(o_hat[:, i], fs, 0.1, 2.0)
     if prof["channel"] == "auto":
         # unknown exercise: the channel + rest polarity with the longest regular run wins
         best = None

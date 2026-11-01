@@ -1,0 +1,183 @@
+{
+ "source": "hevy",
+ "title": "Sunday — Full Body C | Enhanced Comeback W1–2",
+ "start_local": "2026-11-01T10:37:00",
+ "sets": [
+  {
+   "exercise": "Bench Press (Barbell)",
+   "kg": 40.0,
+   "reps": 6,
+   "rpe": null,
+   "warmup": true,
+   "set": 1
+  },
+  {
+   "exercise": "Bench Press (Barbell)",
+   "kg": 60.0,
+   "reps": 6,
+   "rpe": null,
+   "warmup": true,
+   "set": 2
+  },
+  {
+   "exercise": "Bench Press (Barbell)",
+   "kg": 70.0,
+   "reps": 6,
+   "rpe": 6.0,
+   "warmup": false,
+   "set": 3
+  },
+  {
+   "exercise": "Bench Press (Barbell)",
+   "kg": 80.0,
+   "reps": 6,
+   "rpe": 7.5,
+   "warmup": false,
+   "set": 4
+  },
+  {
+   "exercise": "Deadlift (Barbell)",
+   "kg": 60.0,
+   "reps": 5,
+   "rpe": null,
+   "warmup": true,
+   "set": 1
+  },
+  {
+   "exercise": "Deadlift (Barbell)",
+   "kg": 80.0,
+   "reps": 5,
+   "rpe": null,
+   "warmup": true,
+   "set": 2
+  },
+  {
+   "exercise": "Deadlift (Barbell)",
+   "kg": 100.0,
+   "reps": 5,
+   "rpe": 6.0,
+   "warmup": false,
+   "set": 3
+  },
+  {
+   "exercise": "Deadlift (Barbell)",
+   "kg": 100.0,
+   "reps": 5,
+   "rpe": 6.0,
+   "warmup": false,
+   "set": 4
+  },
+  {
+   "exercise": "Bulgarian Split Squat (Dumbbell)",
+   "kg": 10.0,
+   "reps": 7,
+   "rpe": 6.0,
+   "warmup": false,
+   "set": 1
+  },
+  {
+   "exercise": "Bulgarian Split Squat (Dumbbell)",
+   "kg": 10.0,
+   "reps": 7,
+   "rpe": null,
+   "warmup": false,
+   "set": 2
+  },
+  {
+   "exercise": "Bulgarian Split Squat (Dumbbell)",
+   "kg": 10.0,
+   "reps": 7,
+   "rpe": null,
+   "warmup": false,
+   "set": 3
+  },
+  {
+   "exercise": "Pulldown (Wide Parellel Grip)",
+   "kg": 60.0,
+   "reps": 10,
+   "rpe": null,
+   "warmup": false,
+   "set": 1
+  },
+  {
+   "exercise": "Pulldown (Wide Parellel Grip)",
+   "kg": 50.0,
+   "reps": 12,
+   "rpe": 6.0,
+   "warmup": false,
+   "set": 2
+  },
+  {
+   "exercise": "Pulldown (Wide Parellel Grip)",
+   "kg": 50.0,
+   "reps": 12,
+   "rpe": 7.5,
+   "warmup": false,
+   "set": 3
+  },
+  {
+   "exercise": "Triceps Rope Pushdown",
+   "kg": 21.0,
+   "reps": 10,
+   "rpe": 6.0,
+   "warmup": false,
+   "set": 1
+  },
+  {
+   "exercise": "Triceps Rope Pushdown",
+   "kg": 21.0,
+   "reps": 10,
+   "rpe": 7.5,
+   "warmup": false,
+   "set": 2
+  },
+  {
+   "exercise": "Triceps Rope Pushdown",
+   "kg": 21.0,
+   "reps": 10,
+   "rpe": 8.5,
+   "warmup": false,
+   "set": 3
+  },
+  {
+   "exercise": "Hammer Curl (Dumbbell)",
+   "kg": 12.5,
+   "reps": 12,
+   "rpe": 7.0,
+   "warmup": false,
+   "set": 1
+  },
+  {
+   "exercise": "Hammer Curl (Dumbbell)",
+   "kg": 12.5,
+   "reps": 10,
+   "rpe": 7.5,
+   "warmup": false,
+   "set": 2
+  },
+  {
+   "exercise": "Hammer Curl (Dumbbell)",
+   "kg": 12.5,
+   "reps": 7,
+   "rpe": 8.5,
+   "warmup": false,
+   "set": 3
+  },
+  {
+   "exercise": "Lateral Raise (Dumbbell)",
+   "kg": 8.0,
+   "reps": 10,
+   "rpe": 7.0,
+   "warmup": false,
+   "set": 1
+  },
+  {
+   "exercise": "Lateral Raise (Dumbbell)",
+   "kg": 8.0,
+   "reps": 10,
+   "rpe": 7.0,
+   "warmup": false,
+   "set": 2
+  }
+ ]
+}

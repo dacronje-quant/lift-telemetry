@@ -1,4 +1,4 @@
-<title>{{TITLE}} · Wrist Telemetry</title>
+<title>{{TITLE}} · Lift Telemetry</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Source+Sans+3:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -100,7 +100,7 @@ ol.methods{margin:0;padding-left:1.2em;display:grid;gap:8px;max-width:78ch}
 
 <section id="sec-review">
   <div class="sec-head"><div class="eyebrow"><b>0</b> · Worth a look</div><h2>What to check first</h2>
-  <p class="note">Sets where the watch and the log disagree, sets the detector placed with low confidence, and sets it couldn't find. Click one to open it below.</p></div>
+  <p class="note">Sets where the sensor and the log disagree, sets the detector placed with low confidence, and sets it couldn't find. Click one to open it below.</p></div>
   <div class="chips" id="reviewChips"></div>
 </section>
 
@@ -132,9 +132,9 @@ ol.methods{margin:0;padding-left:1.2em;display:grid;gap:8px;max-width:78ch}
 
 <section>
   <div class="sec-head"><div class="eyebrow"><b>3</b> · Logged vs sensed</div><h2>Did you miscount?</h2>
-  <p class="note">Each set gives two counts from the watch: all rep-like cycles, and the clean ones after dropping cycles whose depth or speed doesn't fit (nearly always unracking, a setup pull or re-racking). When the logged count lies between the two, log and watch agree. "Threshold range" is the all-cycles count as the detection threshold moves from 25% to 45% of a typical rep. For one-leg or one-arm exercises logged per side, each bout is compared separately. Click a row to open the set.</p></div>
+  <p class="note">Each set gives two counts from the sensor: all rep-like cycles, and the clean ones after dropping cycles whose depth or speed doesn't fit (nearly always unracking, a setup pull or re-racking). When the logged count lies between the two, log and sensor agree. "Threshold range" is the all-cycles count as the detection threshold moves from 25% to 45% of a typical rep. For one-leg or one-arm exercises logged per side, each bout is compared separately. Click a row to open the set.</p></div>
   <div class="cols">
-    <div class="panel"><div id="countChart"></div><div class="legend" style="margin-top:8px"><span><i style="background:var(--ink-3)"></i>logged in Hevy</span><span><i style="background:var(--ink)"></i>clean reps on the watch</span><span><i style="border:1px dashed var(--ink)"></i>plus edge cycles</span></div></div>
+    <div class="panel"><div id="countChart"></div><div class="legend" style="margin-top:8px"><span><i style="background:var(--ink-3)"></i>logged</span><span><i style="background:var(--ink)"></i>clean reps on the sensor</span><span><i style="border:1px dashed var(--ink)"></i>plus edge cycles</span></div></div>
     <div class="callout" id="countText"></div>
   </div>
   <div class="tw"><table id="countTable"></table></div>
@@ -145,7 +145,7 @@ ol.methods{margin:0;padding-left:1.2em;display:grid;gap:8px;max-width:78ch}
   <p class="note">Mean concentric velocity of the wrist, rep by rep (m/s), one panel and scale per exercise. Lines are sets in order, from lightest (first) to darkest (last).</p></div>
   <div class="cols" id="velMultiples"></div>
   <div class="cols">
-    <div class="panel"><h3>Velocity loss vs logged RPE</h3><div id="vlRpe"></div><p class="note">Velocity loss = fastest rep vs the mean of the last two. One dot per set with an RPE in Hevy (unilateral sets left out).</p></div>
+    <div class="panel"><h3>Velocity loss vs logged RPE</h3><div id="vlRpe"></div><p class="note">Velocity loss = fastest rep vs the mean of the last two. One dot per set with a logged RPE (unilateral sets left out).</p></div>
     <div class="callout" id="velText"></div>
   </div>
 </section>
@@ -174,15 +174,15 @@ ol.methods{margin:0;padding-left:1.2em;display:grid;gap:8px;max-width:78ch}
 </section>
 
 <section>
-  <div class="sec-head"><div class="eyebrow"><b>8</b> · Motion signatures</div><h2>What each exercise looks like to the watch</h2>
-  <p class="note">Every clean rep is stretched to 0–100% of the rep and averaged (line = mean, band = ±1 SD). Columns: wrist height change, wrist orientation (gravity on the watch's x, y, z axes), and rotation rate around them.</p></div>
+  <div class="sec-head"><div class="eyebrow"><b>8</b> · Motion signatures</div><h2>What each exercise looks like to the sensor</h2>
+  <p class="note">Every clean rep is stretched to 0–100% of the rep and averaged (line = mean, band = ±1 SD). Columns: wrist height change, sensor orientation (gravity on the sensor's x, y, z axes), and rotation rate around them.</p></div>
   <div class="panel sig-wrap"><div class="sig-grid" id="sigGrid"></div></div>
   <div class="legend"><span><i class="line" style="background:var(--ink)"></i>x axis</span><span><i class="line" style="background:var(--ink-2)"></i>y axis (dashed)</span><span><i class="line" style="background:var(--ink-3)"></i>z axis (dotted)</span></div>
   <div class="tw"><table id="sigTable"></table></div>
 </section>
 
 <section id="sec-clf">
-  <div class="sec-head"><div class="eyebrow"><b>9</b> · Exercise classifier</div><h2>Can the watch name the exercise?</h2>
+  <div class="sec-head"><div class="eyebrow"><b>9</b> · Exercise classifier</div><h2>Can the sensor name the exercise?</h2>
   <p class="note">Sixteen motion features per set (orientation, rotation, translation). <b>Within this session</b>: leave-one-set-out, so each set is labelled by a model trained on the others. <b>Across sessions</b>: a model trained only on earlier workouts labels today's sets. That second number is the honest one, and it grows as the library does.</p></div>
   <div class="cols">
     <div class="panel"><h3>Leave-one-set-out accuracy</h3><div id="accChart"></div><div class="legend"><span><i style="background:var(--ink)"></i>nearest centroid</span><span><i style="background:var(--ink-3)"></i>1-nearest neighbour</span><span><i style="background:var(--accent)"></i>random forest (all features)</span></div></div>
@@ -197,7 +197,7 @@ ol.methods{margin:0;padding-left:1.2em;display:grid;gap:8px;max-width:78ch}
 
 <section>
   <div class="sec-head"><div class="eyebrow"><b>10</b> · Finding the sets</div><h2>How the sets were located</h2>
-  <p class="note">The detector reads the Hevy log in order and searches the recording for runs of regular reps that fit each logged set's rep count, with consistent wrist orientation and range of motion between sets of the same exercise and plausible rest gaps. It needs no hand marking. When a human has checked the windows, the report uses those and shows how close the detector came.</p></div>
+  <p class="note">The detector reads the workout log in order and searches the recording for runs of regular reps that fit each logged set's rep count, with consistent wrist orientation and range of motion between sets of the same exercise and plausible rest gaps. It needs no hand marking. When a human has checked the windows, the report uses those and shows how close the detector came.</p></div>
   <div class="panel"><div id="detChart"></div></div>
   <div class="callout" id="detText"></div>
 </section>
@@ -207,8 +207,8 @@ ol.methods{margin:0;padding-left:1.2em;display:grid;gap:8px;max-width:78ch}
   <div class="cols" style="align-items:start">
     <div style="display:grid;gap:10px"><h3>Pipeline</h3><ol class="methods" id="methodsList"></ol></div>
     <div style="display:grid;gap:10px"><h3>Caveats</h3><ol class="methods">
-      <li><b>Wrist ≠ bar.</b> The watch measures the forearm it's strapped to. On barbell presses and pulls the wrist follows the bar closely; on curls, extensions and raises it travels an arc, so "velocity" is the wrist's vertical speed, not the load's. Compare within an exercise, never across.</li>
-      <li><b>One arm only.</b> Unilateral and alternating work is only partly visible, and machines or bodyweight moves where the hands don't travel may not show up at all.</li>
+      <li><b>Sensor ≠ load.</b> The sensor measures whatever it's attached to (here: <span id="placeSpan"></span>). Worn on the wrist, it follows the bar closely on presses and pulls, but on curls, extensions and raises it travels an arc, so "velocity" is the sensor's vertical speed, not the load's. Compare within an exercise, never across.</li>
+      <li><b>One limb only.</b> A single wrist or hand sensor sees one side: unilateral and alternating work is only partly visible, and machines or bodyweight moves where that limb doesn't travel may not show up at all.</li>
       <li><b>Absolute velocities run a little low.</b> Smoothing and zero-velocity resets bias mean velocity downward; trends within a set or ramp are more reliable than any single number.</li>
       <li><b>e1RM</b> from a single day's ramp with an assumed minimum velocity threshold: read it as about ±10 kg.</li>
       <li><b>Small n.</b> Within-session classifier numbers are optimistic until enough sessions build up for the across-session test.</li>
@@ -262,9 +262,10 @@ const seen=S.filter(s=>!s.skipped);
 document.getElementById('hdrTitle').textContent=M.report_title||M.title;
 const dur=sm.recording_s/60;
 const dateStr=M.start_local?new Date(M.start_local).toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'short',year:'numeric',timeZone:'UTC'}):M.date;
-document.getElementById('hdrEyebrow').textContent=`Apple Watch · WristMotion · ${M.date}${M.start_local_s!=null?` · ${clockOf(0)}–${clockOf(sm.recording_s)}`:''}${M.timezone?' '+M.timezone:''}`;
-document.getElementById('hdrLede').innerHTML=(NOTES.headline?`${NOTES.headline} `:'')+`${esc(M.title)}. A ${Math.round(dur)}-minute recording from the watch lined up against the Hevy log: ${sm.n_sets} sets of ${sm.n_exercises} exercises, ${sm.n_seen} found in the signal. Each set's reps are counted and timed, with wrist velocity per rep.`;
+document.getElementById('hdrEyebrow').textContent=`${esc(M.sensor||'Motion sensor')} · ${esc(M.log_source||'workout log')} · ${M.date}${M.start_local_s!=null?` · ${clockOf(0)}–${clockOf(sm.recording_s)}`:''}${M.timezone?' '+M.timezone:''}`;
+document.getElementById('hdrLede').innerHTML=(NOTES.headline?`${NOTES.headline} `:'')+`${esc(M.title)}. A ${Math.round(dur)}-minute motion recording lined up against the ${esc(M.log_source||'workout log')}: ${sm.n_sets} sets of ${sm.n_exercises} exercises, ${sm.n_seen} found in the signal. Each set's reps are counted and timed, with wrist velocity per rep.`;
 document.getElementById('sidSpan').textContent=M.session_id;
+document.getElementById('placeSpan').textContent=(M.placement||'wrist')+' placement';
 const lvUse=Object.entries(D.load_velocity||{}).filter(([k,v])=>v.usable);
 const kp=[[`${sm.n_seen}/${sm.n_sets}`,`sets located in the recording (${M.windows_source==='auto'?'automatic':'checked by hand'})`],
   [`${sm.logged_reps} / ${Math.round(sm.sensor_reps_cmp)}`,'reps logged / sensed'],
@@ -274,14 +275,14 @@ const kp=[[`${sm.n_seen}/${sm.n_sets}`,`sets located in the recording (${M.windo
 lvUse.slice(0,2).forEach(([k,v])=>kp.push([`≈${Math.round(v.fit_best.e1rm)} kg`,`${NAME(k)} e1RM from the ramp`]));
 const kd=document.getElementById('kpis');kp.forEach(([b,s])=>kd.appendChild(h('div',{class:'kpi'},`<b>${b}</b><span>${s}</span>`)));
 const lg=document.getElementById('exLegend');EXS.forEach(e=>lg.appendChild(h('span',{},`<i style="background:${col(e.id)}"></i>${esc(e.name)}`)));
-document.getElementById('tlHead').textContent=`${Math.round(dur)} minutes of wrist motion`;
+document.getElementById('tlHead').textContent=`${Math.round(dur)} minutes of ${M.placement==='bar'?'bar':M.placement==='wrist'?'wrist':'sensor'} motion`;
 
 /* ---------- review chips ---------- */
 const rv=document.getElementById('reviewChips');
 const lowScore=s=>s.auto_score!=null&&s.auto_score<1.5&&M.windows_source==='auto';
 const toReview=S.filter(s=>s.skipped||s.flag==='watch fewer'||s.flag==='watch more'||lowScore(s));
 if(!toReview.length) rv.appendChild(h('span',{class:'note'},'Nothing stands out: every set was found and agrees with the log.'));
-toReview.forEach(s=>{const why=s.skipped?'not found':s.flag==='watch fewer'?`watch −${s.delta}`:s.flag==='watch more'?`watch +${s.delta}`:'low detector confidence';
+toReview.forEach(s=>{const why=s.skipped?'not found':s.flag==='watch fewer'?`sensor −${s.delta}`:s.flag==='watch more'?`sensor +${s.delta}`:'low detector confidence';
   const b=h('button',{class:'chip'+(s.skipped?' off':''),type:'button'},`<span class="sw" style="background:${col(s.ex)}"></span>#${s.i} ${esc(NAME(s.ex))} · ${why}`);
   b.addEventListener('click',()=>{if(!s.skipped){select(S.indexOf(s));document.getElementById('drill').scrollIntoView();}});rv.appendChild(b);});
 
@@ -327,7 +328,7 @@ document.getElementById('tlReset').addEventListener('click',()=>{view=[T0,TEND];
 /* ---------- drill-down ---------- */
 const chips=document.getElementById('setChips');
 S.forEach((s,i)=>{const b=h('button',{class:'chip'+(s.skipped?' off':''),type:'button',id:'chip'+s.i,'aria-pressed':'false',title:`${NAME(s.ex)} ${setLabel(s)}${s.skipped?' (not found)':''}`},`<span class="sw" style="background:${col(s.ex)}"></span>${s.ex}${s.i}`);if(!s.skipped)b.addEventListener('click',()=>select(i));else b.disabled=true;chips.appendChild(b);});
-function flagPill(s){const m={match:['match','✓ match'],ambiguous:['off1','≈ within ambiguity'],'watch fewer':['off2',`watch −${s.delta}`],'watch more':['off2',`watch +${s.delta}`],'not seen':['muted','not found']}[s.flag]||['muted',s.flag];return `<span class="pill ${m[0]}">${m[1]}</span>`;}
+function flagPill(s){const m={match:['match','✓ match'],ambiguous:['off1','≈ within ambiguity'],'watch fewer':['off2',`sensor −${s.delta}`],'watch more':['off2',`sensor +${s.delta}`],'not seen':['muted','not found']}[s.flag]||['muted',s.flag];return `<span class="pill ${m[0]}">${m[1]}</span>`;}
 function sensedTxt(s){return s.skipped?'–':s.per_unit?`${s.bouts.join(' + ')}`:`${s.sensor_reps}`;}
 function cleanTxt(s){return s.skipped?'–':s.per_unit?`${s.bouts_clean.join(' + ')}`:`${s.clean_reps}`;}
 function select(i){if(S[i].skipped)return;current=i;S.forEach((s,j)=>document.getElementById('chip'+s.i).setAttribute('aria-pressed',j===i));drawDrill();drawTimeline();
@@ -342,7 +343,7 @@ function hoverLayer(svg,x,Wd,H,m,tt,fn){
 function drawDrill(){
   const s=S[current],tr=s.trace,n=tr.pos.length,tt=Array.from({length:n},(_,k)=>tr.t0+k*tr.dt);
   document.getElementById('drillHead').innerHTML=`<span class="big" style="border-bottom:3px solid ${col(s.ex)}">Set ${s.i} · ${esc(NAME(s.ex))}</span>
-   <span class="stat"><b>${setLabel(s)}</b><span>Hevy${s.warmup?' · warm-up':''}${s.rpe?' · RPE '+s.rpe:''}</span></span>
+   <span class="stat"><b>${setLabel(s)}</b><span>logged${s.warmup?' · warm-up':''}${s.rpe?' · RPE '+s.rpe:''}</span></span>
    <span class="stat"><b>${sensedTxt(s)} / ${cleanTxt(s)}</b><span>all cycles / clean</span></span>
    <span class="stat"><b>${fmt(s.mean_velocity)} m/s</b><span>mean conc. velocity</span></span>
    <span class="stat"><b>${s.velocity_loss_pct==null?'–':fmt(s.velocity_loss_pct,0)+'%'}</b><span>velocity loss</span></span>
@@ -613,13 +614,13 @@ function drawDet(){
   let t='';
   if(M.windows_source==='auto'){const low=S.filter(lowScore),sk=S.filter(s=>s.skipped);
     t=`<p><b>The set windows on this page were found automatically.</b> ${sk.length?`${sk.length} logged set(s) couldn't be placed (${sk.map(s=>'#'+s.i).join(', ')}). `:''}${low.length?`${low.length} set(s) were placed with low confidence (${low.map(s=>'#'+s.i).join(', ')}) and are worth a look.`:'Every set was placed with reasonable confidence.'} Confirmed or corrected windows become ground truth for the next round of algorithm tuning.</p>`;}
-  else if(det.recall!=null){t=`<p><b>The windows on this page were checked by hand.</b> The automatic detector, given only the Hevy log and the recording, found ${Math.round(det.recall*S.length)} of ${S.length} sets in the right place (mean overlap IoU ${fmt(det.mean_iou,2)}; hand windows are deliberately generous, so IoU stays below 1).</p>`;}
+  else if(det.recall!=null){t=`<p><b>The windows on this page were checked by hand.</b> The automatic detector, given only the workout log and the recording, found ${Math.round(det.recall*S.length)} of ${S.length} sets in the right place (mean overlap IoU ${fmt(det.mean_iou,2)}; hand windows are deliberately generous, so IoU stays below 1).</p>`;}
   document.getElementById('detText').innerHTML=t+readBlock('detection');
 }
 
 /* ---------- methods ---------- */
 document.getElementById('methodsList').innerHTML=[
-  `<b>Data.</b> Sensor Logger WristMotion: user acceleration and gravity (g), rotation rate (rad/s)${M.raw_rate_hz?` at ${M.raw_rate_hz} Hz${M.n_raw_samples?`, ${M.n_raw_samples.toLocaleString('en')} samples`:''}`:''}, stored at 25 Hz after an 8 Hz anti-alias filter (all lifting motion is below 6 Hz).${M.start_local?` Recording started ${M.start_local.replace('T',' ').slice(0,19)} (${esc(M.timezone||'')})${M.hevy_minus_recording_s!=null?`; Hevy's start time is ${Math.abs(Math.round(M.hevy_minus_recording_s/60))} min ${M.hevy_minus_recording_s<0?'earlier':'later'}`:''}.`:''}`,
+  `<b>Data.</b> ${esc(M.sensor||'Motion sensor')}: ${M.gravity==='device'?'user acceleration and gravity from the device':'raw accelerometer'+(String(M.gravity).includes('no gyro')?' only; gravity estimated with low-pass filters (no gyroscope, so velocities are less accurate)':' and gyroscope; gravity estimated with a gyro-aided complementary filter')}${M.raw_rate_hz?` at ${M.raw_rate_hz} Hz${M.n_raw_samples?`, ${M.n_raw_samples.toLocaleString('en')} samples`:''}`:''}, stored at 25 Hz after an 8 Hz anti-alias filter (lifting motion is below 6 Hz). Log: ${esc(M.log_source||'workout log')}.${M.start_local?` Recording started ${M.start_local.replace('T',' ').slice(0,19)} (${esc(M.timezone||'')})${M.log_minus_recording_s!=null?`; the log's start time is ${Math.abs(Math.round(M.log_minus_recording_s/60))} min ${M.log_minus_recording_s<0?'earlier':'later'}`:''}.`:''}`,
   `<b>Vertical axis.</b> User acceleration projected onto −gravity gives "up" in the world frame without needing yaw.`,
   `<b>Set windows.</b> ${M.windows_source==='auto'?'Found automatically by the log-guided detector (section 10).':'Checked by hand; the automatic detector is benchmarked against them (section 10).'}`,
   `<b>Reps.</b> Each exercise counts from the signal that shows its reps most cleanly: wrist height for presses, pulls, squats and raises, forearm rotation for curls and pushdowns, and the most regular signal for exercises without a profile. A rep is one turnaround inside the longest run of regularly spaced extrema; per-side exercises keep one run per side.`,

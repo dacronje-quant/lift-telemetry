@@ -11,7 +11,7 @@ Metrics (each session evaluated with models trained on the *other* sessions):
   logged) and (b) a fake machine set inserted (logged but invisible);
 * rep counts: |auto-window count - truth-window count|, and the share of sets
   whose verdict vs. the logged count is match/ambiguous;
-* classifier: leave-one-session-out accuracy over Hevy exercise names
+* classifier: leave-one-session-out accuracy over logged exercise names
   (needs >= 2 sessions sharing exercises).
 
 Record a line after every algorithm change; the history shows whether a
@@ -43,8 +43,8 @@ def trusted_sessions(root=SESSIONS):
 
 
 def eval_session(sid, root=SESSIONS, stress=True):
-    d, meta, hevy_text, data = load_session(sid, root)
-    logged = logged_sets(hevy_text)
+    d, meta, log, data = load_session(sid, root)
+    logged = logged_sets(log)
     truth = json.loads((d / "sets.json").read_text())["sets"]
     prior = library.exercise_model(library.load_rows(root, exclude=sid))
     found, _ = detect_sets(data, logged, prior_model=prior)

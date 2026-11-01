@@ -1,4 +1,4 @@
-"""Hevy-guided set detection: find where each logged set happened in the recording.
+"""Log-guided set detection: find where each logged set happened in the recording.
 
 Gym rest is not quiet (walking, loading plates, phone), so "still wrist = rest"
 fails. Instead:
@@ -25,7 +25,7 @@ from scipy.signal import find_peaks
 
 from .core import vertical_acceleration
 from .workout import (PROFILES, resample, position, _bp, analyze_set, set_features,
-                      FEATURES, split_bouts)
+                      FEATURES, split_bouts, profile_for)
 
 
 @dataclass
@@ -124,7 +124,7 @@ class CentroidModel:
         return dict(zip(self.labels, lp))
 
 
-def _window_score(data, t0, t1, logged, ex, cache, fs):
+def _window_score(data, t0, t1, logged, ex, cache, fs, placement="wrist"):
     """How well 'logged set of ex happened inside [t0, t1]' fits the signal.
 
     The exercise's own rep detector runs on the window once per profile
@@ -133,11 +133,11 @@ def _window_score(data, t0, t1, logged, ex, cache, fs):
     fidget cycles), and scored on count error, rhythm regularity (CV of
     rep durations), fraction of plausible reps and median range of motion.
     """
-    prof = PROFILES.get(ex, PROFILES["auto"])
+    prof = profile_for(ex, placement)
     sig = (prof["channel"], prof["rest"], prof["bouts"])
     key = (round(t0, 2), round(t1, 2), sig)
     if key not in cache:
-        cache[key] = analyze_set(data, t0, t1, ex, fs=fs)["reps"]
+        cache[key] = analyze_set(data, t0, t1, ex, fs=fs, placement=placement)["reps"]
     reps = cache[key]
     target = max(1, logged * prof["bouts"])
     n = len(reps)
@@ -186,7 +186,7 @@ def align_sets(data, logged_sets, runs=None, model=None, fs=25.0, min_gap_s=5.0,
                skip_cost=2.5, skip_cost_invisible=0.5, pad_s=2.0,
                w_ori=1.5, ori_scale_deg=25.0, w_gap=0.5, max_rest_same_s=240.0,
                max_rest_change_s=480.0, max_lead_s=360.0, w_rom=1.5, min_rom_m=0.15,
-               w_romc=1.0, max_ori_cost=1.5, max_romc_cost=1.5, cache=None):
+               w_romc=1.0, max_ori_cost=1.5, max_romc_cost=1.5, cache=None, placement="wrist"):
     """Assign each logged set (dicts with exercise_key, reps) to a time window, in order.
 
     Ordered DP over candidate windows. Per-window score: rep-count agreement,
@@ -224,7 +224,7 @@ def align_sets(data, logged_sets, runs=None, model=None, fs=25.0, min_gap_s=5.0,
     def score(k, w):
         s = logged_sets[k]
         a, b, _ = wins[w]
-        r = _window_score(data, a, b, s["reps"], s["exercise_key"], cache, fs)
+        r = _window_score(data, a, b, s["reps"], s["exercise_key"], cache, fs, placement)
         if r["n"] == 0:
             return -np.inf, r
         sc = (reward - w_count * r["count_err"] - w_cv * min(r["cv"], 1.0)

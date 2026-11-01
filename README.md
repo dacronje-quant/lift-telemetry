@@ -1,16 +1,32 @@
-# lift-telemetry: Apple Watch VBT & rep counter
+# lift-telemetry
 
-Velocity-based training metrics and rep counting from Apple Watch motion data.
-This is a clean-room build from published VBT methods, not copied from Motra.
+Turn motion-sensor recordings and any gym workout log into per-workout reports on reps, bar
+speed and fatigue, improving with every session.
 
-## Record a set
-1. Install **Sensor Logger** (free) on iPhone + Apple Watch.
-2. On the watch enable *Wrist Motion* (CoreMotion deviceMotion), 100 Hz.
-3. Start recording, do the set, stop. Export as CSV → `WristMotion.csv`.
+* **Sensors**: Apple Watch or phone via Sensor Logger, or any IMU CSV (accelerometer, ideally with
+  gyroscope), worn on the wrist or clipped to the bar. Units and conventions are detected; gravity is
+  estimated when the device doesn't provide it (`vbt/sensors.py`).
+* **Workout logs**: Hevy share text, Strong CSV, any CSV, JSON or typed notes (`vbt/logs.py`).
 
-Wear the watch snug. Wrist ≈ bar path for squat / bench / OHP / deadlift.
+A clean-room build from published velocity-based-training (VBT) methods.
 
-## Analyze
+## Recording
+Anything that logs a 3-axis accelerometer at ≥ 25 Hz works; a gyroscope makes velocities much
+more accurate. Supported setups (Apple Watch is validated on a real session; the generic IMU path
+on that watch's raw accelerometer and on synthetic data; the phone path is not yet tested on a real
+recording):
+* **Apple Watch + Sensor Logger** (free): enable *Wrist Motion*, 100 Hz, export CSV/zip.
+* **Phone + Sensor Logger** (iOS/Android): Accelerometer, Gravity, Gyroscope. Strap it to the
+  forearm or clip it to the bar.
+* **Any IMU / other app**: a CSV with a time column and acc x/y/z (+ gyro x/y/z). Pass
+  `--accel-convention gravity` if the device reads −1 g on the axis pointing up at rest (Apple),
+  otherwise the default `specific_force` (+1 g up; Android and most IMUs) applies.
+
+Wear it snug and in the same place every session. Wrist ≈ bar path for squat / bench / OHP /
+deadlift; `--placement bar` for a bar-mounted sensor.
+
+## Single set (quick look)
+
 ```bash
 pip install -r requirements.txt
 python -m vbt WristMotion.csv --plot set.png
@@ -41,16 +57,17 @@ those have no reps and get dropped.
 
 ## One workout → one report
 ```bash
-python -m vbt.pipeline new --sensor Hevy_Workout.zip --hevy hevy.txt   # ingest + detect + analyse + HTML
+python -m vbt.pipeline new --sensor recording.zip --log workout.txt     # ingest + detect + analyse + HTML
 python -m vbt.pipeline review 2026-11-01 review.png                    # rep-marker grid for a quick check
 python -m vbt.pipeline run --all                                       # re-run everything after a code change
 python -m vbt.evaluate --record                                        # benchmark vs human-checked sessions
 ```
-* `data/sessions/<id>/`: `hevy.txt`, `sensor_25hz.csv.gz` (anti-aliased 25 Hz copy of WristMotion),
+* `data/sessions/<id>/`: `log.json` + `log_source.*` (normalised and original log), `sensor_25hz.csv.gz`
+  (canonical 25 Hz motion table),
   `meta.json`, `sets.json` (set windows: `auto` or human `reviewed`/`manual`), `notes.json`
   (optional commentary), `analysis.json` (compact results that feed the cross-session library).
 * `reports/<id>.html`: the interactive report.
-* `vbt/align.py`: finds the logged sets in the recording, guided by the Hevy log (rep counts, rhythm,
+* `vbt/align.py`: finds the logged sets in the recording, guided by the workout log (rep counts, rhythm,
   wrist orientation and ROM consistency, rest gaps, plus an exercise model trained on earlier sessions).
   No hand marking needed.
 * `vbt/workout.py`: per-exercise rep segmentation, per-rep velocity/ROM/tempo, plausibility flags,

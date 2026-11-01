@@ -45,7 +45,7 @@ def load_rows(root="data/sessions", exclude=None, min_source=None):
 
 
 def exercise_model(rows, min_sets_per_label=2):
-    """Centroid model over Hevy exercise names, or None if too little data."""
+    """Centroid model over logged exercise names, or None if too little data."""
     from collections import Counter
     cnt = Counter(r["label"] for r in rows)
     rows = [r for r in rows if cnt[r["label"]] >= min_sets_per_label and None not in r["features"]]

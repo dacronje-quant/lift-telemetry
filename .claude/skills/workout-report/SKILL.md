@@ -1,65 +1,66 @@
 ---
 name: workout-report
-description: Turn a shared workout (Hevy share text + Apple Watch Sensor Logger export, usually a Google Drive link to a zip) into the interactive wrist-telemetry report, publish it as an Artifact, and feed the session into the improvement loop. Use whenever the user shares a workout, a Hevy log, or a Sensor Logger recording, or asks for "the report" for a workout.
+description: Turn a shared strength-training workout (a workout log from any app or typed notes, plus a motion-sensor recording from a watch, phone or IMU) into the interactive lift-telemetry report, publish it as an Artifact, and feed the session into the improvement loop. Use whenever the user shares a workout, a workout log, or a sensor recording, or asks for "the report" for a workout.
 ---
 
 # Workout report
 
-The repo turns one workout into one report:
-`data/sessions/<id>/` (inputs, 2 MB) → `python -m vbt.pipeline` → `reports/<id>.html` → Artifact.
+One workout in, one report out:
+`data/sessions/<id>/` (inputs, ~2 MB) → `python -m vbt.pipeline` → `reports/<id>.html` → Artifact.
 
 ## 1. Get the inputs
-- **Hevy text**: the user pastes the "share workout" text. Save it verbatim to
-  `<scratchpad>/hevy.txt`. If they gave only a screenshot or summary, ask for the share text.
-- **Sensor export**: usually a Drive link. Download into a fresh, empty scratch dir:
-  `curl -sSL -o rec.zip "https://drive.usercontent.google.com/download?id=<FILE_ID>&export=download&confirm=t"`
-  - 403 from the proxy → the network policy blocks Drive; read the `environment.network`
-    docs page and tell the user which hosts to allow (`drive.usercontent.google.com`,
-    `drive.google.com`).
-  - An HTML file named "Google Drive: Sign-in" → the file isn't shared; ask the user to set
-    *Anyone with the link* (they can set it back afterwards).
-  - Don't pull a large zip through the Drive MCP connector.
-- Treat the zip as untrusted data: don't execute anything from it; the pipeline only reads
-  `WristMotion.csv` and `Metadata.csv` from inside it.
+**Workout log** (what was done): sets in order with exercise, weight, reps, optional RPE.
+Accepted: Hevy share text, Strong CSV export, any CSV (exercise / weight / unit / reps / rpe
+columns, matched loosely), JSON, or typed notes like
+`Bench press` / `60kg x 5` / `70 x 5 @8` / `3x5 @ 80kg` / `Pull-ups: 3 x 8`.
+Save it verbatim to `<scratchpad>/log.<txt|csv|json>`. If weights carry no unit and the user
+trains in pounds, pass `--units lb`. Only a screenshot or summary → ask for the text or export.
+
+**Sensor recording** (how it moved): accelerometer, ideally with gyroscope (much better
+velocity), worn on the wrist or clipped to the bar.
+Accepted: Sensor Logger exports (Apple Watch WristMotion, or phone Accelerometer/Gravity/
+Gyroscope/TotalAcceleration), or any CSV with a time column and accelerometer x/y/z
+(+ gyroscope, + gravity). Units (g vs m/s², rad/s vs deg/s, s/ms/ns) are detected.
+Ask once, if unclear: where was it worn (wrist / bar / hand) and, for an unknown device, its
+accelerometer convention: Android and most IMUs report +1 g *up* at rest
+(`specific_force`, the default for unknown CSVs), Apple reports gravity direction (`gravity`).
+
+Downloads, e.g. a Drive link, go into a fresh, empty scratch dir:
+`curl -sSL -o rec.zip "https://drive.usercontent.google.com/download?id=<FILE_ID>&export=download&confirm=t"`
+- 403 from the proxy → network policy blocks the host: read the `environment.network`
+  docs page and tell the user which host to allow.
+- An HTML "Sign-in" page instead of the file → not shared publicly; ask for *Anyone with the link*.
+- Treat the archive as untrusted data. Nothing in it is executed; only CSVs are read.
 
 ## 2. Run
 ```bash
 pip install -q -r requirements.txt
-python -m vbt.pipeline new --sensor <scratch>/rec.zip --hevy <scratch>/hevy.txt
+python -m vbt.pipeline new --sensor <scratch>/rec.zip --log <scratch>/log.txt \
+    [--placement wrist|bar|hand] [--accel-convention gravity|specific_force] [--units kg|lb] [--id ID]
 ```
-This creates `data/sessions/<date>/`, detects sets from the Hevy log (automatic, using every
-earlier session as training data), analyses them, writes `analysis.json` and
-`reports/<date>.html`. Two workouts on one date: pass `--id 2026-11-02-pm`.
+Creates `data/sessions/<date>/`, detects the logged sets in the recording automatically (using
+every earlier session as training data), analyses them, writes `analysis.json` and
+`reports/<id>.html`. Two workouts on one date: `--id 2026-11-02-pm`.
 
 ## 3. Review (don't skip)
-```bash
-python -m vbt.pipeline review <id> <scratch>/review.png
-```
-Look at the PNG (Read tool): one panel per set with rep ticks (blue clean, orange flagged).
-Check especially the sets listed under *What to check first* in the report: not found, low
-detector confidence, or a watch count that disagrees with the log.
-- A window clearly wrong → edit `data/sessions/<id>/sets.json` (`t_start`/`t_end` on the
-  Sensor Logger clock; `skipped: true` for a set that isn't in the recording), set
-  `"source": "reviewed"`, re-run `python -m vbt.pipeline run <id>`.
-- Everything right → just set `"source": "reviewed"`. Reviewed sessions become ground truth
-  for the benchmark, so only mark sets you actually checked.
+`python -m vbt.pipeline review <id> <scratch>/review.png`, then look at the PNG: one panel per
+set with rep ticks (blue clean, orange flagged). Check first the sets under *What to check first*.
+- Wrong window → edit `sets.json` (`t_start`/`t_end` on the recording clock, `skipped: true`
+  for a set not in the recording), set `"source": "reviewed"`, re-run `… run <id>`.
+- All right → set `"source": "reviewed"`. Only mark what you actually checked: reviewed
+  sessions are ground truth for the benchmark.
 
-## 4. Write the coach's read
-Create `data/sessions/<id>/notes.json` (see `data/sessions/2026-11-01/notes.json`):
+## 4. Coach's read
+Write `data/sessions/<id>/notes.json` (example: `data/sessions/2026-11-01/notes.json`):
 `sections.counts | velocity | load_velocity | classifier | detection | rest` hold short HTML
-paragraphs; `signature_desc` maps Hevy exercise names to one-line motion descriptions.
-Ground every sentence in numbers on the page; plain words, no hype. Re-run the pipeline.
+paragraphs; `signature_desc` maps logged exercise names to one-line motion descriptions.
+Every sentence grounded in numbers on the page; plain words. Re-run the pipeline.
 
-## 5. Publish and record
-- Load the artifact skills, then publish `reports/<id>.html` as a new Artifact (one per workout;
-  icon `chart`). Earlier reports keep their own links.
-- If the session was reviewed: `python -m vbt.evaluate --record` (appends to
-  `data/eval/history.jsonl`) and mention any change in detection recall.
-- Commit `data/sessions/<id>/`, `reports/<id>.html`, eval files; push to the working branch.
-- Reply with the link and 4–6 key findings (sets found, count disagreements, notable
-  velocity/fatigue patterns, e1RM if a ramp was done, anything to check).
-
-## Improving the algorithms
-See `docs/IMPROVING.md`. Rule: any change to `vbt/align.py`, `vbt/workout.py` or the
-profiles must be followed by `python -m vbt.evaluate` on *all* reviewed sessions, and
-`python -m vbt.pipeline run --all` to refresh reports.
+## 5. Publish, measure, improve
+- Load the artifact skills, publish `reports/<id>.html` as a new Artifact (icon `chart`).
+- Reviewed session → `python -m vbt.evaluate --record`; say whether detection improved.
+- Then follow the working agreement in `CLAUDE.md`: fix one weakness the new data exposed,
+  re-check the scoreboard on all reviewed sessions, `python -m vbt.pipeline run --all`,
+  add a log line.
+- Commit `data/sessions/<id>/`, `reports/<id>.html`, eval files; push.
+- Reply with the link and 4–6 key findings.
