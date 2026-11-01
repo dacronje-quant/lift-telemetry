@@ -1,6 +1,6 @@
 {
- "when": "2026-11-01T12:28:18+00:00",
- "commit": "2056dba",
+ "when": "2026-11-01T12:36:13+00:00",
+ "commit": "5ef4a6c",
  "n_trusted_sessions": 1,
  "detection": {
   "recall": 1.0,
