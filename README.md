@@ -75,4 +75,6 @@ python -m vbt.evaluate --record                                        # benchma
 * `vbt/personal.py`: learns how *you* do each exercise from checked workouts (`python -m vbt.personal`).
   `vbt/infer.py`: sensor-only mode, run on every workout as a shadow test with the log hidden
   (`python -m vbt.infer <id>`); its "readiness" score tracks progress toward log-free use.
+* `reports/learning.html` (`python -m vbt.learning`): the learning page, separate from the workout
+  reports: readiness over time, per-workout shadow tests, learned exercise settings, scoreboard.
 * Workflow for new workouts: `.claude/skills/workout-report/SKILL.md`. Improvement loop: `docs/IMPROVING.md`.

@@ -23,10 +23,16 @@ data toward that. Two mechanisms carry it:
   and personal tempo / range-of-motion / rotation norms. A learned setting replaces the
   generic one only with evidence from >= 2 workouts that also wins on held-out sets.
   `python -m vbt.personal` prints the current state.
-- `vbt/infer.py` is the sensor-only mode. Every report and `vbt.evaluate` run it as a
+- `vbt/infer.py` is the sensor-only mode. The pipeline and `vbt.evaluate` run it as a
   *shadow test*: log hidden, knowledge from other workouts only, scored against the log.
   "Readiness" = share of logged sets found, named and counted exactly. That number is the
   project's north star; report it after every workout.
+- **Learning is kept out of the workout reports.** `reports/<id>.html` is about that
+  workout only. Everything about the system learning (readiness trend, per-workout shadow
+  tests, learned per-exercise settings, scoreboard history) lives on one page,
+  `reports/learning.html` (`python -m vbt.learning`; the pipeline rebuilds it), published
+  as a single Artifact that is updated in place after every workout:
+  LEARNING_ARTIFACT_URL
 
 ## Working agreement (ongoing project)
 This is a living project: the user sends a new workout (workout log + sensor recording)

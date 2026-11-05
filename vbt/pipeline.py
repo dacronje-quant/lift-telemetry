@@ -412,38 +412,6 @@ def build_html(out, path):
     return path
 
 
-def readiness_history(root, sid, current, date):
-    """Sensor-only readiness per workout, oldest first (this one from `current`)."""
-    out = []
-    for p in sorted(Path(root).glob("*/analysis.json")):
-        if p.parent.name == sid:
-            continue
-        sh = json.loads(p.read_text()).get("shadow") or {}
-        if sh.get("readiness_pct") is not None:
-            out.append({"session": p.parent.name, "readiness_pct": sh["readiness_pct"], "mode": sh.get("mode"),
-                        "found": sh.get("found"), "n_sets": sh.get("n_sets")})
-    if current.get("readiness_pct") is not None:
-        out.append({"session": sid, "readiness_pct": current["readiness_pct"], "mode": current.get("mode"),
-                    "found": current.get("found"), "n_sets": current.get("n_sets")})
-    return sorted(out, key=lambda r: r["session"])
-
-
-def personal_summary(root, groups):
-    """What has been learned so far about each of today's exercises (all checked workouts)."""
-    P = personal.profiles(root)
-    out = {}
-    for label, g in groups.items():
-        p = P.get(label)
-        if not p:
-            out[g["id"]] = {"n_sets": 0, "n_sessions": 0}
-            continue
-        out[g["id"]] = {k: (R(v, 3) if isinstance(v, float) else v) for k, v in p.items()
-                        if k not in ("prototype", "profile")}
-        out[g["id"]]["signal_in_use"] = (f"{p['profile']['channel']}/{p['profile']['rest']}"
-                                         if p.get("profile") else p.get("generic_signal"))
-    return {"exercises": out, "min_sessions": personal.MIN_SESSIONS, "min_gain": personal.MIN_GAIN}
-
-
 def run(sid, root=SESSIONS, redetect=False, html=True, quiet=False):
     warnings.filterwarnings("ignore", category=RuntimeWarning)
     d, meta, log, data = load_session(sid, root)
@@ -512,9 +480,8 @@ def run(sid, root=SESSIONS, redetect=False, html=True, quiet=False):
     # sensor-only shadow test: log hidden, knowledge from other workouts only
     sh = shadow_test(d, data, logged, wins["sets"], root, placement)
     sh["reference"] = "checked windows" if wins.get("source") in TRUSTED else "automatic windows (unchecked)"
-    out["shadow"] = sh
-    out["readiness_history"] = readiness_history(root, sid, sh, m["date"])
-    out["personal"] = personal_summary(root, groups)
+    # learning lives on its own page (vbt.learning), not in the workout report
+    (d / "shadow.json").write_text(json.dumps(sh, indent=0))
     notes = d / "notes.json"
     out["notes"] = json.loads(notes.read_text()) if notes.exists() else {}
     out["findings"] = findings(out)
@@ -528,6 +495,11 @@ def run(sid, root=SESSIONS, redetect=False, html=True, quiet=False):
         p = build_html(out, REPORTS / f"{sid}.html")
         if not quiet:
             print("report:", p, p.stat().st_size // 1024, "KB")
+        if Path(root).resolve() == SESSIONS.resolve():
+            from .learning import build as build_learning
+            lp = build_learning(root)
+            if not quiet:
+                print("learning page:", lp)
     if not quiet:
         print(f"{sid}: {summary['n_seen']}/{summary['n_sets']} sets seen, windows={wins.get('source')}, "
               f"match {summary['n_match']} ambiguous {summary['n_ambiguous']} "

@@ -393,3 +393,25 @@ def test_sensor_only_finds_and_names_sets():
     for i, j in m.items():
         assert inferred[j]["guess"] == wins[i][0]
         assert abs(inferred[j]["reps"] - wins[i][1]) <= 1
+
+
+def test_learning_page_is_separate(tmp_path):
+    """Workout reports carry no learning sections; the learning page builds from sessions."""
+    from pathlib import Path
+    from vbt.learning import build, collect
+    tpl = (Path(__file__).parents[1] / "vbt/templates/report.html").read_text()
+    assert "sec-shadow" not in tpl and "personalTable" not in tpl
+    root = tmp_path / "sessions"
+    d = root / "2026-11-01"
+    d.mkdir(parents=True)
+    (d / "analysis.json").write_text(json.dumps({"date": "2026-11-01", "windows_source": "reviewed",
+                                                 "summary": {"n_sets": 2}, "sets": []}))
+    (d / "shadow.json").write_text(json.dumps({"mode": "other workouts", "n_sets": 2, "found": 2,
+                                               "named": 1, "reps_exact": 1, "reps_within1": 2,
+                                               "false_sets": 0, "fully_right": 1, "readiness_pct": 50.0,
+                                               "rows": []}))
+    c = collect(root, eval_dir=tmp_path)
+    assert c["sessions"][0]["shadow"]["readiness_pct"] == 50.0
+    out = build(root, tmp_path / "learning.html")
+    html = out.read_text()
+    assert "/*DATA*/" not in html and "readyChart" in html

@@ -202,25 +202,8 @@ ol.methods{margin:0;padding-left:1.2em;display:grid;gap:8px;max-width:78ch}
   <div class="callout" id="detText"></div>
 </section>
 
-<section id="sec-shadow">
-  <div class="sec-head"><div class="eyebrow"><b>11</b> · Sensor only</div><h2>Could the sensor have done this alone?</h2>
-  <p class="note">The goal is to hand over sensor data and get the whole workout back. Every report runs that test: the log is hidden, and the sensor-only mode finds the sets, names the exercises and counts the reps using only what it learned from <i>other</i> workouts. "Fully right" means the set was found, named correctly and its rep count matches the log exactly.</p></div>
-  <div class="kpis" id="shadowKpis"></div>
-  <div class="cols">
-    <div class="panel"><h3>Readiness over time</h3><div id="readyChart"></div><p class="note">Share of logged sets the sensor got fully right on its own, per workout.</p></div>
-    <div class="callout" id="shadowText"></div>
-  </div>
-  <div class="tw"><table id="shadowTable"></table></div>
-</section>
-
-<section id="sec-personal">
-  <div class="sec-head"><div class="eyebrow"><b>12</b> · Learning your lifting</div><h2>What it has learned about how you lift</h2>
-  <p class="note">Every checked set teaches the system something about each exercise as you do it: which signal shows your reps most reliably, whether your setup moves look like reps, your usual tempo and range of motion, and what the movement looks like to the sensor. A learned setting replaces the generic one only when evidence from at least <span id="minSess"></span> workouts shows it doing better on sets it wasn't tuned on.</p></div>
-  <div class="tw"><table id="personalTable"></table></div>
-</section>
-
 <section>
-  <div class="sec-head"><div class="eyebrow"><b>13</b> · Methods & caveats</div><h2>How this was made, and what not to trust</h2></div>
+  <div class="sec-head"><div class="eyebrow"><b>11</b> · Methods & caveats</div><h2>How this was made, and what not to trust</h2></div>
   <div class="cols" style="align-items:start">
     <div style="display:grid;gap:10px"><h3>Pipeline</h3><ol class="methods" id="methodsList"></ol></div>
     <div style="display:grid;gap:10px"><h3>Caveats</h3><ol class="methods">
@@ -635,44 +618,6 @@ function drawDet(){
   document.getElementById('detText').innerHTML=t+readBlock('detection');
 }
 
-/* ---------- sensor only ---------- */
-const SIG={pos:'height',gx:'rotation x',gy:'rotation y',gz:'rotation z'};
-const sigName=c=>{if(!c)return 'auto';const [ch,r]=c.split('/');return `${SIG[ch]||ch}, rest at ${r}`;};
-function drawShadow(){
-  const sh=D.shadow||{};const sec=document.getElementById('sec-shadow');
-  if(!sh.n_sets){document.getElementById('shadowKpis').innerHTML='';document.getElementById('shadowText').innerHTML=`<p>${esc(sh.note||'Not available for this workout yet.')}</p>`;return;}
-  const k=[[`${sh.found}/${sh.n_sets}`,'sets found without the log'],[`${sh.named}/${sh.found}`,'of those named correctly'],
-    [`${sh.reps_exact}/${sh.found}`,`rep count exact (${sh.reps_within1} within ±1)`],[`${sh.false_sets}`,'extra sets that were not in the log'],
-    [`${Math.round(sh.readiness_pct)}%`,'fully right (found, named, exact reps)']];
-  document.getElementById('shadowKpis').innerHTML=k.map(([b,t])=>`<div class="kpi"><b>${b}</b><span>${t}</span></div>`).join('');
-  const RH=D.readiness_history||[];const d=document.getElementById('readyChart');d.innerHTML='';
-  const Wd=W('readyChart'),H=170,m={l:36,r:16,t:14,b:26};
-  const svg=el('svg',{viewBox:`0 0 ${Wd} ${H}`,role:'img','aria-label':'Sensor-only readiness per workout'},d);
-  const x=lin(0,Math.max(1,RH.length-1),m.l,Wd-m.r),y=lin(0,100,H-m.b,m.t);
-  axes(svg,x,y,H,Wd,m,{xt:RH.map((_,i)=>i),xf:i=>RH[i]?RH[i].session.slice(5):'',yt:[0,25,50,75,100],yf:v=>v+'%'});
-  if(RH.length>1)el('path',{d:pathOf(RH.map((_,i)=>i),RH.map(r=>r.readiness_pct),x,y),fill:'none',stroke:'var(--accent)','stroke-width':2},svg);
-  RH.forEach((r,i)=>{const c=el('circle',{cx:x(i),cy:y(r.readiness_pct),r:5,fill:r.mode&&r.mode.startsWith('same')?'var(--panel)':'var(--accent)',stroke:'var(--accent)','stroke-width':2},svg);
-    onTip(c,()=>`<b>${r.session}</b><br>${Math.round(r.readiness_pct)}% fully right · ${r.found}/${r.n_sets} found<br>${esc(r.mode||'')}`);
-    el('text',{x:x(i)+(RH.length===1?9:0),y:y(r.readiness_pct)-9,'text-anchor':RH.length===1?'start':'middle'},svg).textContent=Math.round(r.readiness_pct)+'%';});
-  const same=sh.mode&&sh.mode.startsWith('same');
-  const miss=(sh.rows||[]).filter(r=>!r.found).map(r=>'#'+r.set), wrongName=(sh.rows||[]).filter(r=>r.found&&!r.named&&!(r.known===false&&r.guess===r.label)), unsure=(sh.rows||[]).filter(r=>r.found&&r.known===false&&r.guess===r.label), off=(sh.rows||[]).filter(r=>r.found&&r.rep_err>0);
-  document.getElementById('shadowText').innerHTML=`<div class="read"><span class="tag">How to read this</span>
-   <p>${same?`<b>This is the first checked workout</b>, so nothing from other days exists yet. Exercises were recognised from this workout's <i>other</i> sets (each set hidden in turn). That's optimistic: grip and watch fit don't change within a day. The honest across-workout score starts with the next checked workout (filled dots).`:`Recognition used ${sh.trained_on_sets} checked sets from earlier workouts and nothing from this one.`}</p>
-   <ul>${miss.length?`<li>Missed: ${miss.join(', ')}.</li>`:''}${wrongName.length?`<li>Named wrong: ${wrongName.map(r=>`#${r.set} ${esc(r.label)} → ${esc(r.guess||'?')}`).join('; ')}.</li>`:''}${unsure.length?`<li>Right guess but not confident enough to name: ${unsure.map(r=>'#'+r.set).join(', ')}.</li>`:''}${off.length?`<li>Rep count off: ${off.map(r=>`#${r.set} ${r.sensed.join('+')} vs ${r.logged}`).join(', ')}. Mostly edge cycles (setup pulls, unracking) counted as reps; the system learns per exercise whether to count them once two workouts agree.</li>`:''}</ul></div>`+readBlock('shadow');
-  const rows=(sh.rows||[]).map(r=>{const id=Object.values(EXM).find(e=>e.label===r.label);
-    const st=!r.found?'<span class="pill off2">missed</span>':(r.named&&r.rep_err===0)?'<span class="pill match">✓ fully right</span>':(r.known===false&&r.guess===r.label)?'<span class="pill off1">not confident</span>':!r.named?'<span class="pill off2">wrong exercise</span>':'<span class="pill off1">reps off</span>';
-    return `<tr><td class="num">${r.set}</td><td><span class="chip" style="cursor:inherit;padding:2px 6px"><span class="sw" style="background:${id?col(id.id):'var(--s0)'}"></span>${esc(id?id.name:r.label)}</span></td><td>${r.found?(r.known===false?'<span class="note">unrecognised, closest: </span>':'')+esc((Object.values(EXM).find(e=>e.label===r.guess)||{}).name||r.guess||'unknown'):'–'}</td><td class="num">${r.logged}</td><td class="num">${r.found?r.sensed.join(' + '):'–'}</td><td>${st}</td></tr>`;}).join('');
-  document.getElementById('shadowTable').innerHTML=`<thead><tr><th class="num">Set</th><th>Logged exercise</th><th>Sensor's guess</th><th class="num">Logged reps</th><th class="num">Sensor reps</th><th>Result</th></tr></thead><tbody>${rows}</tbody>`;
-}
-function drawPersonal(){
-  const PS=D.personal||{exercises:{}};document.getElementById('minSess').textContent=PS.min_sessions||2;
-  const rows=EXS.map(e=>{const p=PS.exercises[e.id]||{n_sets:0};
-    if(!p.n_sets)return `<tr><td><span class="chip" style="cursor:inherit;padding:2px 6px"><span class="sw" style="background:${col(e.id)}"></span>${esc(e.name)}</span></td><td class="num">0</td><td colspan="5" class="empty">No checked sets yet.</td></tr>`;
-    const status=p.learned?'<span class="pill match">learned</span>':(p.best_signal!==p.generic_signal&&p.held_out_err_learned!=null&&p.held_out_err_generic!=null&&p.held_out_err_learned<p.held_out_err_generic)?'<span class="pill off1">promising, needs another workout</span>':'<span class="pill muted">generic works</span>';
-    return `<tr><td><span class="chip" style="cursor:inherit;padding:2px 6px"><span class="sw" style="background:${col(e.id)}"></span>${esc(e.name)}</span></td><td class="num">${p.n_sets} / ${p.n_sessions}</td><td>${esc(sigName(p.signal_in_use))}${p.best_signal&&p.best_signal!==p.signal_in_use?`<br><small class="note">candidate: ${esc(sigName(p.best_signal))}</small>`:''}</td><td class="num">${p.held_out_err_generic!=null?fmt(p.held_out_err_generic,2):'–'} → ${p.held_out_err_learned!=null?fmt(p.held_out_err_learned,2):'–'}</td><td>${p.count_mode==='clean'?'skip edge cycles':'count all cycles'}</td><td class="num">${fmt(p.rep_s,1)} s · ${p.rom_m!=null?Math.round(p.rom_m*100):'–'} cm · ${p.rotation_deg!=null?Math.round(p.rotation_deg):'–'}°</td><td>${status}</td></tr>`;}).join('');
-  document.getElementById('personalTable').innerHTML=`<thead><tr><th>Exercise</th><th class="num">Checked sets / workouts</th><th>Rep signal in use</th><th class="num">Held-out rep error generic → learned</th><th>Edge cycles</th><th class="num">Your rep: tempo · range · rotation</th><th>Status</th></tr></thead><tbody>${rows}</tbody>`;
-}
-
 /* ---------- methods ---------- */
 document.getElementById('methodsList').innerHTML=[
   `<b>Data.</b> ${esc(M.sensor||'Motion sensor')}: ${M.gravity==='device'?'user acceleration and gravity from the device':'raw accelerometer'+(String(M.gravity).includes('no gyro')?' only; gravity estimated with low-pass filters (no gyroscope, so velocities are less accurate)':' and gyroscope; gravity estimated with a gyro-aided complementary filter')}${M.raw_rate_hz?` at ${M.raw_rate_hz} Hz${M.n_raw_samples?`, ${M.n_raw_samples.toLocaleString('en')} samples`:''}`:''}, stored at 25 Hz after an 8 Hz anti-alias filter (lifting motion is below 6 Hz). Log: ${esc(M.log_source||'workout log')}.${M.start_local?` Recording started ${M.start_local.replace('T',' ').slice(0,19)} (${esc(M.timezone||'')})${M.log_minus_recording_s!=null?`; the log's start time is ${Math.abs(Math.round(M.log_minus_recording_s/60))} min ${M.log_minus_recording_s<0?'earlier':'later'}`:''}.`:''}`,
@@ -684,8 +629,8 @@ document.getElementById('methodsList').innerHTML=[
 
 /* ---------- boot ---------- */
 let saved=current;try{const v=localStorage.getItem('vbt-'+M.session_id);if(v!=null&&S[+v]&&!S[+v].skipped)saved=+v;}catch(e){}
-function all(){drawTimeline();drawCounts();if(seen.length)select(saved);drawVel();drawLV();drawHistory();drawTUT();drawSig();drawClf();drawDet();drawShadow();drawPersonal();}
+function all(){drawTimeline();drawCounts();if(seen.length)select(saved);drawVel();drawLV();drawHistory();drawTUT();drawSig();drawClf();drawDet();}
 all();
-let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{drawTimeline();if(seen.length)drawDrill();drawCounts();drawVel();drawLV();drawHistory();drawTUT();drawClf();drawDet();drawShadow();},150);});
+let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{drawTimeline();if(seen.length)drawDrill();drawCounts();drawVel();drawLV();drawHistory();drawTUT();drawClf();drawDet();},150);});
 })();
 </script>

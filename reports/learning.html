@@ -1,0 +1,230 @@
+<title>Lift Telemetry Learning</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Source+Sans+3:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: the same training-log system as the workout reports; the readiness trend is the spine, detail panels follow. */
+:root{
+  --bg:#f6f7f8; --panel:#ffffff; --ink:#14181d; --ink-2:#4b545e; --ink-3:#7c8590; --rule:#dfe3e8; --grid:#eceff2;
+  --accent:#1c5cab; --chip:#eef2f6;
+  --good:#008300; --warn:#b56f00; --bad:#c43c3b;
+  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100; --s5:#e87ba4; --s6:#008300; --s7:#6250d6; --s8:#e34948; --s0:#7c8590;
+  --display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  --body:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#121518; --panel:#1a1e22; --ink:#eef0f2; --ink-2:#b4bcc5; --ink-3:#86909a; --rule:#2c3238; --grid:#252a2f;
+  --accent:#6da7ec; --chip:#232930; --good:#3aa63a; --warn:#d99a2b; --bad:#e66767;
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#d55181; --s6:#008300; --s7:#9085e9; --s8:#e66767; --s0:#86909a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121518; --panel:#1a1e22; --ink:#eef0f2; --ink-2:#b4bcc5; --ink-3:#86909a; --rule:#2c3238; --grid:#252a2f;
+  --accent:#6da7ec; --chip:#232930; --good:#3aa63a; --warn:#d99a2b; --bad:#e66767;
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#d55181; --s6:#008300; --s7:#9085e9; --s8:#e66767; --s0:#86909a; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 var(--body);margin:0}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 64px;display:grid;gap:28px}
+h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:.01em;text-wrap:balance;margin:0;line-height:1.05}
+h1{font-size:clamp(2.2rem,5vw,3.6rem);font-weight:700;text-transform:uppercase}
+h2{font-size:1.75rem;text-transform:uppercase}
+h3{font-size:1.15rem;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-2)}
+p{margin:0;max-width:68ch}
+.lede{color:var(--ink-2);font-size:1.05rem}
+.eyebrow{font-family:var(--mono);font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
+.mono,td.num,.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+header{display:grid;gap:14px;padding-bottom:8px;border-bottom:2px solid var(--ink)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule)}
+.kpi{background:var(--panel);padding:12px 14px;display:grid;gap:2px;min-width:0}
+.kpi b{font-family:var(--display);font-size:2rem;font-weight:600;line-height:1;font-variant-numeric:tabular-nums}
+.kpi span{font-size:.82rem;color:var(--ink-2)}
+section{display:grid;gap:14px}
+.sec-head{display:grid;gap:6px;border-top:1px solid var(--rule);padding-top:18px}
+.sec-head .eyebrow b{color:var(--ink)}
+.panel{background:var(--panel);border:1px solid var(--rule);border-radius:6px;padding:14px;min-width:0}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:14px}
+.cols>*{min-width:0}
+svg{display:block;width:100%;height:auto;overflow:visible}
+svg text{fill:var(--ink-2);font:11px var(--mono)}
+svg .ax line{stroke:var(--rule)}
+svg .grid line{stroke:var(--grid)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.85rem;color:var(--ink-2)}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-1px;margin-right:5px}
+.legend i.line{height:2px;border-radius:0;vertical-align:4px;width:16px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:500 .8rem var(--mono);padding:5px 8px;border-radius:4px;border:1px solid var(--rule);background:var(--chip);color:var(--ink);cursor:pointer;display:inline-flex;gap:6px;align-items:center}
+.chip:hover{border-color:var(--ink-3)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chip.off{opacity:.55;text-decoration:line-through}
+.chip .sw{width:8px;height:8px;border-radius:2px}
+button:focus-visible,.chip:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.btn{font:500 .8rem var(--mono);padding:5px 10px;border-radius:4px;border:1px solid var(--rule);background:var(--panel);color:var(--ink);cursor:pointer}
+.tw{overflow-x:auto;border:1px solid var(--rule);border-radius:6px;background:var(--panel)}
+table{border-collapse:collapse;width:100%;font-size:.88rem}
+th,td{padding:6px 10px;text-align:left;border-bottom:1px solid var(--grid);white-space:nowrap}
+th{font:500 .72rem var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);background:var(--panel)}
+td.num,th.num{text-align:right}
+tr.sel td{background:var(--chip)}
+tbody tr.click{cursor:pointer}
+.pill{font:500 .72rem var(--mono);padding:2px 7px;border-radius:999px;border:1px solid currentColor;white-space:nowrap}
+.pill.match{color:var(--good)} .pill.off1{color:var(--warn)} .pill.off2{color:var(--bad)} .pill.muted{color:var(--ink-3)}
+.note{font-size:.9rem;color:var(--ink-2)}
+.callout{border-left:3px solid var(--ink);padding:4px 0 4px 14px;display:grid;gap:8px;align-content:start}
+.callout ul{margin:0;padding-left:1.1em;display:grid;gap:6px;max-width:68ch}
+.callout .read{display:grid;gap:8px}
+.callout .tag{font:500 .7rem var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:14px}
+.facts>div{display:grid;gap:4px;align-content:start}
+.facts b{font-family:var(--display);font-size:1.25rem;font-weight:600;text-transform:uppercase}
+#tip{position:fixed;pointer-events:none;background:var(--ink);color:var(--bg);font:12px/1.45 var(--mono);padding:7px 9px;border-radius:4px;max-width:280px;z-index:20;opacity:0;transition:opacity .08s}
+.sig-wrap{overflow-x:auto}
+.sig-grid{display:grid;grid-template-columns:130px repeat(3,minmax(0,1fr));gap:8px 12px;align-items:center;min-width:640px}
+.sig-grid .rowlab{font-family:var(--display);font-size:1.05rem;text-transform:uppercase;display:grid;gap:2px}
+.sig-grid .rowlab small{font:400 .72rem var(--mono);color:var(--ink-3);text-transform:none}
+.drill-head{display:flex;flex-wrap:wrap;gap:10px 22px;align-items:baseline}
+.drill-head .big{font-family:var(--display);font-size:1.6rem;font-weight:600;text-transform:uppercase}
+.stat{display:grid;gap:0}
+.stat b{font-family:var(--mono);font-size:1.05rem;font-weight:500}
+.stat span{font-size:.75rem;color:var(--ink-3);text-transform:uppercase;letter-spacing:.06em;font-family:var(--mono)}
+ol.methods{margin:0;padding-left:1.2em;display:grid;gap:8px;max-width:78ch}
+.empty{color:var(--ink-3);font-style:italic}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.dot-legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.85rem;color:var(--ink-2)}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;border:2px solid var(--accent);vertical-align:-1px;margin-right:5px}
+.dot.fill{background:var(--accent)}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">Lift telemetry · learning across workouts</div>
+  <h1>How well it knows your lifting</h1>
+  <p class="lede">Each workout's own report is about that workout. This page tracks the system itself: what it has learned about how you do each exercise, and how close it is to working from sensor data alone. It updates after every workout.</p>
+  <div class="kpis" id="kpis"></div>
+</header>
+
+<section>
+  <div class="sec-head"><div class="eyebrow"><b>1</b> · Readiness</div><h2>Sensor only, workout by workout</h2>
+  <p class="note">For every workout the log is hidden and the sensor-only mode finds the sets, names the exercises and counts the reps using only what it learned from <i>other</i> workouts. Readiness is the share of logged sets it gets fully right: found, named correctly, and with the exact rep count.</p></div>
+  <div class="panel"><div id="readyChart"></div>
+    <div class="dot-legend" style="margin-top:8px"><span><i class="dot fill"></i>trained on other workouts (the honest score)</span><span><i class="dot"></i>first workout only: same-day sets used, optimistic</span></div></div>
+</section>
+
+<section>
+  <div class="sec-head"><div class="eyebrow"><b>2</b> · Per workout</div><h2>What the sensor got right on its own</h2>
+  <p class="note">Pick a workout to see the shadow test set by set.</p></div>
+  <div class="chips" id="sessChips" role="group" aria-label="Choose a workout"></div>
+  <div class="kpis" id="shadowKpis"></div>
+  <div class="callout" id="shadowText"></div>
+  <div class="tw"><table id="shadowTable"></table></div>
+</section>
+
+<section>
+  <div class="sec-head"><div class="eyebrow"><b>3</b> · Learning your lifting</div><h2>What it has learned about how you lift</h2>
+  <p class="note">Every checked set teaches the system something about the exercise as you do it: which signal shows your reps most reliably, whether setup moves look like reps, your usual tempo and range of motion, and what the movement looks like to the sensor. A learned setting replaces the generic one only when evidence from at least <span id="minSess"></span> workouts shows it doing better on sets it wasn't tuned on.</p></div>
+  <div class="tw"><table id="personalTable"></table></div>
+</section>
+
+<section>
+  <div class="sec-head"><div class="eyebrow"><b>4</b> · Scoreboard</div><h2>Every recorded algorithm change</h2>
+  <p class="note">One row per benchmark run over all checked workouts. A change is kept only if it doesn't make any workout worse.</p></div>
+  <div class="tw"><table id="evalTable"></table></div>
+</section>
+
+<section>
+  <div class="sec-head"><div class="eyebrow"><b>5</b> · How it learns</div><h2>The rules</h2></div>
+  <ol class="methods">
+    <li><b>Checked workouts are the teacher.</b> After each workout the set windows are checked against the recording and marked reviewed. Only those workouts feed learning and scoring.</li>
+    <li><b>Never graded on its own homework.</b> A workout's shadow test uses knowledge from the other workouts only, and learned settings are tested on sets they weren't tuned on.</li>
+    <li><b>One day isn't enough.</b> A learned setting needs evidence from at least <span id="minSess2"></span> workouts and a held-out win of at least <span id="minGain"></span> reps per set over the generic setting. On the first workout alone, tuning made held-out counts worse, which is why this rule exists.</li>
+    <li><b>Your logs are the training data.</b> Keep logging exercise names and rep counts. Readiness should climb as workouts accumulate; when it stays high across several workouts, sensor data alone becomes enough.</li>
+  </ol>
+  <p class="note">Code: <span class="mono">vbt/personal.py</span> (learning), <span class="mono">vbt/infer.py</span> (sensor-only mode), <span class="mono">vbt/learning.py</span> (this page). Roadmap: <span class="mono">docs/IMPROVING.md</span>.</p>
+</section>
+</div>
+<div id="tip" role="tooltip"></div>
+
+<script id="data" type="application/json">{"sessions":[{"id":"2026-11-01","date":"2026-11-01","title":"Sunday \u2014 Full Body C | Enhanced Comeback W1\u20132","windows_source":"manual","n_sets":22,"shadow":{"mode":"same day (leave-one-set-out)","n_sets":22,"trained_on_sets":0,"found":21,"false_sets":1,"named":16,"reps_exact":9,"reps_within1":12,"fully_right":8,"rows":[{"set":1,"label":"Bench Press (Barbell)","logged":6,"found":true,"guess":"Bench Press (Barbell)","known":true,"named":true,"sensed":[6],"rep_err":0,"t_start":56.64,"t_end":69.38},{"set":2,"label":"Bench Press (Barbell)","logged":6,"found":true,"guess":"Deadlift (Barbell)","known":true,"named":false,"sensed":[6],"rep_err":0,"t_start":166.28,"t_end":182.26},{"set":3,"label":"Bench Press (Barbell)","logged":6,"found":true,"guess":"Bench Press (Barbell)","known":true,"named":true,"sensed":[8],"rep_err":2,"t_start":311.82,"t_end":335.78},{"set":4,"label":"Bench Press (Barbell)","logged":6,"found":true,"guess":"Bench Press (Barbell)","known":true,"named":true,"sensed":[6],"rep_err":0,"t_start":471.62,"t_end":492.94},{"set":5,"label":"Deadlift (Barbell)","logged":5,"found":true,"guess":"Deadlift (Barbell)","known":true,"named":true,"sensed":[12],"rep_err":7,"t_start":667.66,"t_end":711.3},{"set":6,"label":"Deadlift (Barbell)","logged":5,"found":true,"guess":"Pulldown (Wide Parellel Grip)","known":true,"named":false,"sensed":[12],"rep_err":7,"t_start":765.12,"t_end":805.54},{"set":7,"label":"Deadlift (Barbell)","logged":5,"found":true,"guess":"Deadlift (Barbell)","known":true,"named":true,"sensed":[7],"rep_err":2,"t_start":942.4,"t_end":970.34},{"set":8,"label":"Deadlift (Barbell)","logged":5,"found":false},{"set":9,"label":"Bulgarian Split Squat (Dumbbell)","logged":7,"found":true,"guess":"Deadlift (Barbell)","known":true,"named":false,"sensed":[9],"rep_err":2,"t_start":1308.1,"t_end":1331.62},{"set":10,"label":"Bulgarian Split Squat (Dumbbell)","logged":7,"found":true,"guess":"Bulgarian Split Squat (Dumbbell)","known":true,"named":true,"sensed":[15],"rep_err":8,"t_start":1407.36,"t_end":1442.26},{"set":11,"label":"Bulgarian Split Squat (Dumbbell)","logged":7,"found":true,"guess":"Bulgarian Split Squat (Dumbbell)","known":true,"named":true,"sensed":[7,7],"rep_err":0,"t_start":1530.3,"t_end":1562.46},{"set":12,"label":"Pulldown (Wide Parellel Grip)","logged":10,"found":true,"guess":"Pulldown (Wide Parellel Grip)","known":false,"named":false,"sensed":[12],"rep_err":2,"t_start":1638.64,"t_end":1677.2},{"set":13,"label":"Pulldown (Wide Parellel Grip)","logged":12,"found":true,"guess":"Pulldown (Wide Parellel Grip)","known":true,"named":true,"sensed":[11],"rep_err":1,"t_start":1798.06,"t_end":1827.32},{"set":14,"label":"Pulldown (Wide Parellel Grip)","logged":12,"found":true,"guess":"Pulldown (Wide Parellel Grip)","known":true,"named":true,"sensed":[12],"rep_err":0,"t_start":1908.68,"t_end":1941.98},{"set":15,"label":"Triceps Rope Pushdown","logged":10,"found":true,"guess":"Triceps Rope Pushdown","known":true,"named":true,"sensed":[10],"rep_err":0,"t_start":1980.34,"t_end":1999.4},{"set":16,"label":"Triceps Rope Pushdown","logged":10,"found":true,"guess":"Triceps Rope Pushdown","known":true,"named":true,"sensed":[12],"rep_err":2,"t_start":2124.4,"t_end":2155.18},{"set":17,"label":"Triceps Rope Pushdown","logged":10,"found":true,"guess":"Triceps Rope Pushdown","known":true,"named":true,"sensed":[9],"rep_err":1,"t_start":2237.16,"t_end":2260.24},{"set":18,"label":"Hammer Curl (Dumbbell)","logged":12,"found":true,"guess":"Hammer Curl (Dumbbell)","known":true,"named":true,"sensed":[10],"rep_err":2,"t_start":2349.68,"t_end":2377.92},{"set":19,"label":"Hammer Curl (Dumbbell)","logged":10,"found":true,"guess":"Deadlift (Barbell)","known":true,"named":false,"sensed":[11],"rep_err":1,"t_start":2463.92,"t_end":2500.12},{"set":20,"label":"Hammer Curl (Dumbbell)","logged":7,"found":true,"guess":"Hammer Curl (Dumbbell)","known":true,"named":true,"sensed":[7],"rep_err":0,"t_start":2570.26,"t_end":2597.2},{"set":21,"label":"Lateral Raise (Dumbbell)","logged":10,"found":true,"guess":"Lateral Raise (Dumbbell)","known":true,"named":true,"sensed":[10],"rep_err":0,"t_start":2624.98,"t_end":2645.68},{"set":22,"label":"Lateral Raise (Dumbbell)","logged":10,"found":true,"guess":"Lateral Raise (Dumbbell)","known":true,"named":true,"sensed":[10],"rep_err":0,"t_start":2762.34,"t_end":2785.32}],"unmatched":[{"t_start":347.98,"t_end":363.46,"guess":"Triceps Rope Pushdown","reps":4}],"readiness_pct":36.4,"reference":"checked windows"}}],"exercises":{"Bench Press (Barbell)":{"key":"bench","n_sets":4.0,"n_sessions":1.0,"generic_signal":"pos/top","generic_err":0.25,"best_signal":"pos/top","best_err":0.25,"best_exact":0.75,"held_out_err_generic":0.25,"held_out_err_learned":1.25,"learned":0.0,"count_mode":"all","count_err_all":0.75,"count_err_clean":0.5,"rep_s":2.5,"rom_m":0.397,"rotation_deg":11.437,"signal_in_use":"pos/top"},"Bulgarian Split Squat (Dumbbell)":{"key":"bss","n_sets":3.0,"n_sessions":1.0,"generic_signal":"pos/top","generic_err":0.667,"best_signal":"gy/top","best_err":0.0,"best_exact":1.0,"held_out_err_generic":0.667,"held_out_err_learned":0.0,"learned":0.0,"count_mode":"all","count_err_all":0.333,"count_err_clean":1.333,"rep_s":1.93,"rom_m":0.473,"rotation_deg":5.006,"signal_in_use":"pos/top"},"Deadlift (Barbell)":{"key":"deadlift","n_sets":4.0,"n_sessions":1.0,"generic_signal":"pos/bottom","generic_err":0.25,"best_signal":"gx/bottom","best_err":0.0,"best_exact":1.0,"held_out_err_generic":0.25,"held_out_err_learned":0.75,"learned":0.0,"count_mode":"all","count_err_all":1.75,"count_err_clean":0.5,"rep_s":3.52,"rom_m":0.98,"rotation_deg":14.874,"signal_in_use":"pos/bottom"},"Hammer Curl (Dumbbell)":{"key":"curl","n_sets":3.0,"n_sessions":1.0,"generic_signal":"gx/bottom","generic_err":1.0,"best_signal":"pos/top","best_err":0.667,"best_exact":0.667,"held_out_err_generic":1.0,"held_out_err_learned":1.0,"learned":0.0,"count_mode":"all","count_err_all":1.0,"count_err_clean":1.0,"rep_s":3.34,"rom_m":0.419,"rotation_deg":79.606,"signal_in_use":"gx/bottom"},"Lateral Raise (Dumbbell)":{"key":"lateral","n_sets":2.0,"n_sessions":1.0,"generic_signal":"pos/bottom","generic_err":0.0,"best_signal":"pos/bottom","best_err":0.0,"best_exact":1.0,"held_out_err_generic":0.0,"held_out_err_learned":0.0,"learned":0.0,"count_mode":"all","count_err_all":0.0,"count_err_clean":1.5,"rep_s":1.925,"rom_m":0.73,"rotation_deg":54.775,"signal_in_use":"pos/bottom"},"Pulldown (Wide Parellel Grip)":{"key":"pulldown","n_sets":3.0,"n_sessions":1.0,"generic_signal":"pos/top","generic_err":0.667,"best_signal":"gy/top","best_err":0.0,"best_exact":1.0,"held_out_err_generic":0.667,"held_out_err_learned":0.0,"learned":0.0,"count_mode":"all","count_err_all":0.667,"count_err_clean":1.333,"rep_s":2.34,"rom_m":0.615,"rotation_deg":14.621,"signal_in_use":"pos/top"},"Triceps Rope Pushdown":{"key":"pushdown","n_sets":3.0,"n_sessions":1.0,"generic_signal":"gx/top","generic_err":0.333,"best_signal":"gy/top","best_err":0.0,"best_exact":1.0,"held_out_err_generic":0.333,"held_out_err_learned":0.667,"learned":0.0,"count_mode":"all","count_err_all":1.0,"count_err_clean":0.667,"rep_s":2.1,"rom_m":0.27,"rotation_deg":48.935,"signal_in_use":"gx/top"}},"eval_history":[{"when":"2026-11-01T12:36:13+00:00","commit":"5ef4a6c","n_trusted_sessions":1,"detection":{"recall":1.0,"mean_iou":0.759},"sensor_only":null},{"when":"2026-11-05T20:06:15+00:00","commit":"22e6fa6","n_trusted_sessions":1,"detection":{"recall":1.0,"mean_iou":0.759},"sensor_only":{"fully_right_pct":36.4,"found_pct":95.5,"named_pct":72.7,"reps_exact_pct":40.9,"false_sets":1,"modes":["same day (leave-one-set-out)"]}}],"rules":{"min_sessions":2,"min_gain":0.2}}</script>
+<script>
+(function(){
+const D=JSON.parse(document.getElementById('data').textContent);
+const SS=D.sessions, SH=SS.filter(s=>s.shadow&&s.shadow.n_sets), EX=D.exercises, EH=D.eval_history||[];
+const NS='http://www.w3.org/2000/svg';
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt=(x,n=2)=>x==null||!isFinite(x)?'–':(+x).toFixed(n);
+const short=l=>String(l||'').replace(/\s*\(.*?\)/g,'').trim();
+function el(t,a={},p){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+function h(t,a={},html=''){const e=document.createElement(t);for(const k in a)e.setAttribute(k,a[k]);if(html)e.innerHTML=html;return e;}
+function lin(d0,d1,r0,r1){const f=v=>r0+(v-d0)/(d1-d0||1)*(r1-r0);f.inv=p=>d0+(p-r0)/(r1-r0)*(d1-d0);f.d=[d0,d1];return f;}
+const tip=document.getElementById('tip');
+function showTip(e,html){tip.innerHTML=html;tip.style.opacity=1;const w=tip.offsetWidth,hh=tip.offsetHeight;let x=e.clientX+14,y=e.clientY+14;if(x+w>innerWidth-8)x=e.clientX-w-14;if(y+hh>innerHeight-8)y=e.clientY-hh-14;tip.style.left=x+'px';tip.style.top=y+'px';}
+function onTip(n,fn){n.addEventListener('mousemove',e=>showTip(e,fn()));n.addEventListener('mouseleave',()=>tip.style.opacity=0);}
+function W(id){return Math.max(300,document.getElementById(id).clientWidth||600);}
+const SIG={pos:'height',gx:'rotation x',gy:'rotation y',gz:'rotation z'};
+const sigName=c=>{if(!c)return 'automatic';const [ch,r]=c.split('/');return `${SIG[ch]||ch}, rest at ${r}`;};
+const isSame=s=>(s.shadow.mode||'').startsWith('same');
+
+/* KPIs */
+const latest=SH[SH.length-1], honest=SH.filter(s=>!isSame(s));
+const checked=SS.filter(s=>['manual','reviewed'].includes(s.windows_source)).length;
+const exs=Object.values(EX), nLearned=exs.filter(e=>e.learned).length, nSets=exs.reduce((a,e)=>a+e.n_sets,0);
+const kp=[[`${checked}`,`checked workout${checked===1?'':'s'} of ${SS.length}`],[`${nSets}`,'checked sets learned from'],
+  [`${nLearned} / ${exs.length}`,'exercises with a learned setting in use'],
+  [latest?`${Math.round(latest.shadow.readiness_pct)}%`:'–',latest?`latest readiness (${isSame(latest)?'same-day, optimistic':'honest'})`:'no shadow test yet'],
+  [honest.length?`${Math.round(honest[honest.length-1].shadow.readiness_pct)}%`:'–',honest.length?'latest honest readiness':'honest score starts with the 2nd checked workout']];
+document.getElementById('kpis').innerHTML=kp.map(([b,t])=>`<div class="kpi"><b>${b}</b><span>${t}</span></div>`).join('');
+
+/* readiness chart */
+function drawReady(){const d=document.getElementById('readyChart');d.innerHTML='';
+  if(!SH.length){d.innerHTML='<p class="empty">No workouts tested yet.</p>';return;}
+  const Wd=W('readyChart'),H=220,m={l:40,r:24,t:18,b:28};
+  const svg=el('svg',{viewBox:`0 0 ${Wd} ${H}`,role:'img','aria-label':'Sensor-only readiness per workout'},d);
+  const x=lin(-0.5,Math.max(0.5,SH.length-0.5),m.l,Wd-m.r),y=lin(0,100,H-m.b,m.t);
+  [0,25,50,75,100].forEach(v=>{el('line',{x1:m.l,x2:Wd-m.r,y1:y(v),y2:y(v),stroke:'var(--grid)'},svg);el('text',{x:m.l-6,y:y(v)+4,'text-anchor':'end'},svg).textContent=v+'%';});
+  el('line',{x1:m.l,x2:Wd-m.r,y1:H-m.b,y2:H-m.b,stroke:'var(--rule)'},svg);
+  SH.forEach((s,i)=>el('text',{x:x(i),y:H-m.b+16,'text-anchor':'middle'},svg).textContent=s.date||s.id);
+  if(SH.length>1){let p='';SH.forEach((s,i)=>p+=(i?'L':'M')+x(i)+','+y(s.shadow.readiness_pct));el('path',{d:p,fill:'none',stroke:'var(--accent)','stroke-width':2},svg);}
+  SH.forEach((s,i)=>{const c=el('circle',{cx:x(i),cy:y(s.shadow.readiness_pct),r:6,fill:isSame(s)?'var(--panel)':'var(--accent)',stroke:'var(--accent)','stroke-width':2},svg);
+    onTip(c,()=>`<b>${esc(s.date)} · ${esc(s.title||'')}</b><br>${Math.round(s.shadow.readiness_pct)}% fully right<br>${s.shadow.found}/${s.shadow.n_sets} found · ${s.shadow.named} named · ${s.shadow.reps_exact} exact reps<br>${esc(s.shadow.mode)}`);
+    el('text',{x:x(i)+10,y:y(s.shadow.readiness_pct)-8},svg).textContent=Math.round(s.shadow.readiness_pct)+'%';});
+}
+
+/* per workout */
+let cur=SH.length-1;
+const chips=document.getElementById('sessChips');
+SH.forEach((s,i)=>{const b=h('button',{class:'chip',type:'button','aria-pressed':String(i===cur)},`${esc(s.date)} · ${esc(short(s.title)||s.id)}`);b.addEventListener('click',()=>{cur=i;[...chips.children].forEach((c,j)=>c.setAttribute('aria-pressed',String(j===i)));drawShadow();});chips.appendChild(b);});
+function drawShadow(){
+  if(!SH.length){document.getElementById('shadowText').innerHTML='<p>No workouts tested yet.</p>';return;}
+  const s=SH[cur],sh=s.shadow;
+  const k=[[`${sh.found}/${sh.n_sets}`,'sets found without the log'],[`${sh.named}/${sh.found}`,'of those named correctly'],
+    [`${sh.reps_exact}/${sh.found}`,`rep count exact (${sh.reps_within1} within ±1)`],[`${sh.false_sets}`,'extra sets not in the log'],
+    [`${Math.round(sh.readiness_pct)}%`,'fully right']];
+  document.getElementById('shadowKpis').innerHTML=k.map(([b,t])=>`<div class="kpi"><b>${b}</b><span>${t}</span></div>`).join('');
+  const R=sh.rows||[];const miss=R.filter(r=>!r.found).map(r=>'#'+r.set);
+  const unsure=R.filter(r=>r.found&&r.known===false&&r.guess===r.label);
+  const wrong=R.filter(r=>r.found&&!r.named&&!(r.known===false&&r.guess===r.label));
+  const off=R.filter(r=>r.found&&r.rep_err>0);
+  document.getElementById('shadowText').innerHTML=`<p>${isSame(s)?`<b>First checked workout:</b> nothing from other days existed yet, so exercises were recognised from this workout's other sets (each set hidden in turn). Optimistic, since grip and sensor fit don't change within a day.`:`Recognition used ${sh.trained_on_sets} checked sets from other workouts and nothing from this one.`} Compared against ${esc(sh.reference||'the log')}.</p>
+   <ul>${miss.length?`<li>Missed: ${miss.join(', ')}.</li>`:''}${wrong.length?`<li>Named wrong: ${wrong.map(r=>`#${r.set} ${esc(short(r.label))} → ${esc(short(r.guess)||'?')}`).join('; ')}.</li>`:''}${unsure.length?`<li>Right guess, not confident enough to name: ${unsure.map(r=>'#'+r.set).join(', ')}.</li>`:''}${off.length?`<li>Rep count off: ${off.map(r=>`#${r.set} ${r.sensed.join('+')} vs ${r.logged}`).join(', ')}.</li>`:''}</ul>`;
+  const rows=R.map(r=>{const st=!r.found?'<span class="pill off2">missed</span>':(r.named&&r.rep_err===0)?'<span class="pill match">✓ fully right</span>':(r.known===false&&r.guess===r.label)?'<span class="pill off1">not confident</span>':!r.named?'<span class="pill off2">wrong exercise</span>':'<span class="pill off1">reps off</span>';
+    return `<tr><td class="num">${r.set}</td><td>${esc(short(r.label))}</td><td>${r.found?(r.known===false?'<span class="note">unrecognised, closest: </span>':'')+esc(short(r.guess)||'unknown'):'–'}</td><td class="num">${r.logged}</td><td class="num">${r.found?r.sensed.join(' + '):'–'}</td><td>${st}</td></tr>`;}).join('');
+  document.getElementById('shadowTable').innerHTML=`<thead><tr><th class="num">Set</th><th>Logged exercise</th><th>Sensor's guess</th><th class="num">Logged reps</th><th class="num">Sensor reps</th><th>Result</th></tr></thead><tbody>${rows}</tbody>`;
+}
+
+/* learned per exercise */
+document.getElementById('minSess').textContent=D.rules.min_sessions;
+document.getElementById('minSess2').textContent=D.rules.min_sessions;
+document.getElementById('minGain').textContent=D.rules.min_gain;
+(function(){const rows=Object.entries(EX).map(([label,p])=>{
+  const status=p.learned?'<span class="pill match">learned, in use</span>':(p.best_signal!==p.generic_signal&&p.held_out_err_learned!=null&&p.held_out_err_generic!=null&&p.held_out_err_learned<p.held_out_err_generic)?'<span class="pill off1">promising, needs another workout</span>':'<span class="pill muted">generic works</span>';
+  return `<tr><td>${esc(short(label))}</td><td class="num">${p.n_sets} / ${p.n_sessions}</td><td>${esc(sigName(p.signal_in_use))}${p.best_signal&&p.best_signal!==p.signal_in_use?`<br><small class="note">candidate: ${esc(sigName(p.best_signal))}</small>`:''}</td><td class="num">${fmt(p.held_out_err_generic)} → ${fmt(p.held_out_err_learned)}</td><td>${p.count_mode==='clean'?'skip edge cycles':'count all cycles'}</td><td class="num">${fmt(p.rep_s,1)} s · ${p.rom_m!=null?Math.round(p.rom_m*100):'–'} cm · ${p.rotation_deg!=null?Math.round(p.rotation_deg):'–'}°</td><td>${status}</td></tr>`;}).join('');
+  document.getElementById('personalTable').innerHTML=rows?`<thead><tr><th>Exercise</th><th class="num">Checked sets / workouts</th><th>Rep signal in use</th><th class="num">Held-out rep error generic → learned</th><th>Edge cycles</th><th class="num">Your rep: tempo · range · rotation</th><th>Status</th></tr></thead><tbody>${rows}</tbody>`:'<tbody><tr><td class="empty">No checked workouts yet.</td></tr></tbody>';})();
+
+/* scoreboard */
+(function(){const p=v=>v==null?'–':Math.round(v)+'%';
+  const rows=[...EH].reverse().map(r=>{const so=r.sensor_only||{},de=r.detection||{};
+    return `<tr><td class="num">${esc((r.when||'').slice(0,16).replace('T',' '))}</td><td class="mono">${esc(r.commit||'')}</td><td class="num">${r.n_trusted_sessions??'–'}</td><td class="num">${p(de.recall!=null?de.recall*100:null)}</td><td class="num">${fmt(de.mean_iou)}</td><td class="num">${p(so.found_pct)}</td><td class="num">${p(so.named_pct)}</td><td class="num">${p(so.reps_exact_pct)}</td><td class="num"><b>${p(so.fully_right_pct)}</b></td></tr>`;}).join('');
+  document.getElementById('evalTable').innerHTML=`<thead><tr><th class="num">When (UTC)</th><th>Commit</th><th class="num">Checked workouts</th><th class="num">Log-guided sets found</th><th class="num">Window IoU</th><th class="num">Sensor-only found</th><th class="num">Named</th><th class="num">Reps exact</th><th class="num">Readiness</th></tr></thead><tbody>${rows||'<tr><td colspan="9" class="empty">No recorded runs yet.</td></tr>'}</tbody>`;})();
+
+drawReady();drawShadow();
+let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(drawReady,150);});
+})();
+</script>

@@ -58,10 +58,13 @@ Every sentence grounded in numbers on the page; plain words. Re-run the pipeline
 
 ## 5. Publish, measure, improve
 - Load the artifact skills, publish `reports/<id>.html` as a new Artifact (icon `chart`).
+  The workout report holds no learning content.
+- Republish `reports/learning.html` to the **existing** learning Artifact (URL in
+  `CLAUDE.md`; pass it as `url`), never as a new one.
 - Reviewed session → re-run `python -m vbt.pipeline run <id>` (rebuilds its evidence),
   then `python -m vbt.evaluate --record` and `python -m vbt.personal`. Say whether
   log-guided detection and **sensor-only readiness** improved, and which learned exercise
-  settings were adopted or are still only promising. The report's sections 11–12 show both.
+  settings were adopted or are still only promising. The learning page shows both.
 - Then follow the working agreement in `CLAUDE.md`: fix one weakness the new data exposed,
   re-check the scoreboard on all reviewed sessions, `python -m vbt.pipeline run --all`,
   add a log line.
