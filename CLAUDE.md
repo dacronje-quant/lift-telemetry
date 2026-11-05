@@ -32,7 +32,7 @@ data toward that. Two mechanisms carry it:
   tests, learned per-exercise settings, scoreboard history) lives on one page,
   `reports/learning.html` (`python -m vbt.learning`; the pipeline rebuilds it), published
   as a single Artifact that is updated in place after every workout:
-  LEARNING_ARTIFACT_URL
+  https://claude.ai/artifact/L6TKF62UyjYP97cihDmz83
 
 ## Working agreement (ongoing project)
 This is a living project: the user sends a new workout (workout log + sensor recording)
