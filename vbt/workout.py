@@ -238,13 +238,15 @@ def profile_for(exercise, placement="wrist"):
     return prof
 
 
-def analyze_set(data, t0, t1, exercise, fs=100.0, placement="wrist"):
+def analyze_set(data, t0, t1, exercise, fs=100.0, placement="wrist", profile=None):
     """Count reps and compute per-rep kinematics for one set window.
 
     data: dict with t, acc, grav (m/s^2, N x 3) and optional gyro (rad/s, N x 3).
     exercise: PROFILES key.
+    profile: optional full profile dict (e.g. a personal one from vbt.personal)
+             overriding the generic profile for this exercise.
     """
-    prof = profile_for(exercise, placement)
+    prof = dict(profile) if profile else profile_for(exercise, placement)
     d = resample(data, t0, t1, fs)
     t, acc, grav = d["t"], d["acc"], d["grav"]
     g_hat = grav / np.linalg.norm(grav, axis=1, keepdims=True)

@@ -72,4 +72,7 @@ python -m vbt.evaluate --record                                        # benchma
   No hand marking needed.
 * `vbt/workout.py`: per-exercise rep segmentation, per-rep velocity/ROM/tempo, plausibility flags,
   features, classifier. `vbt/library.py`: cross-session data. `vbt/evaluate.py`: scoreboard.
+* `vbt/personal.py`: learns how *you* do each exercise from checked workouts (`python -m vbt.personal`).
+  `vbt/infer.py`: sensor-only mode, run on every workout as a shadow test with the log hidden
+  (`python -m vbt.infer <id>`); its "readiness" score tracks progress toward log-free use.
 * Workflow for new workouts: `.claude/skills/workout-report/SKILL.md`. Improvement loop: `docs/IMPROVING.md`.

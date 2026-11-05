@@ -33,6 +33,8 @@ from . import workout as W
 from .align import detect_sets, evaluate_alignment
 from .loadvelocity import estimate_1rm
 from . import library
+from . import personal
+from .infer import shadow_test
 
 ROOT = Path(__file__).resolve().parents[1]
 SESSIONS = ROOT / "data/sessions"
@@ -126,13 +128,13 @@ def windows_for(d, data, logged, sid, redetect=False, root=SESSIONS, benchmark=T
     return (existing if existing and existing.get("source") in TRUSTED else rec), rec
 
 
-def _count_range(data, t0, t1, key, placement="wrist"):
+def _count_range(data, t0, t1, key, placement="wrist", profile=None):
     counts = []
     orig = W.find_turnarounds
     try:
         for rp in (0.25, 0.35, 0.45):
             W.find_turnarounds = lambda *a, _rp=rp, **k: orig(*a, **{**k, "rel_prom": _rp})
-            counts.append(analyze_set(data, t0, t1, key, placement=placement)["rep_count"])
+            counts.append(analyze_set(data, t0, t1, key, placement=placement, profile=profile)["rep_count"])
     finally:
         W.find_turnarounds = orig
     return [min(counts), max(counts)]
@@ -151,7 +153,7 @@ def analyze_sets(data, logged, wins, groups, placement="wrist"):
                          "flag": "not seen", "delta": None, "sensor_reps": 0})
             continue
         t0, t1 = w["t_start"], w["t_end"]
-        res = analyze_set(data, t0, t1, g["key"], placement=placement)
+        res = analyze_set(data, t0, t1, g["key"], placement=placement, profile=h.get("profile"))
         reps = res["reps"]
         flag, delta, bouts, bouts_clean = count_verdict(reps, h["reps"], prof["bouts"]) if reps \
             else ("watch fewer", h["reps"], [0], [0])
@@ -165,7 +167,8 @@ def analyze_sets(data, logged, wins, groups, placement="wrist"):
         s = {**base, "skipped": False, "window": [t0, t1], "span": [R(span[0], 2), R(span[1], 2)],
              "auto_score": w.get("score"), "channel": res.get("channel"),
              "sensor_reps": len(reps), "clean_reps": sum(r["ok"] for r in reps),
-             "sensor_range": _count_range(data, t0, t1, g["key"], placement),
+             "sensor_range": _count_range(data, t0, t1, g["key"], placement, h.get("profile")),
+             "profile_source": "personal" if h.get("profile") else "generic",
              "bouts": bouts, "bouts_clean": bouts_clean, "flag": flag, "delta": delta,
              "mean_velocity": R(res.get("mean_velocity")), "best_velocity": R(res.get("best_mean_velocity")),
              "velocity_loss_pct": R(res.get("velocity_loss_pct"), 1),
@@ -409,12 +412,51 @@ def build_html(out, path):
     return path
 
 
+def readiness_history(root, sid, current, date):
+    """Sensor-only readiness per workout, oldest first (this one from `current`)."""
+    out = []
+    for p in sorted(Path(root).glob("*/analysis.json")):
+        if p.parent.name == sid:
+            continue
+        sh = json.loads(p.read_text()).get("shadow") or {}
+        if sh.get("readiness_pct") is not None:
+            out.append({"session": p.parent.name, "readiness_pct": sh["readiness_pct"], "mode": sh.get("mode"),
+                        "found": sh.get("found"), "n_sets": sh.get("n_sets")})
+    if current.get("readiness_pct") is not None:
+        out.append({"session": sid, "readiness_pct": current["readiness_pct"], "mode": current.get("mode"),
+                    "found": current.get("found"), "n_sets": current.get("n_sets")})
+    return sorted(out, key=lambda r: r["session"])
+
+
+def personal_summary(root, groups):
+    """What has been learned so far about each of today's exercises (all checked workouts)."""
+    P = personal.profiles(root)
+    out = {}
+    for label, g in groups.items():
+        p = P.get(label)
+        if not p:
+            out[g["id"]] = {"n_sets": 0, "n_sessions": 0}
+            continue
+        out[g["id"]] = {k: (R(v, 3) if isinstance(v, float) else v) for k, v in p.items()
+                        if k not in ("prototype", "profile")}
+        out[g["id"]]["signal_in_use"] = (f"{p['profile']['channel']}/{p['profile']['rest']}"
+                                         if p.get("profile") else p.get("generic_signal"))
+    return {"exercises": out, "min_sessions": personal.MIN_SESSIONS, "min_gain": personal.MIN_GAIN}
+
+
 def run(sid, root=SESSIONS, redetect=False, html=True, quiet=False):
     warnings.filterwarnings("ignore", category=RuntimeWarning)
     d, meta, log, data = load_session(sid, root)
     logged = logged_sets(log)
     placement = (meta.get("sensor_info") or {}).get("placement") or "wrist"
+    # personal profiles learned from OTHER checked workouts (never from this one)
+    learned = personal.profiles(root, exclude=sid)
+    for s in logged:
+        if (learned.get(s["label"]) or {}).get("profile"):
+            s["profile"] = learned[s["label"]]["profile"]
     wins, auto = windows_for(d, data, logged, sid, redetect, root, placement=placement)
+    if wins.get("source") in TRUSTED and personal.evidence_is_stale(d):
+        personal.build_evidence(d, data, logged, wins["sets"], placement)
     if len(wins["sets"]) != len(logged):
         raise ValueError(f"{sid}: sets.json has {len(wins['sets'])} sets, the workout log has {len(logged)}")
     # exercise groups in order of first appearance -> colour slot, short code
@@ -467,12 +509,19 @@ def run(sid, root=SESSIONS, redetect=False, html=True, quiet=False):
     elif wins.get("source") == "auto":
         det.update(auto=wins["sets"])
     out["detection"] = det
+    # sensor-only shadow test: log hidden, knowledge from other workouts only
+    sh = shadow_test(d, data, logged, wins["sets"], root, placement)
+    sh["reference"] = "checked windows" if wins.get("source") in TRUSTED else "automatic windows (unchecked)"
+    out["shadow"] = sh
+    out["readiness_history"] = readiness_history(root, sid, sh, m["date"])
+    out["personal"] = personal_summary(root, groups)
     notes = d / "notes.json"
     out["notes"] = json.loads(notes.read_text()) if notes.exists() else {}
     out["findings"] = findings(out)
     # compact copy for the library (no traces)
     compact = {"session_id": sid, "date": m["date"], "windows_source": wins.get("source"),
                "summary": summary,
+               "shadow": {k: v for k, v in sh.items() if k not in ("rows", "unmatched")},
                "sets": [{k: v for k, v in s.items() if k not in ("trace", "reps")} for s in sets]}
     (d / "analysis.json").write_text(json.dumps(compact, indent=0))
     if html:

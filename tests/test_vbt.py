@@ -326,3 +326,70 @@ def test_pipeline_generic_inputs(tmp_path):
     assert out["summary"]["n_seen"] == 3
     assert out["meta"]["log_source"] == "workout notes"
     assert all(abs(s["sensor_reps"] - n) <= 1 for s, n in zip(out["sets"], counts))
+
+
+# ---------------------------------------------------------------- learning your lifting
+
+def _fake_evidence(root, sid, n_sets, generic_err, alt_err, label="Bench Press (Barbell)", key="bench"):
+    d = root / sid
+    d.mkdir(parents=True)
+    (d / "sets.json").write_text(json.dumps({"source": "reviewed", "sets": []}))
+    from vbt.workout import FEATURES
+    rows = [{"index": i + 1, "label": label, "key": key, "reps": 6, "bouts": 1, "generic": "pos/top",
+             "trials": {"pos/top": {"err": generic_err, "n": 6 + generic_err},
+                        "gy/top": {"err": alt_err, "n": 6 + alt_err}},
+             "features": [0.1 * i] * len(FEATURES), "n_all": 7, "n_clean": 6,
+             "rep_s": 2.5, "rom_m": 0.4, "rotation_deg": 10} for i in range(n_sets)]
+    (d / "evidence.json").write_text(json.dumps({"session": sid, "sets_mtime": 0, "sets": rows}))
+
+
+def test_personal_profile_needs_two_workouts(tmp_path):
+    from vbt.personal import profiles
+    _fake_evidence(tmp_path, "2026-11-01", 4, generic_err=1, alt_err=0)
+    p = profiles(tmp_path)["Bench Press (Barbell)"]
+    assert p["best_signal"] == "gy/top" and not p["learned"]          # one workout is not enough
+    _fake_evidence(tmp_path, "2026-11-08", 4, generic_err=1, alt_err=0)
+    p = profiles(tmp_path)["Bench Press (Barbell)"]
+    assert p["learned"] and p["profile"]["channel"] == "gy" and p["count_mode"] == "clean"
+    # honest tests never use a session's own evidence
+    assert profiles(tmp_path, exclude="2026-11-08")["Bench Press (Barbell)"]["n_sessions"] == 1
+
+
+def test_personal_profile_not_adopted_when_generic_is_as_good(tmp_path):
+    from vbt.personal import profiles
+    for sid in ("2026-11-01", "2026-11-08"):
+        _fake_evidence(tmp_path, sid, 3, generic_err=0, alt_err=0)
+    assert not profiles(tmp_path)["Bench Press (Barbell)"]["learned"]
+
+
+def test_sensor_only_finds_and_names_sets():
+    """Two synthetic 'exercises' (different wrist tilts); prototypes from labelled sets."""
+    from vbt import synth_set, set_features
+    from vbt.personal import Prototypes
+    from vbt.infer import infer_sets, _match
+    from vbt.workout import FEATURES
+    rng = np.random.default_rng(0)
+    plan = [("A", 0, 6), ("A", 0, 5), ("B", 1, 8), ("B", 1, 7)]
+    parts, t0, wins = [], 0.0, []
+    for lab, seed, n in plan:
+        d, _ = synth_set(n_reps=n, seed=seed)                 # same seed -> same wrist tilt
+        rt = np.arange(0, 60.0, 0.01)
+        jit = np.convolve(rng.normal(0, 3.0, len(rt)), np.ones(20) / 20, "same")
+        rest = {"t": rt, "acc": np.c_[jit, jit * 0.5, -jit] * 0.3, "grav": np.tile(d["grav"][0], (len(rt), 1))}
+        wins.append((lab, n, t0, t0 + d["t"][-1]))
+        for seg in (d, rest):
+            parts.append({k: (seg[k] + t0 if k == "t" else seg[k]) for k in seg})
+            t0 = parts[-1]["t"][-1] + 0.01
+    data = {k: np.concatenate([p[k] for p in parts]) for k in ("t", "acc", "grav")}
+    rows = []
+    for i, (lab, n, a, b) in enumerate(wins):
+        f = set_features(data, a + 0.5, b - 0.5)
+        rows.append({"index": i + 1, "label": lab, "key": "bench", "features": [f[k] for k in FEATURES]})
+    protos = Prototypes(rows)
+    inferred = infer_sets(data, protos)
+    truth = [{"t_start": a, "t_end": b} for _, _, a, b in wins]
+    m = _match(inferred, truth)
+    assert len(m) == 4 and len(inferred) == 4
+    for i, j in m.items():
+        assert inferred[j]["guess"] == wins[i][0]
+        assert abs(inferred[j]["reps"] - wins[i][1]) <= 1

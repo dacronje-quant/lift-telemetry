@@ -21,7 +21,7 @@ import numpy as np
 import pandas as pd
 from scipy.signal import butter, filtfilt
 
-from .sensors import COLS, load_sensor, describe
+from .sensors import COLS, QUAT, load_sensor, describe
 from .logs import parse_log
 
 STORE_HZ = 25.0
@@ -35,7 +35,16 @@ def downsample(df, fs=STORE_HZ):
     t = t[order]
     fs_in = 1.0 / np.median(np.diff(t))
     tu = np.arange(t[0], t[-1], 1.0 / fs)
-    cols = COLS + [c for c in ORIENT if c in df.columns]
+    cols = COLS + [c for c in ORIENT + QUAT if c in df.columns]
+    df = df.copy()
+    if all(c in df.columns for c in QUAT):
+        # q and -q are the same attitude: make the sign continuous before filtering
+        q = df[QUAT].to_numpy(float)[order]
+        flip = np.cumsum(np.r_[False, np.einsum("ij,ij->i", q[1:], q[:-1]) < 0]) % 2 == 1
+        q[flip] *= -1
+        inv = np.empty_like(order)
+        inv[order] = np.arange(len(order))
+        df[QUAT] = q[inv]
     out = {"seconds_elapsed": tu}
     if fs_in > 2.5 * fs:
         b, a = butter(4, min(8.0, 0.4 * fs) / (fs_in / 2), "low")
@@ -44,7 +53,7 @@ def downsample(df, fs=STORE_HZ):
         filt = lambda x: x  # noqa: E731   source already slow: just interpolate
     for c in cols:
         out[c] = np.interp(tu, t, filt(df[c].to_numpy(float)[order]))
-    for trip in (["gravityX", "gravityY", "gravityZ"], ORIENT):
+    for trip in (["gravityX", "gravityY", "gravityZ"], ORIENT, QUAT):
         if trip[0] in out:
             g = np.column_stack([out[c] for c in trip])
             g /= np.linalg.norm(g, axis=1, keepdims=True)      # keep unit vectors unit

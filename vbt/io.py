@@ -53,6 +53,8 @@ def load_watch_csv(path, units="g", keep_clock=False):
         out["gyro"] = np.column_stack([_pick(df, k) for k in ("rx", "ry", "rz")])[order]
     except KeyError:
         pass
+    if all(f"quaternion{a}" in df.columns for a in "WXYZ"):
+        out["quat"] = df[["quaternionW", "quaternionX", "quaternionY", "quaternionZ"]].to_numpy(float)[order]
     if all(f"orient{a}" in df.columns for a in "XYZ"):
         out["orient"] = df[["orientX", "orientY", "orientZ"]].to_numpy(float)[order]
     return out

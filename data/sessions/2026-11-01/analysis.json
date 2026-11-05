@@ -23,6 +23,19 @@
 "n_more": 1,
 "n_not_seen": 0
 },
+"shadow": {
+"mode": "same day (leave-one-set-out)",
+"n_sets": 22,
+"trained_on_sets": 0,
+"found": 21,
+"false_sets": 1,
+"named": 16,
+"reps_exact": 9,
+"reps_within1": 12,
+"fully_right": 8,
+"readiness_pct": 36.4,
+"reference": "checked windows"
+},
 "sets": [
 {
 "i": 1,
@@ -51,6 +64,7 @@
 6,
 6
 ],
+"profile_source": "generic",
 "bouts": [
 6
 ],
@@ -112,6 +126,7 @@
 5,
 5
 ],
+"profile_source": "generic",
 "bouts": [
 5
 ],
@@ -173,6 +188,7 @@
 7,
 7
 ],
+"profile_source": "generic",
 "bouts": [
 7
 ],
@@ -234,6 +250,7 @@
 6,
 6
 ],
+"profile_source": "generic",
 "bouts": [
 6
 ],
@@ -295,6 +312,7 @@
 7,
 8
 ],
+"profile_source": "generic",
 "bouts": [
 7
 ],
@@ -356,6 +374,7 @@
 6,
 7
 ],
+"profile_source": "generic",
 "bouts": [
 7
 ],
@@ -417,6 +436,7 @@
 6,
 6
 ],
+"profile_source": "generic",
 "bouts": [
 6
 ],
@@ -478,6 +498,7 @@
 7,
 7
 ],
+"profile_source": "generic",
 "bouts": [
 7
 ],
@@ -539,6 +560,7 @@
 12,
 14
 ],
+"profile_source": "generic",
 "bouts": [
 6,
 7
@@ -602,6 +624,7 @@
 12,
 15
 ],
+"profile_source": "generic",
 "bouts": [
 7,
 7
@@ -665,6 +688,7 @@
 13,
 13
 ],
+"profile_source": "generic",
 "bouts": [
 7,
 6
@@ -728,6 +752,7 @@
 9,
 10
 ],
+"profile_source": "generic",
 "bouts": [
 9
 ],
@@ -789,6 +814,7 @@
 11,
 11
 ],
+"profile_source": "generic",
 "bouts": [
 11
 ],
@@ -850,6 +876,7 @@
 12,
 12
 ],
+"profile_source": "generic",
 "bouts": [
 12
 ],
@@ -911,6 +938,7 @@
 10,
 10
 ],
+"profile_source": "generic",
 "bouts": [
 10
 ],
@@ -972,6 +1000,7 @@
 12,
 12
 ],
+"profile_source": "generic",
 "bouts": [
 12
 ],
@@ -1033,6 +1062,7 @@
 9,
 9
 ],
+"profile_source": "generic",
 "bouts": [
 9
 ],
@@ -1094,6 +1124,7 @@
 10,
 10
 ],
+"profile_source": "generic",
 "bouts": [
 10
 ],
@@ -1155,6 +1186,7 @@
 9,
 9
 ],
+"profile_source": "generic",
 "bouts": [
 9
 ],
@@ -1216,6 +1248,7 @@
 7,
 7
 ],
+"profile_source": "generic",
 "bouts": [
 7
 ],
@@ -1277,6 +1310,7 @@
 8,
 10
 ],
+"profile_source": "generic",
 "bouts": [
 10
 ],
@@ -1338,6 +1372,7 @@
 9,
 11
 ],
+"profile_source": "generic",
 "bouts": [
 10
 ],

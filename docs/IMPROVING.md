@@ -14,6 +14,28 @@ Every reviewed workout, from any sensor and any log, is a labelled example. The 
 3. **Change one thing**, re-run step 2, keep it only if it doesn't hurt any session.
 4. `python -m vbt.pipeline run --all` to refresh every report.
 
+## Toward sensor-only (the end goal)
+Every report and every `vbt.evaluate` run includes a **shadow test**: `vbt/infer.py` gets
+only the sensor data plus what `vbt/personal.py` learned from *other* checked workouts,
+and is scored against the log (sets found, exercise named, reps exact → "readiness").
+
+Baseline 2026-11-01 (only one checked workout, so same-day leave-one-set-out, optimistic):
+21/22 sets found, 1 false set, 16 named correctly, 9 exact rep counts, readiness 36%.
+
+What limits it now, and the fix each needs:
+- **Edge cycles counted as reps** (setup pulls, unracking): biggest error. `personal.py` learns
+  per exercise whether to skip them (`count_mode`) once two workouts agree; next step is a
+  learned "edge cycle" detector from flagged reps in checked sets.
+- **Exercises sharing a pose** (deadlift / split squat / hammer curl hang the arm the same
+  way): more checked sets, plus rep-shape features (time-normalised rep curves, already
+  computed for the report's motion signatures) in the prototypes.
+- **Set-vs-noise rule** (`infer.is_set`) is hand-tuned on one day. Checked workouts provide
+  labelled negatives for free (candidates that matched no logged set): replace the rule with
+  a learned filter once ~5 workouts exist.
+- **Split squat legs** sometimes merge into one bout without the log's per-side hint.
+- **A neural model** (1D CNN on raw windows, as in published wearable-lifting pipelines) only
+  makes sense once a few hundred checked sets exist; until then prototypes are the right size.
+
 ## Where the algorithms live
 | Stage | Code | Main knobs |
 |---|---|---|
@@ -22,6 +44,8 @@ Every reviewed workout, from any sensor and any log, is a labelled example. The 
 | Set candidates | `vbt/align.py::candidate_runs` | prominence thresholds, run regularity |
 | Log-guided alignment | `vbt/align.py::align_sets` | count / regularity / clean-fraction / ROM weights, rest limits, orientation & ROM consistency, skip costs |
 | Exercise model | `vbt/library.py`, `vbt/align.py::CentroidModel` | features (`FEATURES`), temperature |
+| Personal learning | `vbt/personal.py` | `MIN_SESSIONS`, `MIN_GAIN`, candidate signals |
+| Sensor-only mode | `vbt/infer.py` | candidate runs, `is_set` thresholds, join gaps |
 | Report | `vbt/pipeline.py`, `vbt/templates/report.html` | — |
 
 ## Baseline (2026-11-01, one reviewed session)

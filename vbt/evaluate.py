@@ -11,6 +11,9 @@ Metrics (each session evaluated with models trained on the *other* sessions):
   logged) and (b) a fake machine set inserted (logged but invisible);
 * rep counts: |auto-window count - truth-window count|, and the share of sets
   whose verdict vs. the logged count is match/ambiguous;
+* sensor only (the end goal): log hidden, personal knowledge from the other
+  sessions only -> sets found, named, reps exact, "fully right" share. With a
+  single checked session it falls back to same-day leave-one-set-out (flagged);
 * classifier: leave-one-session-out accuracy over logged exercise names
   (needs >= 2 sessions sharing exercises).
 
@@ -30,6 +33,7 @@ from .align import detect_sets, evaluate_alignment
 from .workout import analyze_set, count_verdict, PROFILES, FEATURES
 from . import library
 from .pipeline import SESSIONS, load_session, logged_sets, TRUSTED, ROOT
+from .infer import shadow_test
 
 EVAL = ROOT / "data/eval"
 
@@ -77,6 +81,8 @@ def eval_session(sid, root=SESSIONS, stress=True):
         f3, _ = detect_sets(data, lg, prior_model=prior)
         res["recall_invisible_set"] = round(evaluate_alignment(f3[:j] + f3[j + 1:], truth)["recall"], 3)
         res["invisible_set_skipped"] = bool(f3[j]["skipped"])
+    sh = shadow_test(d, data, logged, truth, root, (meta.get("sensor_info") or {}).get("placement", "wrist"))
+    res["sensor_only"] = {k: v for k, v in sh.items() if k not in ("rows", "unmatched")}
     return res
 
 
@@ -110,13 +116,21 @@ def scoreboard(root=SESSIONS, stress=True):
     tot = sum(s["n_sets"] for s in ses) or 1
     agg = {"recall": round(sum(s["recall"] * s["n_sets"] for s in ses) / tot, 3) if ses else None,
            "mean_iou": round(sum(s["mean_iou"] * s["n_sets"] for s in ses) / tot, 3) if ses else None}
+    so = [s["sensor_only"] for s in ses if s.get("sensor_only", {}).get("n_sets")]
+    n = sum(x["n_sets"] for x in so) or 1
+    sensor_only = {"fully_right_pct": round(100 * sum(x["fully_right"] for x in so) / n, 1) if so else None,
+                   "found_pct": round(100 * sum(x["found"] for x in so) / n, 1) if so else None,
+                   "named_pct": round(100 * sum(x["named"] for x in so) / n, 1) if so else None,
+                   "reps_exact_pct": round(100 * sum(x["reps_exact"] for x in so) / n, 1) if so else None,
+                   "false_sets": sum(x["false_sets"] for x in so),
+                   "modes": sorted({x["mode"] for x in so})}
     try:
         commit = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=ROOT,
                                 capture_output=True, text=True).stdout.strip()
     except Exception:
         commit = None
     return {"when": datetime.now(timezone.utc).isoformat(timespec="seconds"), "commit": commit,
-            "n_trusted_sessions": len(ses), "detection": agg, "sessions": ses,
+            "n_trusted_sessions": len(ses), "detection": agg, "sensor_only": sensor_only, "sessions": ses,
             "classifier_loso": eval_classifier(root)}
 
 

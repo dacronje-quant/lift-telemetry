@@ -1,0 +1,1543 @@
+{
+"session": "2026-11-01",
+"placement": "wrist",
+"sets_mtime": 1793537344.5710216,
+"features": [
+"g_x",
+"g_y",
+"g_z",
+"g_std_x",
+"g_std_y",
+"g_std_z",
+"rot_range_deg",
+"gyro_rms_x",
+"gyro_rms_y",
+"gyro_rms_z",
+"gyro_dom_frac",
+"a_vert_rms",
+"a_horiz_rms",
+"vert_ratio",
+"rom_cm",
+"period_s"
+],
+"sets": [
+{
+"index": 1,
+"label": "Bench Press (Barbell)",
+"key": "bench",
+"kg": 40.0,
+"reps": 6,
+"rpe": null,
+"bouts": 1,
+"generic": "pos/top",
+"trials": {
+"pos/top": {
+"err": 0,
+"n": 7
+},
+"pos/bottom": {
+"err": 0,
+"n": 6
+},
+"gx/top": {
+"err": 6,
+"n": 0
+},
+"gx/bottom": {
+"err": 1,
+"n": 8
+},
+"gy/top": {
+"err": 0,
+"n": 6
+},
+"gy/bottom": {
+"err": 1,
+"n": 5
+},
+"gz/top": {
+"err": 1,
+"n": 5
+},
+"gz/bottom": {
+"err": 0,
+"n": 6
+}
+},
+"features": [
+0.98298,
+-0.07959,
+0.09848,
+0.0153,
+0.09594,
+0.09096,
+9.75659,
+0.21141,
+0.42969,
+0.53895,
+0.45672,
+2.81298,
+0.68895,
+0.80327,
+46.13128,
+1.68
+],
+"n_all": 7,
+"n_clean": 6,
+"rep_s": 1.73,
+"rom_m": 0.3988233718322981,
+"rotation_deg": 11.199257330696565,
+"mean_velocity": 0.4492982601820974,
+"velocity_loss_pct": 6.367845290736426
+},
+{
+"index": 2,
+"label": "Bench Press (Barbell)",
+"key": "bench",
+"kg": 60.0,
+"reps": 6,
+"rpe": null,
+"bouts": 1,
+"generic": "pos/top",
+"trials": {
+"pos/top": {
+"err": 1,
+"n": 5
+},
+"pos/bottom": {
+"err": 1,
+"n": 5
+},
+"gx/top": {
+"err": 0,
+"n": 7
+},
+"gx/bottom": {
+"err": 1,
+"n": 9
+},
+"gy/top": {
+"err": 0,
+"n": 7
+},
+"gy/bottom": {
+"err": 2,
+"n": 4
+},
+"gz/top": {
+"err": 0,
+"n": 7
+},
+"gz/bottom": {
+"err": 3,
+"n": 3
+}
+},
+"features": [
+0.98325,
+-0.10183,
+0.05604,
+0.0151,
+0.09839,
+0.09901,
+12.52194,
+0.21266,
+0.39209,
+0.46555,
+0.43497,
+2.04806,
+0.57992,
+0.77933,
+43.63077,
+2.42
+],
+"n_all": 5,
+"n_clean": 4,
+"rep_s": 2.42,
+"rom_m": 0.38479104474759296,
+"rotation_deg": 11.674171107617035,
+"mean_velocity": 0.3573280607190069,
+"velocity_loss_pct": 20.11184026938327
+},
+{
+"index": 3,
+"label": "Bench Press (Barbell)",
+"key": "bench",
+"kg": 70.0,
+"reps": 6,
+"rpe": 6.0,
+"bouts": 1,
+"generic": "pos/top",
+"trials": {
+"pos/top": {
+"err": 0,
+"n": 7
+},
+"pos/bottom": {
+"err": 1,
+"n": 7
+},
+"gx/top": {
+"err": 2,
+"n": 4
+},
+"gx/bottom": {
+"err": 0,
+"n": 11
+},
+"gy/top": {
+"err": 3,
+"n": 3
+},
+"gy/bottom": {
+"err": 2,
+"n": 4
+},
+"gz/top": {
+"err": 0,
+"n": 7
+},
+"gz/bottom": {
+"err": 0,
+"n": 6
+}
+},
+"features": [
+0.98167,
+-0.11387,
+0.05878,
+0.0154,
+0.10366,
+0.09449,
+10.27479,
+0.14522,
+0.33338,
+0.4047,
+0.45817,
+1.54522,
+0.46435,
+0.76893,
+45.48645,
+4.96
+],
+"n_all": 7,
+"n_clean": 6,
+"rep_s": 2.58,
+"rom_m": 0.3947619143361508,
+"rotation_deg": 11.123250200315109,
+"mean_velocity": 0.30256418206862645,
+"velocity_loss_pct": 17.76058352125528
+},
+{
+"index": 4,
+"label": "Bench Press (Barbell)",
+"key": "bench",
+"kg": 80.0,
+"reps": 6,
+"rpe": 7.5,
+"bouts": 1,
+"generic": "pos/top",
+"trials": {
+"pos/top": {
+"err": 0,
+"n": 6
+},
+"pos/bottom": {
+"err": 0,
+"n": 6
+},
+"gx/top": {
+"err": 2,
+"n": 4
+},
+"gx/bottom": {
+"err": 3,
+"n": 3
+},
+"gy/top": {
+"err": 0,
+"n": 6
+},
+"gy/bottom": {
+"err": 0,
+"n": 7
+},
+"gz/top": {
+"err": 0,
+"n": 8
+},
+"gz/bottom": {
+"err": 0,
+"n": 9
+}
+},
+"features": [
+0.98595,
+-0.09956,
+0.01602,
+0.00985,
+0.10139,
+0.08583,
+10.92353,
+0.11101,
+0.27698,
+0.32256,
+0.45396,
+0.82586,
+0.41096,
+0.66773,
+28.03795,
+3.32
+],
+"n_all": 6,
+"n_clean": 6,
+"rep_s": 3.23,
+"rom_m": 0.45247151723160906,
+"rotation_deg": 13.286623809500897,
+"mean_velocity": 0.22821331610703377,
+"velocity_loss_pct": 5.571887578463568
+},
+{
+"index": 5,
+"label": "Deadlift (Barbell)",
+"key": "deadlift",
+"kg": 60.0,
+"reps": 5,
+"rpe": null,
+"bouts": 1,
+"generic": "pos/bottom",
+"trials": {
+"pos/top": {
+"err": 3,
+"n": 8
+},
+"pos/bottom": {
+"err": 1,
+"n": 7
+},
+"gx/top": {
+"err": 0,
+"n": 6
+},
+"gx/bottom": {
+"err": 0,
+"n": 5
+},
+"gy/top": {
+"err": 1,
+"n": 7
+},
+"gy/bottom": {
+"err": 0,
+"n": 7
+},
+"gz/top": {
+"err": 0,
+"n": 5
+},
+"gz/bottom": {
+"err": 0,
+"n": 6
+}
+},
+"features": [
+-0.97629,
+0.13871,
+-0.03061,
+0.02555,
+0.08536,
+0.1369,
+15.08915,
+0.65378,
+0.33691,
+0.29701,
+0.50771,
+2.12666,
+1.1353,
+0.65196,
+49.26237,
+3.02
+],
+"n_all": 7,
+"n_clean": 6,
+"rep_s": 3.04,
+"rom_m": 0.47627804001435825,
+"rotation_deg": 13.107943046638079,
+"mean_velocity": 0.3837426209801697,
+"velocity_loss_pct": 3.806591795727378
+},
+{
+"index": 6,
+"label": "Deadlift (Barbell)",
+"key": "deadlift",
+"kg": 80.0,
+"reps": 5,
+"rpe": null,
+"bouts": 1,
+"generic": "pos/bottom",
+"trials": {
+"pos/top": {
+"err": 0,
+"n": 7
+},
+"pos/bottom": {
+"err": 0,
+"n": 7
+},
+"gx/top": {
+"err": 0,
+"n": 5
+},
+"gx/bottom": {
+"err": 0,
+"n": 6
+},
+"gy/top": {
+"err": 0,
+"n": 5
+},
+"gy/bottom": {
+"err": 0,
+"n": 6
+},
+"gz/top": {
+"err": 0,
+"n": 6
+},
+"gz/bottom": {
+"err": 0,
+"n": 5
+}
+},
+"features": [
+-0.96105,
+0.16773,
+-0.03138,
+0.06756,
+0.15728,
+0.13402,
+28.03459,
+0.38546,
+0.38735,
+0.33517,
+0.3496,
+2.06757,
+1.17661,
+0.63732,
+53.70449,
+2.98
+],
+"n_all": 7,
+"n_clean": 4,
+"rep_s": 3.04,
+"rom_m": 0.6689375336229924,
+"rotation_deg": 15.518355688452765,
+"mean_velocity": 0.4924675183227145,
+"velocity_loss_pct": 6.0267783410840465
+},
+{
+"index": 7,
+"label": "Deadlift (Barbell)",
+"key": "deadlift",
+"kg": 100.0,
+"reps": 5,
+"rpe": 6.0,
+"bouts": 1,
+"generic": "pos/bottom",
+"trials": {
+"pos/top": {
+"err": 0,
+"n": 5
+},
+"pos/bottom": {
+"err": 0,
+"n": 6
+},
+"gx/top": {
+"err": 2,
+"n": 3
+},
+"gx/bottom": {
+"err": 0,
+"n": 6
+},
+"gy/top": {
+"err": 0,
+"n": 5
+},
+"gy/bottom": {
+"err": 0,
+"n": 5
+},
+"gz/top": {
+"err": 0,
+"n": 5
+},
+"gz/bottom": {
+"err": 0,
+"n": 5
+}
+},
+"features": [
+-0.97561,
+0.09144,
+-0.04242,
+0.06354,
+0.07803,
+0.16704,
+12.23184,
+0.43843,
+0.39636,
+0.26716,
+0.39787,
+1.91036,
+1.05318,
+0.64462,
+31.70688,
+4.14
+],
+"n_all": 6,
+"n_clean": 5,
+"rep_s": 4.1,
+"rom_m": 1.395783618740369,
+"rotation_deg": 14.911331066020189,
+"mean_velocity": 0.4212089927667055,
+"velocity_loss_pct": 11.814157181971117
+},
+{
+"index": 8,
+"label": "Deadlift (Barbell)",
+"key": "deadlift",
+"kg": 100.0,
+"reps": 5,
+"rpe": 6.0,
+"bouts": 1,
+"generic": "pos/bottom",
+"trials": {
+"pos/top": {
+"err": 0,
+"n": 6
+},
+"pos/bottom": {
+"err": 0,
+"n": 7
+},
+"gx/top": {
+"err": 0,
+"n": 6
+},
+"gx/bottom": {
+"err": 0,
+"n": 6
+},
+"gy/top": {
+"err": 0,
+"n": 5
+},
+"gy/bottom": {
+"err": 0,
+"n": 5
+},
+"gz/top": {
+"err": 0,
+"n": 6
+},
+"gz/bottom": {
+"err": 0,
+"n": 5
+}
+},
+"features": [
+-0.94571,
+0.1885,
+-0.03171,
+0.09997,
+0.21067,
+0.12132,
+32.71547,
+0.79248,
+0.46258,
+0.25411,
+0.52511,
+1.75628,
+1.33442,
+0.56825,
+35.84286,
+3.7
+],
+"n_all": 7,
+"n_clean": 5,
+"rep_s": 4.0,
+"rom_m": 1.2919118891338628,
+"rotation_deg": 14.837103433942394,
+"mean_velocity": 0.43615945710223514,
+"velocity_loss_pct": 13.396102562389991
+},
+{
+"index": 9,
+"label": "Bulgarian Split Squat (Dumbbell)",
+"key": "bss",
+"kg": 10.0,
+"reps": 7,
+"rpe": 6.0,
+"bouts": 2,
+"generic": "pos/top",
+"trials": {
+"pos/top": {
+"err": 1,
+"n": 13
+},
+"pos/bottom": {
+"err": 3,
+"n": 11
+},
+"gx/top": {
+"err": 7,
+"n": 0
+},
+"gx/bottom": {
+"err": 7,
+"n": 0
+},
+"gy/top": {
+"err": 0,
+"n": 12
+},
+"gy/bottom": {
+"err": 0,
+"n": 12
+},
+"gz/top": {
+"err": 0,
+"n": 9
+},
+"gz/bottom": {
+"err": 1,
+"n": 6
+}
+},
+"features": [
+-0.94865,
+0.19616,
+-0.07589,
+0.11214,
+0.18934,
+0.0861,
+43.57868,
+0.4933,
+0.23253,
+0.27733,
+0.49175,
+1.78749,
+1.12066,
+0.61465,
+44.84207,
+2.16
+],
+"n_all": 13,
+"n_clean": 10,
+"rep_s": 2.21,
+"rom_m": 0.4780918855568797,
+"rotation_deg": 5.005853098179367,
+"mean_velocity": 0.44325655136257414,
+"velocity_loss_pct": null
+},
+{
+"index": 10,
+"label": "Bulgarian Split Squat (Dumbbell)",
+"key": "bss",
+"kg": 10.0,
+"reps": 7,
+"rpe": null,
+"bouts": 2,
+"generic": "pos/top",
+"trials": {
+"pos/top": {
+"err": 0,
+"n": 14
+},
+"pos/bottom": {
+"err": 0,
+"n": 14
+},
+"gx/top": {
+"err": 2,
+"n": 14
+},
+"gx/bottom": {
+"err": 2,
+"n": 13
+},
+"gy/top": {
+"err": 0,
+"n": 17
+},
+"gy/bottom": {
+"err": 0,
+"n": 15
+},
+"gz/top": {
+"err": 3,
+"n": 10
+},
+"gz/bottom": {
+"err": 0,
+"n": 15
+}
+},
+"features": [
+-0.97899,
+0.14637,
+-0.11913,
+0.01369,
+0.06539,
+0.03868,
+6.69701,
+0.4302,
+0.14981,
+0.27267,
+0.50452,
+2.0871,
+0.81311,
+0.71964,
+62.42112,
+3.92
+],
+"n_all": 14,
+"n_clean": 12,
+"rep_s": 1.93,
+"rom_m": 0.47253774075364474,
+"rotation_deg": 5.540348922129063,
+"mean_velocity": 0.4735677519056876,
+"velocity_loss_pct": null
+},
+{
+"index": 11,
+"label": "Bulgarian Split Squat (Dumbbell)",
+"key": "bss",
+"kg": 10.0,
+"reps": 7,
+"rpe": null,
+"bouts": 2,
+"generic": "pos/top",
+"trials": {
+"pos/top": {
+"err": 1,
+"n": 13
+},
+"pos/bottom": {
+"err": 1,
+"n": 13
+},
+"gx/top": {
+"err": 0,
+"n": 14
+},
+"gx/bottom": {
+"err": 2,
+"n": 13
+},
+"gy/top": {
+"err": 0,
+"n": 17
+},
+"gy/bottom": {
+"err": 3,
+"n": 16
+},
+"gz/top": {
+"err": 3,
+"n": 14
+},
+"gz/bottom": {
+"err": 5,
+"n": 17
+}
+},
+"features": [
+-0.98007,
+0.16543,
+-0.07888,
+0.01419,
+0.06264,
+0.04175,
+6.61739,
+0.18439,
+0.12221,
+0.24899,
+0.44816,
+2.12151,
+0.6932,
+0.75372,
+48.88276,
+1.84
+],
+"n_all": 13,
+"n_clean": 12,
+"rep_s": 1.82,
+"rom_m": 0.4596918683009513,
+"rotation_deg": 4.927452630135667,
+"mean_velocity": 0.49352209759650334,
+"velocity_loss_pct": null
+},
+{
+"index": 12,
+"label": "Pulldown (Wide Parellel Grip)",
+"key": "pulldown",
+"kg": 60.0,
+"reps": 10,
+"rpe": null,
+"bouts": 1,
+"generic": "pos/top",
+"trials": {
+"pos/top": {
+"err": 1,
+"n": 9
+},
+"pos/bottom": {
+"err": 0,
+"n": 10
+},
+"gx/top": {
+"err": 3,
+"n": 7
+},
+"gx/bottom": {
+"err": 3,
+"n": 7
+},
+"gy/top": {
+"err": 0,
+"n": 14
+},
+"gy/bottom": {
+"err": 0,
+"n": 16
+},
+"gz/top": {
+"err": 0,
+"n": 20
+},
+"gz/bottom": {
+"err": 5,
+"n": 18
+}
+},
+"features": [
+0.96316,
+-0.13132,
+0.11942,
+0.09304,
+0.0947,
+0.15231,
+13.12513,
+0.704,
+0.80084,
+0.47818,
+0.40385,
+2.66074,
+1.56626,
+0.62946,
+69.22778,
+2.54
+],
+"n_all": 9,
+"n_clean": 9,
+"rep_s": 2.42,
+"rom_m": 0.651778979628877,
+"rotation_deg": 13.379371581133986,
+"mean_velocity": 0.4385902155595343,
+"velocity_loss_pct": 1.4457457808641023
+},
+{
+"index": 13,
+"label": "Pulldown (Wide Parellel Grip)",
+"key": "pulldown",
+"kg": 50.0,
+"reps": 12,
+"rpe": 6.0,
+"bouts": 1,
+"generic": "pos/top",
+"trials": {
+"pos/top": {
+"err": 1,
+"n": 11
+},
+"pos/bottom": {
+"err": 0,
+"n": 12
+},
+"gx/top": {
+"err": 3,
+"n": 9
+},
+"gx/bottom": {
+"err": 5,
+"n": 7
+},
+"gy/top": {
+"err": 0,
+"n": 18
+},
+"gy/bottom": {
+"err": 4,
+"n": 21
+},
+"gz/top": {
+"err": 0,
+"n": 22
+},
+"gz/bottom": {
+"err": 1,
+"n": 22
+}
+},
+"features": [
+0.96911,
+-0.08318,
+0.09856,
+0.10699,
+0.12736,
+0.12852,
+12.3858,
+0.57387,
+0.66405,
+0.67321,
+0.35226,
+2.66861,
+1.69413,
+0.61168,
+75.55097,
+2.52
+],
+"n_all": 11,
+"n_clean": 10,
+"rep_s": 2.33,
+"rom_m": 0.6146016020072883,
+"rotation_deg": 14.620579551241878,
+"mean_velocity": 0.48757053477833123,
+"velocity_loss_pct": 8.607519613378075
+},
+{
+"index": 14,
+"label": "Pulldown (Wide Parellel Grip)",
+"key": "pulldown",
+"kg": 50.0,
+"reps": 12,
+"rpe": 7.5,
+"bouts": 1,
+"generic": "pos/top",
+"trials": {
+"pos/top": {
+"err": 0,
+"n": 12
+},
+"pos/bottom": {
+"err": 0,
+"n": 13
+},
+"gx/top": {
+"err": 6,
+"n": 6
+},
+"gx/bottom": {
+"err": 5,
+"n": 7
+},
+"gy/top": {
+"err": 0,
+"n": 15
+},
+"gy/bottom": {
+"err": 3,
+"n": 9
+},
+"gz/top": {
+"err": 0,
+"n": 15
+},
+"gz/bottom": {
+"err": 5,
+"n": 7
+}
+},
+"features": [
+0.96203,
+-0.08297,
+0.10024,
+0.11375,
+0.16654,
+0.12996,
+17.02157,
+0.60488,
+0.66179,
+0.72784,
+0.36492,
+2.7703,
+1.72094,
+0.61682,
+70.83675,
+2.58
+],
+"n_all": 12,
+"n_clean": 11,
+"rep_s": 2.34,
+"rom_m": 0.5930395963337691,
+"rotation_deg": 15.083678582503966,
+"mean_velocity": 0.447288702072597,
+"velocity_loss_pct": 44.8184145908517
+},
+{
+"index": 15,
+"label": "Triceps Rope Pushdown",
+"key": "pushdown",
+"kg": 21.0,
+"reps": 10,
+"rpe": 6.0,
+"bouts": 1,
+"generic": "gx/top",
+"trials": {
+"pos/top": {
+"err": 0,
+"n": 10
+},
+"pos/bottom": {
+"err": 0,
+"n": 10
+},
+"gx/top": {
+"err": 0,
+"n": 10
+},
+"gx/bottom": {
+"err": 0,
+"n": 10
+},
+"gy/top": {
+"err": 0,
+"n": 11
+},
+"gy/bottom": {
+"err": 1,
+"n": 9
+},
+"gz/top": {
+"err": 0,
+"n": 11
+},
+"gz/bottom": {
+"err": 0,
+"n": 11
+}
+},
+"features": [
+-0.3848,
+0.69805,
+-0.29848,
+0.44356,
+0.2377,
+0.14938,
+49.5451,
+0.86739,
+1.33658,
+1.70966,
+0.43685,
+2.51507,
+2.6937,
+0.48285,
+35.19742,
+1.74
+],
+"n_all": 10,
+"n_clean": 9,
+"rep_s": 1.72,
+"rom_m": 0.25704063882714784,
+"rotation_deg": 48.93451505265127,
+"mean_velocity": 0.289477089411074,
+"velocity_loss_pct": 15.412327211377825
+},
+{
+"index": 16,
+"label": "Triceps Rope Pushdown",
+"key": "pushdown",
+"kg": 21.0,
+"reps": 10,
+"rpe": 7.5,
+"bouts": 1,
+"generic": "gx/top",
+"trials": {
+"pos/top": {
+"err": 1,
+"n": 12
+},
+"pos/bottom": {
+"err": 1,
+"n": 13
+},
+"gx/top": {
+"err": 0,
+"n": 12
+},
+"gx/bottom": {
+"err": 0,
+"n": 11
+},
+"gy/top": {
+"err": 0,
+"n": 12
+},
+"gy/bottom": {
+"err": 2,
+"n": 8
+},
+"gz/top": {
+"err": 2,
+"n": 8
+},
+"gz/bottom": {
+"err": 0,
+"n": 10
+}
+},
+"features": [
+-0.24589,
+0.72541,
+-0.27236,
+0.50668,
+0.19118,
+0.21416,
+51.04063,
+0.83152,
+1.12672,
+1.36678,
+0.41106,
+1.74198,
+2.05281,
+0.45904,
+32.09776,
+2.14
+],
+"n_all": 12,
+"n_clean": 10,
+"rep_s": 2.1,
+"rom_m": 0.27484050146637434,
+"rotation_deg": 51.16449476894685,
+"mean_velocity": 0.2672232701699912,
+"velocity_loss_pct": 28.888004652657813
+},
+{
+"index": 17,
+"label": "Triceps Rope Pushdown",
+"key": "pushdown",
+"kg": 21.0,
+"reps": 10,
+"rpe": 8.5,
+"bouts": 1,
+"generic": "gx/top",
+"trials": {
+"pos/top": {
+"err": 0,
+"n": 10
+},
+"pos/bottom": {
+"err": 1,
+"n": 9
+},
+"gx/top": {
+"err": 1,
+"n": 9
+},
+"gx/bottom": {
+"err": 1,
+"n": 9
+},
+"gy/top": {
+"err": 0,
+"n": 12
+},
+"gy/bottom": {
+"err": 0,
+"n": 11
+},
+"gz/top": {
+"err": 0,
+"n": 12
+},
+"gz/bottom": {
+"err": 0,
+"n": 12
+}
+},
+"features": [
+-0.20367,
+0.78494,
+-0.35661,
+0.42914,
+0.13946,
+0.1077,
+42.92754,
+0.51702,
+1.03461,
+1.16283,
+0.42838,
+1.2623,
+1.50781,
+0.45568,
+43.5652,
+5.96
+],
+"n_all": 9,
+"n_clean": 9,
+"rep_s": 2.36,
+"rom_m": 0.27040661318064474,
+"rotation_deg": 47.55881324827622,
+"mean_velocity": 0.23900253748555814,
+"velocity_loss_pct": 31.04068405198109
+},
+{
+"index": 18,
+"label": "Hammer Curl (Dumbbell)",
+"key": "curl",
+"kg": 12.5,
+"reps": 12,
+"rpe": 7.0,
+"bouts": 1,
+"generic": "gx/bottom",
+"trials": {
+"pos/top": {
+"err": 2,
+"n": 10
+},
+"pos/bottom": {
+"err": 2,
+"n": 10
+},
+"gx/top": {
+"err": 3,
+"n": 9
+},
+"gx/bottom": {
+"err": 2,
+"n": 10
+},
+"gy/top": {
+"err": 4,
+"n": 8
+},
+"gy/bottom": {
+"err": 6,
+"n": 6
+},
+"gz/top": {
+"err": 3,
+"n": 9
+},
+"gz/bottom": {
+"err": 2,
+"n": 10
+}
+},
+"features": [
+-0.4215,
+0.54539,
+-0.12318,
+0.61989,
+0.3435,
+0.08633,
+70.92723,
+0.38055,
+0.28662,
+2.06337,
+0.75566,
+1.71994,
+1.16603,
+0.59596,
+46.09567,
+2.26
+],
+"n_all": 10,
+"n_clean": 10,
+"rep_s": 2.2300000000000004,
+"rom_m": 0.482734389599198,
+"rotation_deg": 71.79922500604934,
+"mean_velocity": 0.5093566648891177,
+"velocity_loss_pct": 10.038033897518249
+},
+{
+"index": 19,
+"label": "Hammer Curl (Dumbbell)",
+"key": "curl",
+"kg": 12.5,
+"reps": 10,
+"rpe": 7.5,
+"bouts": 1,
+"generic": "gx/bottom",
+"trials": {
+"pos/top": {
+"err": 0,
+"n": 11
+},
+"pos/bottom": {
+"err": 0,
+"n": 11
+},
+"gx/top": {
+"err": 7,
+"n": 3
+},
+"gx/bottom": {
+"err": 1,
+"n": 9
+},
+"gy/top": {
+"err": 5,
+"n": 5
+},
+"gy/bottom": {
+"err": 1,
+"n": 9
+},
+"gz/top": {
+"err": 2,
+"n": 8
+},
+"gz/bottom": {
+"err": 5,
+"n": 5
+}
+},
+"features": [
+-0.66147,
+0.44201,
+-0.08826,
+0.48867,
+0.32897,
+0.1108,
+74.38964,
+0.41418,
+0.41731,
+1.60702,
+0.65902,
+1.67529,
+1.07536,
+0.60905,
+35.27416,
+3.42
+],
+"n_all": 9,
+"n_clean": 9,
+"rep_s": 3.34,
+"rom_m": 0.4185157462800729,
+"rotation_deg": 80.99329407077451,
+"mean_velocity": 0.45097175002912326,
+"velocity_loss_pct": 7.755401741888729
+},
+{
+"index": 20,
+"label": "Hammer Curl (Dumbbell)",
+"key": "curl",
+"kg": 12.5,
+"reps": 7,
+"rpe": 8.5,
+"bouts": 1,
+"generic": "gx/bottom",
+"trials": {
+"pos/top": {
+"err": 0,
+"n": 9
+},
+"pos/bottom": {
+"err": 1,
+"n": 10
+},
+"gx/top": {
+"err": 0,
+"n": 7
+},
+"gx/bottom": {
+"err": 0,
+"n": 7
+},
+"gy/top": {
+"err": 1,
+"n": 6
+},
+"gy/bottom": {
+"err": 0,
+"n": 7
+},
+"gz/top": {
+"err": 0,
+"n": 7
+},
+"gz/bottom": {
+"err": 0,
+"n": 7
+}
+},
+"features": [
+-0.63056,
+0.47107,
+-0.0805,
+0.50596,
+0.33223,
+0.08733,
+71.54945,
+0.40374,
+0.25244,
+1.54307,
+0.70164,
+1.36977,
+0.83762,
+0.62054,
+32.18728,
+3.8
+],
+"n_all": 7,
+"n_clean": 7,
+"rep_s": 3.5,
+"rom_m": 0.39037959548546247,
+"rotation_deg": 79.60632776141767,
+"mean_velocity": 0.37427532779547484,
+"velocity_loss_pct": 2.9542370662515838
+},
+{
+"index": 21,
+"label": "Lateral Raise (Dumbbell)",
+"key": "lateral",
+"kg": 8.0,
+"reps": 10,
+"rpe": 7.0,
+"bouts": 1,
+"generic": "pos/bottom",
+"trials": {
+"pos/top": {
+"err": 0,
+"n": 10
+},
+"pos/bottom": {
+"err": 0,
+"n": 10
+},
+"gx/top": {
+"err": 2,
+"n": 8
+},
+"gx/bottom": {
+"err": 1,
+"n": 9
+},
+"gy/top": {
+"err": 2,
+"n": 8
+},
+"gy/bottom": {
+"err": 0,
+"n": 10
+},
+"gz/top": {
+"err": 0,
+"n": 10
+},
+"gz/bottom": {
+"err": 0,
+"n": 10
+}
+},
+"features": [
+-0.52203,
+0.38435,
+-0.41825,
+0.33916,
+0.24462,
+0.47954,
+58.74855,
+1.20289,
+1.57216,
+0.34138,
+0.50447,
+3.97207,
+3.21614,
+0.55258,
+78.38383,
+3.56
+],
+"n_all": 10,
+"n_clean": 8,
+"rep_s": 1.77,
+"rom_m": 0.7084172358784808,
+"rotation_deg": 49.62793716726189,
+"mean_velocity": 0.7869898126838324,
+"velocity_loss_pct": 2.396886133323668
+},
+{
+"index": 22,
+"label": "Lateral Raise (Dumbbell)",
+"key": "lateral",
+"kg": 8.0,
+"reps": 10,
+"rpe": 7.0,
+"bouts": 1,
+"generic": "pos/bottom",
+"trials": {
+"pos/top": {
+"err": 1,
+"n": 9
+},
+"pos/bottom": {
+"err": 0,
+"n": 10
+},
+"gx/top": {
+"err": 3,
+"n": 7
+},
+"gx/bottom": {
+"err": 2,
+"n": 8
+},
+"gy/top": {
+"err": 0,
+"n": 13
+},
+"gy/bottom": {
+"err": 1,
+"n": 9
+},
+"gz/top": {
+"err": 0,
+"n": 10
+},
+"gz/bottom": {
+"err": 0,
+"n": 11
+}
+},
+"features": [
+-0.47908,
+0.46473,
+-0.42022,
+0.2915,
+0.27064,
+0.46873,
+58.03172,
+1.36335,
+1.39584,
+0.34683,
+0.4494,
+3.43296,
+3.02519,
+0.53157,
+74.09404,
+2.14
+],
+"n_all": 10,
+"n_clean": 9,
+"rep_s": 2.08,
+"rom_m": 0.7516688867173308,
+"rotation_deg": 59.92145460225278,
+"mean_velocity": 0.7557290643200921,
+"velocity_loss_pct": 8.729365705173455
+}
+]
+}

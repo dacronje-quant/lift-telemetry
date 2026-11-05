@@ -124,7 +124,7 @@ class CentroidModel:
         return dict(zip(self.labels, lp))
 
 
-def _window_score(data, t0, t1, logged, ex, cache, fs, placement="wrist"):
+def _window_score(data, t0, t1, logged, ex, cache, fs, placement="wrist", profile=None):
     """How well 'logged set of ex happened inside [t0, t1]' fits the signal.
 
     The exercise's own rep detector runs on the window once per profile
@@ -133,11 +133,11 @@ def _window_score(data, t0, t1, logged, ex, cache, fs, placement="wrist"):
     fidget cycles), and scored on count error, rhythm regularity (CV of
     rep durations), fraction of plausible reps and median range of motion.
     """
-    prof = profile_for(ex, placement)
-    sig = (prof["channel"], prof["rest"], prof["bouts"])
+    prof = dict(profile) if profile else profile_for(ex, placement)
+    sig = (prof["channel"], prof["rest"], prof["bouts"], prof["conc"])
     key = (round(t0, 2), round(t1, 2), sig)
     if key not in cache:
-        cache[key] = analyze_set(data, t0, t1, ex, fs=fs, placement=placement)["reps"]
+        cache[key] = analyze_set(data, t0, t1, ex, fs=fs, placement=placement, profile=prof)["reps"]
     reps = cache[key]
     target = max(1, logged * prof["bouts"])
     n = len(reps)
@@ -224,7 +224,7 @@ def align_sets(data, logged_sets, runs=None, model=None, fs=25.0, min_gap_s=5.0,
     def score(k, w):
         s = logged_sets[k]
         a, b, _ = wins[w]
-        r = _window_score(data, a, b, s["reps"], s["exercise_key"], cache, fs, placement)
+        r = _window_score(data, a, b, s["reps"], s["exercise_key"], cache, fs, placement, s.get("profile"))
         if r["n"] == 0:
             return -np.inf, r
         sc = (reward - w_count * r["count_err"] - w_cv * min(r["cv"], 1.0)

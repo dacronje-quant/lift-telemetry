@@ -6,6 +6,8 @@ Canonical frame (what the rest of vbt expects), per sample:
     accelerationX/Y/Z          user acceleration (gravity removed), in g
     gravityX/Y/Z               unit vector pointing *down* in the sensor frame
     rotationRateX/Y/Z          rad/s (zeros if the source has no gyroscope)
+    quaternionW/X/Y/Z (opt.)   device attitude, when the source provides it (full earth frame:
+                               lets later code look at horizontal bar path, not just vertical)
     orientX/Y/Z  (optional)    fast orientation unit vector, only without a gyroscope
 
 i.e. Apple CoreMotion "device motion": raw accelerometer = gravity + user.
@@ -36,6 +38,7 @@ import pandas as pd
 from scipy.signal import butter, filtfilt
 
 G = 9.80665
+QUAT = ["quaternionW", "quaternionX", "quaternionY", "quaternionZ"]
 COLS = ["rotationRateX", "rotationRateY", "rotationRateZ", "gravityX", "gravityY", "gravityZ",
         "accelerationX", "accelerationY", "accelerationZ"]
 
@@ -196,9 +199,10 @@ def read_sensorlogger_watch(members, info):
     missing = [c for c in COLS + ["seconds_elapsed"] if c not in df.columns]
     if missing:
         raise ValueError(f"WristMotion.csv lacks {missing}")
+    has_q = all(c in df.columns for c in QUAT)
     info.update(format="sensorlogger-watch", placement=info.get("placement") or "wrist",
-                has_gyro=True, gravity="device")
-    return df[["seconds_elapsed"] + COLS], info
+                has_gyro=True, gravity="device", has_attitude=has_q)
+    return df[["seconds_elapsed"] + COLS + (QUAT if has_q else [])], info
 
 
 def read_sensorlogger_phone(members, info, accel_convention=None):

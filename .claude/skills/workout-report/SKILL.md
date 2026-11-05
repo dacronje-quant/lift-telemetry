@@ -58,7 +58,10 @@ Every sentence grounded in numbers on the page; plain words. Re-run the pipeline
 
 ## 5. Publish, measure, improve
 - Load the artifact skills, publish `reports/<id>.html` as a new Artifact (icon `chart`).
-- Reviewed session → `python -m vbt.evaluate --record`; say whether detection improved.
+- Reviewed session → re-run `python -m vbt.pipeline run <id>` (rebuilds its evidence),
+  then `python -m vbt.evaluate --record` and `python -m vbt.personal`. Say whether
+  log-guided detection and **sensor-only readiness** improved, and which learned exercise
+  settings were adopted or are still only promising. The report's sections 11–12 show both.
 - Then follow the working agreement in `CLAUDE.md`: fix one weakness the new data exposed,
   re-check the scoreboard on all reviewed sessions, `python -m vbt.pipeline run --all`,
   add a log line.
