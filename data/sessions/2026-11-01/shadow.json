@@ -4,9 +4,9 @@
 "trained_on_sets": 0,
 "found": 21,
 "false_sets": 1,
-"named": 16,
+"named": 17,
 "reps_exact": 9,
-"reps_within1": 12,
+"reps_within1": 11,
 "fully_right": 8,
 "rows": [
 {
@@ -172,8 +172,8 @@
 "logged": 10,
 "found": true,
 "guess": "Pulldown (Wide Parellel Grip)",
-"known": false,
-"named": false,
+"known": true,
+"named": true,
 "sensed": [
 12
 ],
@@ -276,15 +276,15 @@
 "label": "Hammer Curl (Dumbbell)",
 "logged": 10,
 "found": true,
-"guess": "Deadlift (Barbell)",
+"guess": "Triceps Rope Pushdown",
 "known": true,
 "named": false,
 "sensed": [
-11
+3
 ],
-"rep_err": 1,
-"t_start": 2463.92,
-"t_end": 2500.12
+"rep_err": 7,
+"t_start": 2475.44,
+"t_end": 2487.72
 },
 {
 "set": 20,

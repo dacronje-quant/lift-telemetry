@@ -29,9 +29,9 @@
 "trained_on_sets": 0,
 "found": 21,
 "false_sets": 1,
-"named": 16,
+"named": 17,
 "reps_exact": 9,
-"reps_within1": 12,
+"reps_within1": 11,
 "fully_right": 8,
 "readiness_pct": 36.4,
 "reference": "checked windows"

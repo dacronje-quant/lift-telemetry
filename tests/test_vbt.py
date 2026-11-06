@@ -415,3 +415,23 @@ def test_learning_page_is_separate(tmp_path):
     out = build(root, tmp_path / "learning.html")
     html = out.read_text()
     assert "/*DATA*/" not in html and "readyChart" in html
+
+
+def test_rep_shape_separates_movements():
+    """Same rhythm, different wrist rotation -> different rep shapes; same movement -> similar."""
+    from vbt import synth_set, analyze_set
+    from vbt.workout import rep_shape
+    a, _ = synth_set(n_reps=6, seed=2)
+    b, _ = synth_set(n_reps=6, seed=2, noise=0.02)
+    ra = analyze_set(a, a["t"][0] + 0.5, a["t"][-1] - 0.5, "bench")["reps"]
+    rb = analyze_set(b, b["t"][0] + 0.5, b["t"][-1] - 0.5, "bench")["reps"]
+    sa, sb = np.array(rep_shape(a, ra)), np.array(rep_shape(b, rb))
+    assert sa.shape == (7 * 12,)
+    # a rotating forearm: tilt gravity back and forth with each rep
+    c = {k: v.copy() for k, v in a.items()}
+    ang = 0.6 * np.sin(2 * np.pi * c["t"] / 2.6)
+    g = c["grav"][0] / np.linalg.norm(c["grav"][0])
+    perp = np.cross(g, [1.0, 0, 0]); perp /= np.linalg.norm(perp)
+    c["grav"] = 9.80665 * (np.cos(ang)[:, None] * g + np.sin(ang)[:, None] * perp)
+    sc = np.array(rep_shape(c, ra))
+    assert np.abs(sa - sb).mean() < np.abs(sa - sc).mean()

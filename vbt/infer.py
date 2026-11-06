@@ -25,7 +25,7 @@ from pathlib import Path
 import numpy as np
 
 from .align import candidate_runs
-from .workout import PROFILES, FEATURES, analyze_set, set_features, split_bouts
+from .workout import PROFILES, FEATURES, analyze_set, set_features, split_bouts, rep_shape
 from . import personal as P
 
 MIN_REPS = 3
@@ -81,11 +81,11 @@ def infer_sets(data, protos, prof_by_label=None, placement="wrist", fs=50.0, dis
     well it fits. The best lift-like hypothesis wins. (Measuring features over the
     whole segment fails: segments often include setup fidgeting.)
 
-    distances: optional callable(features, (t0, t1)) -> {label: distance}, used by the
-    shadow test to hide the set being judged from the prototypes.
+    distances: optional callable(features, (t0, t1), shape) -> {label: distance}, used by
+    the shadow test to hide the set being judged from the prototypes.
     """
     prof_by_label = prof_by_label or {}
-    distances = distances or (lambda f, span: protos.distances(f))
+    distances = distances or (lambda f, span, shape=None: protos.distances(f, shape))
     out = []
     for a, b in _blocks(data):
         best = None
@@ -100,16 +100,21 @@ def infer_sets(data, protos, prof_by_label=None, placement="wrist", fs=50.0, dis
             if not (cv <= 0.45 and clean >= 0.5 and rom >= (0.5 * norm if norm else 0.10)):
                 continue
             span = (reps[0]["t_start"], reps[-1]["t_end"])
-            dist = distances(set_features(data, *span), span).get(label, np.inf)
-            score = dist + 0.5 * cv
+            f = set_features(data, *span)
+            # rep shape helps choose WHICH exercise; the set-vs-noise gate (is_set) stays on
+            # the summary-feature distance it was calibrated with
+            full = distances(f, span, rep_shape(data, reps)).get(label, np.inf)
+            dist = distances(f, span, None).get(label, np.inf)
+            score = full + 0.5 * cv
+            # only hypotheses under which the segment looks like a real set compete
+            if not is_set(dist, cv, rom, clean):
+                continue
             if best is None or score < best[0]:
                 best = (score, label, key, res, span, dist, cv, rom)
         if best is None:
             continue
         _, label, key, res, span, dist, cv, rom = best
         reps = res["reps"]
-        if not is_set(dist, cv, rom, sum(r["ok"] for r in reps) / len(reps)):
-            continue
         known = dist <= UNKNOWN_FACTOR * protos.spread
         mode = (prof_by_label.get(label) or {}).get("count_mode", "all")
         bouts_n = PROFILES.get(key, PROFILES["auto"])["bouts"]
@@ -189,13 +194,13 @@ def shadow_test(d, data, log_sets, truth, root, placement="wrist"):
 
         cache = {}
 
-        def distances(f, span):
+        def distances(f, span, shape=None):
             hide = tuple(sorted(r["index"] for r in rows if r["index"] in tw
                                 and min(tw[r["index"]][1], span[1]) - max(tw[r["index"]][0], span[0]) > 0))
             if hide not in cache:
                 keep = [r for r in rows if r["index"] not in hide]
                 cache[hide] = P.Prototypes(keep) if len({r["label"] for r in keep}) >= 2 else protos
-            return cache[hide].distances(f)
+            return cache[hide].distances(f, shape)
     inferred = infer_sets(data, protos, prof_by_label, placement, distances=distances)
     m = _match(inferred, truth)
     rows = []

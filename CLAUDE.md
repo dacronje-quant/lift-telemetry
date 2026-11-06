@@ -63,6 +63,12 @@ For every new workout:
   so nothing is adopted until a second checked workout. Candidates to confirm next time:
   pulldown and split squat counted from rotation y. Set-vs-noise thresholds in infer.py are
   provisional (tuned on Nov 1).
+- 2026-11-06: rep-shape features (time-normalised height, rotation pattern, rotation rate per
+  rep) added to exercise recognition. Nov 1, each set hidden: 20 -> 21/22 named; sensor-only:
+  16 -> 17 named, readiness unchanged at 36% (8/22). Rhythm features (concentric share) hurt
+  (19/22) and were dropped. Also fixed sensor-only choosing a hypothesis that then failed the
+  set-vs-noise check (now only hypotheses that pass compete). Bottleneck is rep counting:
+  edge cycles and -1 undercounts. Next: learned edge-cycle rejection (needs 2+ checked workouts).
 - 2026-11-01 (later): made inputs generic. vbt/logs.py (Hevy, Strong, CSV, notes, JSON; kg/lb)
   and vbt/sensors.py (Sensor Logger watch/phone, any IMU CSV; gravity estimated from raw
   accel). Validated on the Nov 1 watch's raw accelerometer: with gyro, gravity within 0.6°

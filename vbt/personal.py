@@ -22,12 +22,15 @@ from pathlib import Path
 
 import numpy as np
 
-from .workout import PROFILES, FEATURES, analyze_set, set_features, split_bouts, exercise_key
+from .workout import PROFILES, FEATURES, analyze_set, set_features, split_bouts, exercise_key, rep_shape
 
 TRUSTED = ("manual", "reviewed")
 CANDIDATES = [(c, r) for c in ("pos", "gx", "gy", "gz") for r in ("top", "bottom")]
 MIN_SETS = 2            # an exercise needs this many checked sets before its profile is trusted
 MIN_GAIN = 0.2          # ...and must beat the generic profile by this many reps per set, held out
+SHAPE_WEIGHT = 0.5      # rep-shape distance, in units of its typical within-exercise spread.
+                        # 2026-11-01: +1 set named (sensor-only 16->17, hidden-set test 20->21/22),
+                        # same at 0.25-2; readiness unchanged (rep counting is the bottleneck)
 MIN_SESSIONS = 2        # ...using evidence from at least this many workouts (one day overfits:
                         #    on 2026-11-01 alone, held-out learned signals were worse, 0.64 vs 0.45)
 
@@ -70,6 +73,7 @@ def build_evidence(d, data, log_sets, windows, placement="wrist", fs=50.0):
                      "generic": f"{base['channel']}/{base['rest']}" if base["channel"] != "auto" else None,
                      "trials": trials, "features": [None if not np.isfinite(f[k]) else round(float(f[k]), 5)
                                                     for k in FEATURES],
+                     "shape": rep_shape(data, reps) if reps else None,
                      "n_all": len(reps), "n_clean": sum(r["ok"] for r in reps),
                      "rep_s": med("rep_s"), "rom_m": med("rom"), "rotation_deg": med("rotation_deg"),
                      "mean_velocity": gen.get("mean_velocity"), "velocity_loss_pct": gen.get("velocity_loss_pct")})
@@ -202,14 +206,29 @@ class Prototypes:
         self.labels = sorted(set(labels))
         self.keys = {r["label"]: r["key"] for r in rows}
         self.cent = np.array([Z[[j for j, l in enumerate(labels) if l == c]].mean(0) for c in self.labels])
-        own = [np.sqrt(((Z[j] - self.cent[self.labels.index(labels[j])]) ** 2).mean()) for j in range(len(labels))]
+        # rep-shape prototypes (rows from evidence built before shapes existed have none)
+        self.shape = {}
+        for c in self.labels:
+            sh = [r["shape"] for r in rows if r["label"] == c and r.get("shape")]
+            if sh:
+                self.shape[c] = np.mean(sh, 0)
+        sh_err = [np.sqrt(((np.array(r["shape"]) - self.shape[r["label"]]) ** 2).mean())
+                  for r in rows if r.get("shape") and r["label"] in self.shape]
+        self.shape_scale = max(float(np.median(sh_err)), 1e-3) if sh_err else 1.0
+        own = [np.sqrt(((Z[j] - self.cent[self.labels.index(labels[j])]) ** 2).mean())
+               + self._shape_term(rows[j].get("shape"), labels[j]) for j in range(len(labels))]
         self.spread = float(np.percentile(own, 95)) if own else 1.0
 
-    def distances(self, feats):
-        """feats: dict of FEATURES -> {label: distance to that exercise's prototype}."""
+    def _shape_term(self, shape, label):
+        if shape is None or label not in self.shape:
+            return 0.0
+        return SHAPE_WEIGHT * float(np.sqrt(((np.array(shape) - self.shape[label]) ** 2).mean())) / self.shape_scale
+
+    def distances(self, feats, shape=None):
+        """feats: dict of FEATURES (+ optional rep shape) -> {label: distance to its prototype}."""
         z = (np.nan_to_num(np.array([feats[k] for k in FEATURES], float)) - self.mu) / self.sd
         d = np.sqrt(((self.cent - z) ** 2).mean(1))
-        return dict(zip(self.labels, d.astype(float)))
+        return {c: float(d[i]) + self._shape_term(shape, c) for i, c in enumerate(self.labels)}
 
     def classify(self, feats):
         """feats: dict of FEATURES -> (label or None, distance, margin to runner-up)."""

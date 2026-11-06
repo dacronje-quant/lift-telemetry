@@ -329,6 +329,41 @@ def analyze_set(data, t0, t1, exercise, fs=100.0, placement="wrist", profile=Non
     return out
 
 
+SHAPE_POINTS = 12
+
+
+def rep_shape(data, reps, fs=25.0, n=SHAPE_POINTS):
+    """Average time-normalised rep: what one rep looks like, independent of speed.
+
+    Per rep (rest point to rest point, clean reps only), sampled at n points:
+    height normalised by the rep's range (shape, not size), gravity direction minus
+    its rep mean (the forearm's rotation pattern), and rotation rate / 3 rad/s.
+    Returns a list of 7*n floats, or None without reps.
+
+    Tested on 2026-11-01 (each set hidden, every exercise tried as the explanation):
+    adding this to the 16 summary features named 21/22 sets vs 20/22 without, at any
+    weight from 0.25 up; rhythm features (concentric/eccentric share) made it worse.
+    """
+    ok = [r for r in reps if r["ok"]] or list(reps)
+    if not ok:
+        return None
+    d = resample(data, ok[0]["t_start"] - 2, ok[-1]["t_end"] + 2, fs, pad=0)
+    t = d["t"]
+    g = d["grav"] / np.linalg.norm(d["grav"], axis=1, keepdims=True)
+    p = position(vertical_acceleration(d["acc"], d["grav"]), fs)
+    w = d.get("gyro", np.zeros_like(g))
+    curves = []
+    for r in ok:
+        q = np.linspace(r["t_start"], r["t_end"], n)
+        pp = np.interp(q, t, p)
+        pp = (pp - pp[0]) / (np.ptp(pp) + 1e-3)
+        gg = np.column_stack([np.interp(q, t, g[:, i]) for i in range(3)])
+        gg = gg - gg.mean(0)
+        ww = np.column_stack([np.interp(q, t, w[:, i]) for i in range(3)]) / 3.0
+        curves.append(np.r_[pp, gg.T.ravel(), ww.T.ravel()])
+    return [round(float(v), 4) for v in np.mean(curves, 0)]
+
+
 FEATURES = ["g_x", "g_y", "g_z", "g_std_x", "g_std_y", "g_std_z", "rot_range_deg",
             "gyro_rms_x", "gyro_rms_y", "gyro_rms_z", "gyro_dom_frac",
             "a_vert_rms", "a_horiz_rms", "vert_ratio", "rom_cm", "period_s"]

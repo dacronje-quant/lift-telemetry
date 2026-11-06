@@ -27,8 +27,9 @@ What limits it now, and the fix each needs:
   per exercise whether to skip them (`count_mode`) once two workouts agree; next step is a
   learned "edge cycle" detector from flagged reps in checked sets.
 - **Exercises sharing a pose** (deadlift / split squat / hammer curl hang the arm the same
-  way): more checked sets, plus rep-shape features (time-normalised rep curves, already
-  computed for the report's motion signatures) in the prototypes.
+  way): rep-shape features are now in the prototypes (`workout.rep_shape`, +1 set named on
+  Nov 1); more checked sets are what's left. Tried and rejected: rhythm features
+  (concentric/eccentric share), which cost 2 sets.
 - **Set-vs-noise rule** (`infer.is_set`) is hand-tuned on one day. Checked workouts provide
   labelled negatives for free (candidates that matched no logged set): replace the rule with
   a learned filter once ~5 workouts exist.

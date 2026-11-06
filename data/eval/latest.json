@@ -1,6 +1,6 @@
 {
- "when": "2026-11-05T20:06:15+00:00",
- "commit": "22e6fa6",
+ "when": "2026-11-06T05:39:59+00:00",
+ "commit": "c045419",
  "n_trusted_sessions": 1,
  "detection": {
   "recall": 1.0,
@@ -9,7 +9,7 @@
  "sensor_only": {
   "fully_right_pct": 36.4,
   "found_pct": 95.5,
-  "named_pct": 72.7,
+  "named_pct": 77.3,
   "reps_exact_pct": 40.9,
   "false_sets": 1,
   "modes": [
@@ -35,9 +35,9 @@
     "trained_on_sets": 0,
     "found": 21,
     "false_sets": 1,
-    "named": 16,
+    "named": 17,
     "reps_exact": 9,
-    "reps_within1": 12,
+    "reps_within1": 11,
     "fully_right": 8,
     "readiness_pct": 36.4
    }
