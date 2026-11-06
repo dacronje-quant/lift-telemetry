@@ -1,10 +1,10 @@
 {
- "when": "2026-11-06T05:39:59+00:00",
- "commit": "c045419",
+ "when": "2026-11-06T06:10:04+00:00",
+ "commit": "f0bac29",
  "n_trusted_sessions": 1,
  "detection": {
   "recall": 1.0,
-  "mean_iou": 0.759
+  "mean_iou": 0.754
  },
  "sensor_only": {
   "fully_right_pct": 36.4,
@@ -22,10 +22,10 @@
    "n_sets": 22,
    "prior_model": false,
    "recall": 1.0,
-   "mean_iou": 0.759,
+   "mean_iou": 0.754,
    "missed": [],
-   "rep_count_mae": 0.409,
-   "verdict_consistent": 0.591,
+   "rep_count_mae": 0.318,
+   "verdict_consistent": 0.727,
    "recall_unlogged_set": 0.857,
    "recall_invisible_set": 1.0,
    "invisible_set_skipped": false,

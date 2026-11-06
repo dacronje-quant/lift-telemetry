@@ -28,12 +28,12 @@
 "n_sets": 22,
 "trained_on_sets": 0,
 "found": 21,
-"false_sets": 2,
-"named": 16,
-"reps_exact": 7,
+"false_sets": 1,
+"named": 17,
+"reps_exact": 9,
 "reps_within1": 11,
-"fully_right": 6,
-"readiness_pct": 27.3,
+"fully_right": 8,
+"readiness_pct": 36.4,
 "reference": "checked windows"
 },
 "sets": [
