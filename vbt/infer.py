@@ -58,7 +58,7 @@ def _blocks(data, fs=25.0, gap_s=1.5):
 
 def _count(data, a, b, label, key, prof_by_label, placement, fs):
     prof = (prof_by_label.get(label) or {}).get("profile")
-    res = analyze_set(data, a, b, key, fs=fs, placement=placement, profile=prof)
+    res = analyze_set(data, a, b, key, fs=fs, placement=placement, profile=prof, extend=0)
     return res
 
 

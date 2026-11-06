@@ -435,3 +435,42 @@ def test_rep_shape_separates_movements():
     c["grav"] = 9.80665 * (np.cos(ang)[:, None] * g + np.sin(ang)[:, None] * perp)
     sc = np.array(rep_shape(c, ra))
     assert np.abs(sa - sb).mean() < np.abs(sa - sc).mean()
+
+
+def _set_with_roms(roms, fs=100.0, seed=0):
+    """Wrist moving down/up per rep with the given ranges of motion (m), constant tilt."""
+    rng = np.random.default_rng(seed)
+    pos = [np.zeros(int(fs))]
+    for rom in roms:
+        te = np.linspace(0, 1, int(1.2 * fs))
+        pos.append(-rom * (1 - np.cos(np.pi * te)) / 2)
+        pos.append(np.full(int(0.15 * fs), -rom))
+        tc = np.linspace(0, 1, int(0.9 * fs))
+        pos.append(-rom + rom * (1 - np.cos(np.pi * tc)) / 2)
+        pos.append(np.zeros(int(0.6 * fs)))
+    pos.append(np.zeros(int(fs)))
+    p = np.concatenate(pos)
+    t = np.arange(len(p)) / fs
+    a = np.gradient(np.gradient(p, t), t)
+    g = np.array([0.2, -0.3, -0.93]); g /= np.linalg.norm(g)
+    G = 9.80665
+    acc = (-a)[:, None] * g[None, :] + rng.normal(0, 0.03 * G, (len(t), 3))
+    return {"t": t, "acc": acc, "grav": np.tile(g * G, (len(t), 1))}
+
+
+def test_first_rep_out_of_the_unrack_is_kept():
+    """A shallow first rep breaks the chain's similar-size rule; the end extension keeps it."""
+    from vbt import analyze_set
+    data = _set_with_roms([0.15, 0.45, 0.45, 0.45, 0.45, 0.45])
+    w = (data["t"][0] + 0.5, data["t"][-1] - 0.5)
+    assert analyze_set(data, *w, "bench", extend=0)["rep_count"] == 5      # the old -1
+    assert analyze_set(data, *w, "bench")["rep_count"] == 6
+
+
+def test_exercise_key_whole_words():
+    from vbt import exercise_key
+    assert exercise_key("Dumbbell Row (knee on bench) (left arm)") == "row"
+    assert exercise_key("Triceps Kickback (knee on bench)") == "extension"
+    assert exercise_key("Narrow Grip Bench Press") == "bench"
+    assert exercise_key("Squat Rack Shoulder Press") == "ohp"
+    assert exercise_key("Pull-ups") == "bodyweight"

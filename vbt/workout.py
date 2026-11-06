@@ -9,6 +9,7 @@ Exercise profiles encode two facts the generic pipeline can't guess:
 * where the rest point of a rep is (top or bottom) and which way the
   concentric goes. Pulldown and pushdown are concentric *downwards*.
 """
+import re
 from dataclasses import dataclass, asdict
 import numpy as np
 from scipy.signal import butter, filtfilt, find_peaks
@@ -48,7 +49,8 @@ PROFILES = {
 }
 
 # first match wins, so specific phrases go before generic ones
-_KEYWORDS = [("romanian", "rdl"), ("rdl", "rdl"), ("stiff leg", "rdl"),
+_KEYWORDS = [("kickback", "extension"), ("row", "row"), ("shoulder press", "ohp"),
+             ("romanian", "rdl"), ("rdl", "rdl"), ("stiff leg", "rdl"),
              ("split squat", "bss"), ("lunge", "lunge"), ("step up", "lunge"),
              ("leg press", "machine"), ("leg extension", "machine"), ("leg curl", "machine"),
              ("calf", "machine"), ("hip abduction", "machine"), ("hip adduction", "machine"),
@@ -66,10 +68,14 @@ _KEYWORDS = [("romanian", "rdl"), ("rdl", "rdl"), ("stiff leg", "rdl"),
 
 
 def exercise_key(name):
-    """Map a logged exercise name (any app) to a PROFILES key ("auto" if unknown)."""
-    low = (name or "").lower().replace("(", " ").replace(")", " ")
+    """Map a logged exercise name (any app) to a PROFILES key ("auto" if unknown).
+
+    Whole-word matching: "Dumbbell Row (knee on bench)" is a row, not a bench press,
+    and "narrow grip" contains no row.
+    """
+    low = " " + re.sub(r"[^a-z0-9-]+", " ", (name or "").lower()) + " "
     for kw, key in _KEYWORDS:
-        if kw in low:
+        if f" {kw} " in low or f" {kw}s " in low or f" {kw}es " in low:
             return key
     return "auto"
 
@@ -161,23 +167,39 @@ def _chains(idx, prom, fs, min_len=3):
     return [c for c in out if len(c) >= min_len]
 
 
-def find_turnarounds(sig, fs, bouts=1, rel_prom=0.35, t0=None, t1=None, t=None):
+def find_turnarounds(sig, fs, bouts=1, rel_prom=0.35, t0=None, t1=None, t=None,
+                     extend=1, ext_prom=0.3, ext_gap=1.8):
     """Turnaround extrema (one per rep) of a rep signal whose turnaround is a *peak*.
 
     Keeps the longest regular chain(s): `bouts` chains for unilateral work,
-    plus any chain within 4 s of a kept one (a re-grip mid-set).
+    plus any chain within 4 s of a kept one (a re-grip mid-set). Then extends the
+    kept reps by up to `extend` turnaround at each end with looser rules: a first rep
+    out of the unrack or a slower last rep breaks the chain's regularity test, and
+    used to be dropped (a systematic -1). The signal is reflect-padded so a
+    turnaround right at the window edge can still be a peak.
+    Measured 2026-11-06: RecoFit public data (127 strength sets, many people) exact
+    15% -> 30%, within +-1 71% -> 75%, mean error -1.12 -> -0.73; Nov 1 sets consistent
+    with the log 13 -> 16 of 22.
     t0/t1 restrict to turnarounds inside the set window.
     """
-    pk, pr = find_peaks(sig, prominence=1e-6, distance=int(0.7 * fs))
+    n_pad = int(1.0 * fs)
+    if len(sig) > 2 * n_pad + 2:
+        s = np.r_[sig[n_pad:0:-1], sig, sig[-2:-n_pad - 2:-1]]
+    else:
+        s, n_pad = sig, 0
+    pk, pr = find_peaks(s, prominence=1e-6, distance=int(0.7 * fs))
+    prom = pr["prominences"]
+    pk = pk - n_pad
+    inside = (pk >= 0) & (pk < len(sig))
+    pk, prom = pk[inside], prom[inside]
     if not len(pk):
         return np.array([], int)
     if t is not None and t0 is not None:
         keep = (t[pk] >= t0) & (t[pk] <= t1)
-        pk, prom = pk[keep], pr["prominences"][keep]
-    else:
-        prom = pr["prominences"]
+        pk, prom = pk[keep], prom[keep]
     if not len(pk):
         return np.array([], int)
+    all_pk, all_prom = pk, prom
     big = prom >= rel_prom * np.percentile(prom, 85)
     pk, prom = pk[big], prom[big]
     ch = _chains(pk, prom, fs)
@@ -188,8 +210,20 @@ def find_turnarounds(sig, fs, bouts=1, rel_prom=0.35, t0=None, t1=None, t=None):
     for c in ch[bouts:]:
         if any(min(abs(pk[c[0]] - pk[k[-1]]), abs(pk[k[0]] - pk[c[-1]])) / fs < 4.0 for k in kept):
             kept.append(c)
-    sel = sorted(i for c in kept for i in c)
-    return pk[sel]
+    sel = sorted(int(pk[i]) for c in kept for i in c)
+    if extend and len(sel) >= 3:
+        per = np.median(np.diff(sel))
+        prom_of = dict(zip(all_pk.tolist(), all_prom.tolist()))
+        med = np.median([prom_of[p] for p in sel])
+        for _ in range(extend):
+            for side in (0, -1):
+                ref = sel[side]
+                cand = [p for p in all_pk.tolist()
+                        if (p < ref if side == 0 else p > ref)
+                        and 0.5 * per <= abs(p - ref) <= ext_gap * per and prom_of[p] >= ext_prom * med]
+                if cand:
+                    sel = sorted(sel + [min(cand, key=lambda p: abs(p - ref))])
+    return np.array(sel, int)
 
 
 @dataclass
@@ -238,13 +272,17 @@ def profile_for(exercise, placement="wrist"):
     return prof
 
 
-def analyze_set(data, t0, t1, exercise, fs=100.0, placement="wrist", profile=None):
+def analyze_set(data, t0, t1, exercise, fs=100.0, placement="wrist", profile=None, extend=1):
     """Count reps and compute per-rep kinematics for one set window.
 
     data: dict with t, acc, grav (m/s^2, N x 3) and optional gyro (rad/s, N x 3).
     exercise: PROFILES key.
     profile: optional full profile dict (e.g. a personal one from vbt.personal)
              overriding the generic profile for this exercise.
+    extend:  turnarounds to add at each end of the rep chain with looser rules (see
+             find_turnarounds). Right when the window is known to be the set (a log or
+             checked windows); sensor-only discovery uses 0, since there the loose ends
+             pick up setup motion (Nov 1 readiness 36% -> 27% with it on).
     """
     prof = dict(profile) if profile else profile_for(exercise, placement)
     d = resample(data, t0, t1, fs)
@@ -265,7 +303,7 @@ def analyze_set(data, t0, t1, exercise, fs=100.0, placement="wrist", profile=Non
             for rest in ("top", "bottom"):
                 ts = -1 if rest == "top" else 1
                 tr = find_turnarounds(ts * sig / (np.std(sig) + 1e-12), fs, bouts=prof["bouts"],
-                                      t0=t0, t1=t1, t=t)
+                                      t0=t0, t1=t1, t=t, extend=extend)
                 if best is None or len(tr) > len(best[2]):
                     best = (name, rest, tr)
         channel, rest, turns = best
@@ -277,7 +315,7 @@ def analyze_set(data, t0, t1, exercise, fs=100.0, placement="wrist", profile=Non
         # turnaround = the extreme opposite the rest point
         turn_sign = -1 if rest == "top" else 1
         turns = find_turnarounds(turn_sign * chan / (np.std(chan) + 1e-12), fs,
-                                 bouts=prof["bouts"], t0=t0, t1=t1, t=t)
+                                 bouts=prof["bouts"], t0=t0, t1=t1, t=t, extend=extend)
     a_f = _lp(a_up, fs, 6.0)
     reps = []
     if len(turns):

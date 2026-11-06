@@ -127,6 +127,11 @@ def scoreboard(root=SESSIONS, stress=True):
     try:
         commit = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=ROOT,
                                 capture_output=True, text=True).stdout.strip()
+        # code under test that isn't committed yet: say so, don't credit the parent commit
+        dirty = subprocess.run(["git", "status", "--porcelain", "--", "vbt"], cwd=ROOT,
+                               capture_output=True, text=True).stdout.strip()
+        if dirty:
+            commit += "+uncommitted"
     except Exception:
         commit = None
     return {"when": datetime.now(timezone.utc).isoformat(timespec="seconds"), "commit": commit,

@@ -267,7 +267,9 @@ def read_imu_csv(df, info, accel_convention=None):
         info["gravity"] = "device"
     else:
         raw, unit = _to_g(sign * A)
-        if abs(np.median(np.linalg.norm(raw, axis=1)) - 1) > 0.3:
+        # no gravity in the signal reads ~0 g; explosive work (wall balls, punches) can push
+        # the median well above 1 g, which is fine
+        if np.median(np.linalg.norm(raw, axis=1)) < 0.5:
             raise ValueError("accelerometer has no gravity in it and no gravity columns: can't find 'up'")
         gu, A, orient = separate_gravity(t, raw, gyro)
         info["gravity"] = "estimated" + ("" if gyro is not None else " (no gyro: low-pass)")

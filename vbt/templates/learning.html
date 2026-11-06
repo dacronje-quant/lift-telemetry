@@ -130,7 +130,14 @@ ol.methods{margin:0;padding-left:1.2em;display:grid;gap:8px;max-width:78ch}
 </section>
 
 <section>
-  <div class="sec-head"><div class="eyebrow"><b>5</b> · How it learns</div><h2>The rules</h2></div>
+  <div class="sec-head"><div class="eyebrow"><b>5</b> · Across people</div><h2>Checked against public data</h2>
+  <p class="note">Your workouts show how well it fits you; they can't show whether the methods are sound in general. So every algorithm change is also scored on the RecoFit public dataset (Microsoft, 2014): forearm-worn sensor recordings from many people with true rep counts. The published RecoFit system counted within ±1 rep 93% of the time; that's the bar.</p></div>
+  <div class="kpis" id="pubKpis"></div>
+  <div class="tw"><table id="pubTable"></table></div>
+</section>
+
+<section>
+  <div class="sec-head"><div class="eyebrow"><b>6</b> · How it learns</div><h2>The rules</h2></div>
   <ol class="methods">
     <li><b>Checked workouts are the teacher.</b> After each workout the set windows are checked against the recording and marked reviewed. Only those workouts feed learning and scoring.</li>
     <li><b>Never graded on its own homework.</b> A workout's shadow test uses knowledge from the other workouts only, and learned settings are tested on sets they weren't tuned on.</li>
@@ -217,6 +224,16 @@ document.getElementById('minGain').textContent=D.rules.min_gain;
   const status=p.learned?'<span class="pill match">learned, in use</span>':(p.best_signal!==p.generic_signal&&p.held_out_err_learned!=null&&p.held_out_err_generic!=null&&p.held_out_err_learned<p.held_out_err_generic)?'<span class="pill off1">promising, needs another workout</span>':'<span class="pill muted">generic works</span>';
   return `<tr><td>${esc(short(label))}</td><td class="num">${p.n_sets} / ${p.n_sessions}</td><td>${esc(sigName(p.signal_in_use))}${p.best_signal&&p.best_signal!==p.signal_in_use?`<br><small class="note">candidate: ${esc(sigName(p.best_signal))}</small>`:''}</td><td class="num">${fmt(p.held_out_err_generic)} → ${fmt(p.held_out_err_learned)}</td><td>${p.count_mode==='clean'?'skip edge cycles':'count all cycles'}</td><td class="num">${fmt(p.rep_s,1)} s · ${p.rom_m!=null?Math.round(p.rom_m*100):'–'} cm · ${p.rotation_deg!=null?Math.round(p.rotation_deg):'–'}°</td><td>${status}</td></tr>`;}).join('');
   document.getElementById('personalTable').innerHTML=rows?`<thead><tr><th>Exercise</th><th class="num">Checked sets / workouts</th><th>Rep signal in use</th><th class="num">Held-out rep error generic → learned</th><th>Edge cycles</th><th class="num">Your rep: tempo · range · rotation</th><th>Status</th></tr></thead><tbody>${rows}</tbody>`:'<tbody><tr><td class="empty">No checked workouts yet.</td></tr></tbody>';})();
+
+/* public data */
+(function(){const PB=D.public||[];const p=v=>v==null?'–':Math.round(v)+'%';
+  if(!PB.length){document.getElementById('pubKpis').innerHTML='';document.getElementById('pubTable').innerHTML='<tbody><tr><td class="empty">Not run yet (python -m vbt.public).</td></tr></tbody>';return;}
+  const L=PB[PB.length-1],r=L.reps||{},c=L.recognition||{};
+  const k=[[p(r.within1_pct),`reps within ±1 (${r.n_sets} sets, ${r.n_people} people; RecoFit: 93%)`],[p(r.exact_pct),'reps exact'],[r.mean_error!=null?(r.mean_error>0?'+':'')+r.mean_error:'–','average rep error'],
+    [p(c.with_rep_shape_pct),`exercise named, trained on other people (${c.n_exercises} exercises)`]];
+  document.getElementById('pubKpis').innerHTML=k.map(([b,t])=>`<div class="kpi"><b>${b}</b><span>${t}</span></div>`).join('');
+  const rows=[...PB].reverse().map(x=>{const r=x.reps||{},c=x.recognition||{};return `<tr><td class="num">${esc((x.when||'').slice(0,16).replace('T',' '))}</td><td class="mono">${esc(x.commit||'')}</td><td class="num">${p(r.exact_pct)}</td><td class="num">${p(r.within1_pct)}</td><td class="num">${r.mean_error??'–'}</td><td class="num">${p(c.summary_only_pct)}</td><td class="num"><b>${p(c.with_rep_shape_pct)}</b></td></tr>`;}).join('');
+  document.getElementById('pubTable').innerHTML=`<thead><tr><th class="num">When (UTC)</th><th>Commit</th><th class="num">Reps exact</th><th class="num">Within ±1</th><th class="num">Avg error</th><th class="num">Named (summary only)</th><th class="num">Named (with rep shape)</th></tr></thead><tbody>${rows}</tbody>`;})();
 
 /* scoreboard */
 (function(){const p=v=>v==null?'–':Math.round(v)+'%';

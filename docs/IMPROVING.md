@@ -37,6 +37,18 @@ What limits it now, and the fix each needs:
 - **A neural model** (1D CNN on raw windows, as in published wearable-lifting pipelines) only
   makes sense once a few hundred checked sets exist; until then prototypes are the right size.
 
+## Public benchmark (across people)
+`python -m vbt.public --data <dir outside repo>` scores rep counting and cross-person exercise
+recognition on the RecoFit dataset (Morris et al., CHI 2014; forearm IMU, 50 Hz, true rep
+counts). Published bar: reps within +-1 93%. Ours after 2026-11-06: 76% (exact 29%), mean
+error -0.40; recognition leave-one-person-out 77% (8 exercises). The gap to 93% is the main
+algorithmic headroom in rep counting; look per exercise in the tool's output.
+
+Tried and rejected (don't repeat without new evidence):
+- rhythm features (concentric/eccentric share) for recognition: -2 sets on Nov 1;
+- peeling unusual first/last reps by shape, range of motion or tempo: edge reps are real
+  reps whose kinematics are poorly estimated; every variant cut exact counts.
+
 ## Where the algorithms live
 | Stage | Code | Main knobs |
 |---|---|---|

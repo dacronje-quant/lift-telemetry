@@ -3,11 +3,11 @@
 "n_sets": 22,
 "trained_on_sets": 0,
 "found": 21,
-"false_sets": 1,
-"named": 17,
-"reps_exact": 9,
+"false_sets": 2,
+"named": 16,
+"reps_exact": 7,
 "reps_within1": 11,
-"fully_right": 8,
+"fully_right": 6,
 "rows": [
 {
 "set": 1,
@@ -48,11 +48,11 @@
 "known": true,
 "named": true,
 "sensed": [
-8
+9
 ],
-"rep_err": 2,
-"t_start": 311.82,
-"t_end": 335.78
+"rep_err": 3,
+"t_start": 311.84,
+"t_end": 337.76
 },
 {
 "set": 4,
@@ -63,26 +63,26 @@
 "known": true,
 "named": true,
 "sensed": [
-6
+7
 ],
-"rep_err": 0,
+"rep_err": 1,
 "t_start": 471.62,
-"t_end": 492.94
+"t_end": 497.74
 },
 {
 "set": 5,
 "label": "Deadlift (Barbell)",
 "logged": 5,
 "found": true,
-"guess": "Deadlift (Barbell)",
+"guess": "Bulgarian Split Squat (Dumbbell)",
 "known": true,
-"named": true,
+"named": false,
 "sensed": [
-12
+16
 ],
-"rep_err": 7,
-"t_start": 667.66,
-"t_end": 711.3
+"rep_err": 11,
+"t_start": 653.6,
+"t_end": 710.76
 },
 {
 "set": 6,
@@ -144,11 +144,11 @@
 "known": true,
 "named": true,
 "sensed": [
-15
+16
 ],
-"rep_err": 8,
-"t_start": 1407.36,
-"t_end": 1442.26
+"rep_err": 9,
+"t_start": 1405.0,
+"t_end": 1442.28
 },
 {
 "set": 11,
@@ -175,10 +175,10 @@
 "known": true,
 "named": true,
 "sensed": [
-12
+13
 ],
-"rep_err": 2,
-"t_start": 1638.64,
+"rep_err": 3,
+"t_start": 1636.08,
 "t_end": 1677.2
 },
 {
@@ -205,11 +205,11 @@
 "known": true,
 "named": true,
 "sensed": [
-12
+13
 ],
-"rep_err": 0,
+"rep_err": 1,
 "t_start": 1908.68,
-"t_end": 1941.98
+"t_end": 1944.66
 },
 {
 "set": 15,
@@ -250,11 +250,11 @@
 "known": true,
 "named": true,
 "sensed": [
-9
+10
 ],
-"rep_err": 1,
+"rep_err": 0,
 "t_start": 2237.16,
-"t_end": 2260.24
+"t_end": 2263.0
 },
 {
 "set": 18,
@@ -280,10 +280,10 @@
 "known": true,
 "named": false,
 "sensed": [
-3
+4
 ],
-"rep_err": 7,
-"t_start": 2475.44,
+"rep_err": 6,
+"t_start": 2472.12,
 "t_end": 2487.72
 },
 {
@@ -325,21 +325,27 @@
 "known": true,
 "named": true,
 "sensed": [
-10
+11
 ],
-"rep_err": 0,
-"t_start": 2762.34,
+"rep_err": 1,
+"t_start": 2759.18,
 "t_end": 2785.32
 }
 ],
 "unmatched": [
 {
-"t_start": 347.98,
-"t_end": 363.46,
+"t_start": 22.32,
+"t_end": 45.56,
 "guess": "Triceps Rope Pushdown",
-"reps": 4
+"reps": 9
+},
+{
+"t_start": 347.98,
+"t_end": 366.56,
+"guess": "Triceps Rope Pushdown",
+"reps": 5
 }
 ],
-"readiness_pct": 36.4,
+"readiness_pct": 27.3,
 "reference": "checked windows"
 }
