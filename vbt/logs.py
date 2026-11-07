@@ -65,9 +65,13 @@ _HEVY_BW = re.compile(r"Set\s+(\d+):\s*(\d+)\s*reps?(?:\s*@\s*([\d.]+)\s*rpe)?(\
 def parse_date_line(text):
     """'Sunday, Nov 01, 2026 at 10:37am' -> ISO string (naive local) or None."""
     m = re.search(r"([A-Z][a-z]{2})[a-z]* (\d{1,2}),? (\d{4})(?: at (\d{1,2}):(\d{2})\s*([ap]m)?)?", text)
-    if not m:
-        return None
-    mon, day, year, hh, mm, ap = m.groups()
+    if not m:                                                   # 'Sat 7 Nov 2026' (day first)
+        m = re.search(r"\b(\d{1,2}) ([A-Z][a-z]{2})[a-z]*,? (\d{4})(?: at (\d{1,2}):(\d{2})\s*([ap]m)?)?", text)
+        if not m:
+            return None
+        day, mon, year, hh, mm, ap = m.groups()
+    else:
+        mon, day, year, hh, mm, ap = m.groups()
     try:
         if hh:
             fmt = "%b %d %Y %I %M%p" if ap else "%b %d %Y %H %M"
@@ -183,6 +187,7 @@ def parse_csv(text, default_unit=None):
 # ------------------------------------------------------------------ free text
 _SXR_AT = re.compile(r"(\d+)\s*[x×]\s*(\d+)\s*(?:@|at)\s*([\d.]+)\s*(kg|lbs?)?", re.I)      # 3x5 @ 80kg
 _W_X_R = re.compile(r"([\d.]+)\s*(kg|lbs?)?\s*[x×]\s*(\d+)(?:\s*[x×]\s*(\d+))?", re.I)    # 80kg x 5 (x 3)
+_R_AT_W = re.compile(r"^(\d+)\s*(?:reps?\s*)?(?:@|at)\s*([\d.]+)\s*(kg|lbs?)\b", re.I)   # 8 @ 60 kg
 _RPE = re.compile(r"@\s*(?:rpe\s*)?([\d.]+)(?!\s*(?:kg|lb))", re.I)
 
 
@@ -220,6 +225,12 @@ def parse_text(text, default_unit=None):
                     sets.append(_set(exercise, to_kg(m[3], m[4]), m[2], None, warm))
                 found = True
                 continue
+            m = _R_AT_W.search(chunk)
+            if m and exercise:                       # reps @ weight (needs a unit: "8 @ 9" is RPE)
+                rpe = _RPE.search(chunk[m.end():])
+                sets.append(_set(exercise, to_kg(m[2], m[3]), int(m[1]), rpe[1] if rpe else None, warm))
+                found = True
+                continue
             m = _W_X_R.search(chunk)
             if m and exercise:
                 a, unit, b2, c = m.groups()
@@ -232,7 +243,7 @@ def parse_text(text, default_unit=None):
                     sets.append(_set(exercise, kg, reps, rpe[1] if rpe else None, warm))
                 found = True
         if not found and not re.search(r"\d+\s*[x×]\s*\d+", line):
-            exercise = line.rstrip(":").strip()
+            exercise = re.sub(r"^\d+\s*[.)]\s*", "", line.rstrip(":").strip())   # "1. Bench Press"
     return _number_sets([s for s in sets if s["exercise"]]), {
         "source": "text", "title": title, "start_local": date}
 
@@ -260,7 +271,9 @@ def detect_format(text):
         return "hevy"
     first = t.splitlines()[0] if t else ""
     if first.count(",") >= 2 or first.count(";") >= 2 or first.count("\t") >= 2:
-        if re.search(r"reps|repetitions", first, re.I):
+        # a header row: some cell *is* a reps column ("Reps"), not "26 sets / 169 reps"
+        cells = re.split(r"[,;\t]", first)
+        if any(re.fullmatch(r"\s*\"?(reps?|repetitions)\b[^\d]{0,12}", c, re.I) for c in cells):
             return "csv"
     return "text"
 

@@ -474,3 +474,16 @@ def test_exercise_key_whole_words():
     assert exercise_key("Narrow Grip Bench Press") == "bench"
     assert exercise_key("Squat Rack Shoulder Press") == "ohp"
     assert exercise_key("Pull-ups") == "bodyweight"
+
+
+def test_reps_at_weight_log_with_numbered_exercises():
+    from vbt.logs import parse_log, detect_format
+    text = ("FULL BODY A — Sat 7 Nov 2026 — 1h 06m, 468 kcal, 3 sets / 22 reps\n\n"
+            "1. Bench Press\n8 @ 40 kg (warm-up)\n8 @ 60 kg, rest 2:40\n\n"
+            "2. Hammer Curl\n6 @ 21 kg\n")
+    assert detect_format(text) == "text"            # commas + "reps" in the title is not a CSV header
+    sets, info = parse_log(text)
+    assert [(s["exercise"], s["reps"], s["kg"], s["warmup"]) for s in sets] == [
+        ("Bench Press", 8, 40.0, True), ("Bench Press", 8, 60.0, False), ("Hammer Curl", 6, 21.0, False)]
+    assert info["start_local"].startswith("2026-11-07")
+    assert detect_format("Exercise,Weight,Reps\nBench,60,5\n") == "csv"
