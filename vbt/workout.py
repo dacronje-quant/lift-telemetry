@@ -9,6 +9,8 @@ Exercise profiles encode two facts the generic pipeline can't guess:
 * where the rest point of a rep is (top or bottom) and which way the
   concentric goes. Pulldown and pushdown are concentric *downwards*.
 """
+import json
+from pathlib import Path
 import re
 from dataclasses import dataclass, asdict
 import numpy as np
@@ -79,13 +81,37 @@ def exercise_words(name):
                      for w in words if w not in _EQUIPMENT)
 
 
+ALIASES = Path(__file__).resolve().parents[1] / "data/aliases.json"
+_alias_cache = {}
+
+
+def _aliases():
+    """{lower-case name: canonical name} from data/aliases.json (user-confirmed groups)."""
+    try:
+        mtime = ALIASES.stat().st_mtime
+    except OSError:
+        return {}
+    if _alias_cache.get("mtime") != mtime:
+        groups = json.loads(ALIASES.read_text()).get("same", [])
+        _alias_cache.update(mtime=mtime, map={n.strip().lower(): g[0] for g in groups for n in g})
+    return _alias_cache["map"]
+
+
+def canonical_name(name):
+    """The confirmed canonical name for an exercise name (itself when not listed)."""
+    return _aliases().get((name or "").strip().lower(), name)
+
+
 def same_exercise(a, b):
-    """Same exercise under another app's or day's name. Strict on purpose: 'Bench Press
-    (Barbell)' = 'Bench Press', but 'Hammer Curl' != 'Curl' (different movements)."""
+    """Same exercise under another app's or day's name: confirmed aliases
+    (data/aliases.json) first, then a strict word rule: 'Bench Press (Barbell)' =
+    'Bench Press', but 'Hammer Curl' != 'Curl' (different movements)."""
     if not a or not b:
         return False
+    if canonical_name(a).strip().lower() == canonical_name(b).strip().lower():
+        return True
     wa, wb = exercise_words(a), exercise_words(b)
-    return (a.strip().lower() == b.strip().lower()) or (bool(wa) and wa == wb)
+    return bool(wa) and wa == wb
 
 
 def exercise_key(name):

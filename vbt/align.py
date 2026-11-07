@@ -236,7 +236,7 @@ def align_sets(data, logged_sets, runs=None, model=None, fs=25.0, min_gap_s=5.0,
                 f = set_features(data, *r["span"]) if r["span"][1] - r["span"][0] > 2 else None
                 feats[fk] = [f[k2] for k2 in FEATURES] if f else None
             if feats[fk] is not None:
-                lp = model.log_prob(feats[fk]).get(s.get("label", s["exercise_key"]))
+                lp = model.log_prob(feats[fk]).get(s.get("canon", s.get("label", s["exercise_key"])))
                 if lp is not None:
                     sc += w_cls * max(lp, -6.0)
         return sc, r

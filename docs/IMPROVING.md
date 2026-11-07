@@ -98,9 +98,10 @@ treat the numbers as optimistic until more reviewed sessions exist.
 10. **Supersets / order changes**: declared supersets are interleaved (`--superset "A + B"`).
    Undeclared order changes still break the ordered alignment; an order-free assignment
    (match by exercise signature, then by time) would remove the assumption.
-11. **Exercise names differ between apps/days**: grouped by `workout.same_exercise` (same
-   words, equipment ignored). Strict on purpose; variants ("Lat Pulldown" vs "Pulldown (Wide
-   Grip)") stay separate until a user-confirmed alias list exists.
+11. **Exercise names differ between apps/days**: user-confirmed groups in `data/aliases.json`
+   win (the user confirmed Nov 1 vs Nov 7 names, e.g. "Lat Pulldown" = "Pulldown (Wide
+   Parellel Grip)"); otherwise `workout.same_exercise` groups names with the same words,
+   equipment ignored, strict on purpose. Ask the user when a new name looks like a known one.
 
 ## Data that would help most
 - **An unbroken recording.** Nov 1 (no gaps) recorded location, barometer, compass and

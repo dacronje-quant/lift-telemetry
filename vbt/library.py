@@ -12,7 +12,7 @@ from pathlib import Path
 
 import numpy as np
 
-from .workout import FEATURES
+from .workout import FEATURES, canonical_name
 from .align import CentroidModel
 
 TRUSTED = ("manual", "reviewed")
@@ -34,7 +34,7 @@ def load_rows(root="data/sessions", exclude=None, min_source=None):
         for s in a["sets"]:
             if s.get("skipped") or not s.get("features") or (min_source == "trusted" and s.get("unsure")):
                 continue
-            rows.append({"session": sid, "date": a.get("date"), "label": s["label"],
+            rows.append({"session": sid, "date": a.get("date"), "label": canonical_name(s["label"]),
                          "key": s["key"], "kg": s["kg"], "reps": s["logged_reps"],
                          "rpe": s.get("rpe"), "warmup": s.get("warmup"),
                          "best_velocity": s.get("best_velocity"),

@@ -536,3 +536,10 @@ def test_same_exercise_across_app_names():
     assert same_exercise("Bench Press (Barbell)", "Bench Press")
     assert not same_exercise("Hammer Curl", "Triceps Rope Pushdown")
     assert not same_exercise("Leg Extension (Machine)", "Seated Leg Curl (Machine)")
+
+
+def test_confirmed_aliases_join_differently_named_exercises():
+    from vbt.workout import same_exercise, canonical_name
+    assert same_exercise("Lat Pulldown", "Pulldown (Wide Parellel Grip)")          # user-confirmed
+    assert canonical_name("lat pulldown") == "Pulldown (Wide Parellel Grip)"
+    assert not same_exercise("Lat Pulldown", "Hammer Curl")

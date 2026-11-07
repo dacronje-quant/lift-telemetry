@@ -28,7 +28,7 @@ from .io import load_watch_csv
 from .logs import parse_log
 from .core import vertical_acceleration
 from .workout import (PROFILES, FEATURES, FEATURE_GROUPS, analyze_set, set_features,
-                      loso_classify, exercise_key, count_verdict, resample, _lp)
+                      loso_classify, exercise_key, count_verdict, resample, _lp, canonical_name)
 from . import workout as W
 from .align import detect_sets, evaluate_alignment
 from .loadvelocity import estimate_1rm
@@ -110,6 +110,7 @@ def logged_sets(log):
     for i, s in enumerate(sets):
         s["exercise_key"] = exercise_key(s["exercise"])
         s["label"] = s["exercise"]
+        s["canon"] = canonical_name(s["exercise"])       # cross-session identity (data/aliases.json)
         s["log_index"] = i + 1
     for group in (log.get("supersets") or []) if isinstance(log, dict) else []:
         names = [g.strip().lower() for g in group]
@@ -325,15 +326,15 @@ def classifier_block(sets, rep_rows, sid, root):
     rows = library.load_rows(root, exclude=sid, min_source="trusted")
     model = library.exercise_model(rows)
     if model is not None:
-        known = [s for s in seen if s["label"] in model.labels]
+        known = [s for s in seen if canonical_name(s["label"]) in model.labels]
         preds = []
         for s in known:
             lp = model.log_prob([s["features"][k] for k in FEATURES])
             preds.append(max(lp, key=lp.get))
         out["cross_session"] = {
             "n_sessions": len({r["session"] for r in rows}), "n_train_sets": len(rows),
-            "n_test": len(known), "acc": R(np.mean([p == s["label"] for p, s in zip(preds, known)])) if known else None,
-            "unknown_labels": sorted({s["label"] for s in seen} - set(model.labels))}
+            "n_test": len(known), "acc": R(np.mean([p == canonical_name(s["label"]) for p, s in zip(preds, known)])) if known else None,
+            "unknown_labels": sorted({canonical_name(s["label"]) for s in seen} - set(model.labels))}
     return out
 
 

@@ -1,0 +1,10 @@
+{
+ "note": "Exercise names confirmed by the user to be the same exercise (2026-11-07). First name in each group is the canonical one. Matching is case-insensitive.",
+ "same": [
+  ["Bench Press (Barbell)", "Bench Press"],
+  ["Deadlift (Barbell)", "Deadlift"],
+  ["Hammer Curl (Dumbbell)", "Hammer Curl"],
+  ["Pulldown (Wide Parellel Grip)", "Lat Pulldown"],
+  ["Triceps Rope Pushdown", "Rope Cable Triceps Pushdown"]
+ ]
+}
