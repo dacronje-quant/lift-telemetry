@@ -1,6 +1,6 @@
 {
  "session_id": "2026-11-07",
- "title": "FULL BODY A — Sat 7 Nov 2026 — 1h 06m, 468 kcal, 26 sets / 169 reps",
+ "title": "FULL BODY A \u2014 Sat 7 Nov 2026 \u2014 1h 06m, 468 kcal, 26 sets / 169 reps",
  "log_source": "text",
  "log_start_local": "2026-11-07",
  "sensor": "Apple Watch via Sensor Logger, wrist placement",
@@ -97,5 +97,7 @@
  },
  "n_raw_samples": 146676,
  "source": "rec.zip",
- "start_local": "2026-11-07T10:30:32.050000+01:00"
+ "start_local": "2026-11-07T10:30:32.050000+01:00",
+ "exclude_from_learning": true,
+ "exclude_reason": "User's decision (2026-11-07): the watch paused 16x (61% of the lifting recorded), so the session could confuse learning. Report kept; not learned from or scored."
 }

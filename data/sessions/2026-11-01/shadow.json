@@ -1,7 +1,7 @@
 {
 "mode": "same day (leave-one-set-out)",
 "n_sets": 22,
-"trained_on_sets": 1,
+"trained_on_sets": 0,
 "found": 21,
 "false_sets": 1,
 "unmatched_found": 1,

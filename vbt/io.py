@@ -4,6 +4,9 @@ Works with the free *Sensor Logger* app (Apple Watch -> "Wrist Motion",
 file WristMotion.csv) and any CSV with CoreMotion deviceMotion columns:
 time, userAcceleration x/y/z and gravity x/y/z. CoreMotion reports both in g.
 """
+import json
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
 
@@ -60,3 +63,13 @@ def load_watch_csv(path, units="g", keep_clock=False):
     if all(f"orient{a}" in df.columns for a in "XYZ"):
         out["orient"] = df[["orientX", "orientY", "orientZ"]].to_numpy(float)[order]
     return out
+
+
+def is_excluded(session_dir):
+    """True when meta.json says the session must not be learned from or scored
+    ("exclude_from_learning": the user judged the recording unreliable). Its report stays."""
+    m = Path(session_dir) / "meta.json"
+    try:
+        return bool(json.loads(m.read_text()).get("exclude_from_learning"))
+    except (OSError, ValueError):
+        return False

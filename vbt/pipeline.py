@@ -24,7 +24,7 @@ from pathlib import Path
 
 import numpy as np
 
-from .io import load_watch_csv
+from .io import load_watch_csv, is_excluded
 from .logs import parse_log
 from .core import vertical_acceleration
 from .workout import (PROFILES, FEATURES, FEATURE_GROUPS, analyze_set, set_features,
@@ -460,7 +460,11 @@ def run(sid, root=SESSIONS, redetect=False, html=True, quiet=False):
         if (personal.lookup(learned, s["label"]) or {}).get("profile"):
             s["profile"] = personal.lookup(learned, s["label"])["profile"]
     wins, auto = windows_for(d, data, logged, sid, redetect, root, placement=placement)
-    if wins.get("source") in TRUSTED and personal.evidence_is_stale(d):
+    excluded = is_excluded(d)
+    if excluded:
+        for f in ("evidence.json", "shadow.json"):          # nothing learned from / scored on it
+            (d / f).unlink(missing_ok=True)
+    elif wins.get("source") in TRUSTED and personal.evidence_is_stale(d):
         personal.build_evidence(d, data, logged, wins["sets"], placement)
     if len(wins["sets"]) != len(logged):
         raise ValueError(f"{sid}: sets.json has {len(wins['sets'])} sets, the workout log has {len(logged)}")
@@ -516,17 +520,19 @@ def run(sid, root=SESSIONS, redetect=False, html=True, quiet=False):
         det.update(auto=wins["sets"])
     out["detection"] = det
     # sensor-only shadow test: log hidden, knowledge from other workouts only
-    sh = shadow_test(d, data, logged, wins["sets"], root, placement)
-    sh["reference"] = "checked windows" if wins.get("source") in TRUSTED else "automatic windows (unchecked)"
-    # learning lives on its own page (vbt.learning), not in the workout report
-    (d / "shadow.json").write_text(json.dumps(sh, indent=0))
+    if not excluded:
+        sh = shadow_test(d, data, logged, wins["sets"], root, placement)
+        sh["reference"] = "checked windows" if wins.get("source") in TRUSTED else "automatic windows (unchecked)"
+        # learning lives on its own page (vbt.learning), not in the workout report
+        (d / "shadow.json").write_text(json.dumps(sh, indent=0))
     notes = d / "notes.json"
     out["notes"] = json.loads(notes.read_text()) if notes.exists() else {}
     out["findings"] = findings(out)
     # compact copy for the library (no traces)
     compact = {"session_id": sid, "date": m["date"], "windows_source": wins.get("source"),
                "summary": summary,
-               "shadow": {k: v for k, v in sh.items() if k not in ("rows", "unmatched")},
+               "shadow": ({k: v for k, v in sh.items() if k not in ("rows", "unmatched")} if not excluded else None),
+               "excluded_from_learning": excluded,
                "sets": [{k: v for k, v in s.items() if k not in ("trace", "reps")} for s in sets]}
     (d / "analysis.json").write_text(json.dumps(compact, indent=0))
     if html:

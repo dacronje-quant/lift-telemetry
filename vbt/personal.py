@@ -22,6 +22,7 @@ from pathlib import Path
 
 import numpy as np
 
+from .io import is_excluded
 from .workout import PROFILES, FEATURES, analyze_set, set_features, split_bouts, exercise_key, rep_shape, same_exercise
 
 TRUSTED = ("manual", "reviewed")
@@ -89,7 +90,7 @@ def load_evidence(root="data/sessions", exclude=None):
         if p.parent.name == exclude:
             continue
         sj = p.parent / "sets.json"
-        if not sj.exists() or json.loads(sj.read_text()).get("source") not in TRUSTED:
+        if is_excluded(p.parent) or not sj.exists() or json.loads(sj.read_text()).get("source") not in TRUSTED:
             continue
         out.append(json.loads(p.read_text()))
     # one exercise, many names (apps and days differ): group under the first name seen

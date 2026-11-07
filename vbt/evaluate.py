@@ -29,6 +29,8 @@ from pathlib import Path
 
 import numpy as np
 
+from .io import is_excluded
+
 from .align import detect_sets, evaluate_alignment
 from .workout import analyze_set, count_verdict, PROFILES, FEATURES
 from . import library
@@ -41,7 +43,7 @@ EVAL = ROOT / "data/eval"
 def trusted_sessions(root=SESSIONS):
     out = []
     for p in sorted(Path(root).glob("*/sets.json")):
-        if json.loads(p.read_text()).get("source") in TRUSTED:
+        if json.loads(p.read_text()).get("source") in TRUSTED and not is_excluded(p.parent):
             out.append(p.parent.name)
     return out
 

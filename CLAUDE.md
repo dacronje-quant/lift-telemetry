@@ -82,6 +82,10 @@ For every new workout:
   generic stays. Detection prior learns from checked sessions only. First cross-day
   sensor-only test: 1/1 checkable set found and named, reps off by 1 (readiness 0/1).
   Also: "reps @ weight" logs, day-first dates, workout-name extraction.
+  Later the same day the user confirmed the renamed exercises are the same
+  (`data/aliases.json`), then chose to EXCLUDE Nov 7 from learning and scoring (unreliable
+  recording): `meta.json` "exclude_from_learning" (vbt.io.is_excluded). Report and data kept;
+  the code fixes stay. Ground truth is Nov 1 only again.
 - 2026-11-06 (later): public benchmark added (vbt/public.py, RecoFit dataset, CDLA-P-2.0).
   It exposed a systematic -1 rep undercount: a first rep out of the unrack or a slower last
   rep broke the chain's regularity test and was dropped. Fix: extend the rep chain by one

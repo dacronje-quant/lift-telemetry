@@ -12,6 +12,7 @@ from pathlib import Path
 
 import numpy as np
 
+from .io import is_excluded
 from .workout import FEATURES, canonical_name
 from .align import CentroidModel
 
@@ -26,7 +27,7 @@ def load_rows(root="data/sessions", exclude=None, min_source=None):
     rows = []
     for p in sorted(Path(root).glob("*/analysis.json")):
         sid = p.parent.name
-        if sid == exclude:
+        if sid == exclude or is_excluded(p.parent):
             continue
         a = json.loads(p.read_text())
         if min_source == "trusted" and a.get("windows_source") not in TRUSTED:

@@ -57,7 +57,8 @@ set with rep ticks (blue clean, orange flagged). Check first the sets under *Wha
 - Recording gaps (`meta.json` → `coverage`; the report shows a notice under 95%): a set done
   in a gap → `"skipped": true, "not_recorded": true`. A set you can't tie to the log with
   confidence → `"unsure": true` (with or without a window). Never guess: unsure sets are not
-  scored or learned from. Identify exercises by wrist orientation, hand travel and rotation
+  scored or learned from. If the user judges a whole recording unreliable, set
+  `"exclude_from_learning": true` in its `meta.json`: report kept, nothing learned or scored. Identify exercises by wrist orientation, hand travel and rotation
   per rep against checked sets of earlier sessions.
 
 ## 4. Coach's read

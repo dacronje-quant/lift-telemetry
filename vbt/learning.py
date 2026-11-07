@@ -16,6 +16,7 @@ import sys
 from pathlib import Path
 
 from . import personal
+from .io import is_excluded
 
 ROOT = Path(__file__).resolve().parents[1]
 SESSIONS = ROOT / "data/sessions"
@@ -30,7 +31,7 @@ def _r(x, n=3):
 def collect(root=SESSIONS, eval_dir=ROOT / "data/eval"):
     root = Path(root)
     sessions = []
-    for d in sorted(p for p in root.iterdir() if (p / "analysis.json").exists()):
+    for d in sorted(p for p in root.iterdir() if (p / "analysis.json").exists() and not is_excluded(p)):
         a = json.loads((d / "analysis.json").read_text())
         log = json.loads((d / "log.json").read_text()) if (d / "log.json").exists() else {}
         sh = json.loads((d / "shadow.json").read_text()) if (d / "shadow.json").exists() else {}

@@ -23,20 +23,8 @@
 "n_more": 0,
 "n_not_seen": 0
 },
-"shadow": {
-"mode": "other workouts",
-"n_sets": 1,
-"trained_on_sets": 22,
-"found": 1,
-"false_sets": null,
-"unmatched_found": 9,
-"named": 1,
-"reps_exact": 0,
-"reps_within1": 1,
-"fully_right": 0,
-"readiness_pct": 0.0,
-"reference": "checked windows"
-},
+"shadow": null,
+"excluded_from_learning": true,
 "sets": [
 {
 "i": 1,

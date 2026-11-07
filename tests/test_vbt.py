@@ -543,3 +543,13 @@ def test_confirmed_aliases_join_differently_named_exercises():
     assert same_exercise("Lat Pulldown", "Pulldown (Wide Parellel Grip)")          # user-confirmed
     assert canonical_name("lat pulldown") == "Pulldown (Wide Parellel Grip)"
     assert not same_exercise("Lat Pulldown", "Hammer Curl")
+
+
+def test_excluded_session_is_not_learned_from(tmp_path):
+    import json as _j
+    from vbt.io import is_excluded
+    d = tmp_path / "s"
+    d.mkdir()
+    assert not is_excluded(d)
+    (d / "meta.json").write_text(_j.dumps({"exclude_from_learning": True}))
+    assert is_excluded(d)
