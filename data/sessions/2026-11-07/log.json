@@ -1,0 +1,215 @@
+{
+ "source": "text",
+ "title": "FULL BODY A — Sat 7 Nov 2026 — 1h 06m, 468 kcal, 26 sets / 169 reps",
+ "start_local": "2026-11-07T00:00:00",
+ "sets": [
+  {
+   "exercise": "Bench Press",
+   "kg": 40.0,
+   "reps": 8,
+   "rpe": null,
+   "warmup": true,
+   "set": 1
+  },
+  {
+   "exercise": "Bench Press",
+   "kg": 60.0,
+   "reps": 8,
+   "rpe": null,
+   "warmup": false,
+   "set": 2
+  },
+  {
+   "exercise": "Bench Press",
+   "kg": 70.0,
+   "reps": 6,
+   "rpe": null,
+   "warmup": false,
+   "set": 3
+  },
+  {
+   "exercise": "Bench Press",
+   "kg": 80.0,
+   "reps": 5,
+   "rpe": null,
+   "warmup": false,
+   "set": 4
+  },
+  {
+   "exercise": "Bench Press",
+   "kg": 90.0,
+   "reps": 3,
+   "rpe": null,
+   "warmup": false,
+   "set": 5
+  },
+  {
+   "exercise": "Bench Press",
+   "kg": 95.0,
+   "reps": 1,
+   "rpe": null,
+   "warmup": false,
+   "set": 6
+  },
+  {
+   "exercise": "Bench Press",
+   "kg": 70.0,
+   "reps": 9,
+   "rpe": null,
+   "warmup": false,
+   "set": 7
+  },
+  {
+   "exercise": "Back Squat",
+   "kg": 60.0,
+   "reps": 6,
+   "rpe": null,
+   "warmup": true,
+   "set": 1
+  },
+  {
+   "exercise": "Back Squat",
+   "kg": 80.0,
+   "reps": 6,
+   "rpe": null,
+   "warmup": false,
+   "set": 2
+  },
+  {
+   "exercise": "Back Squat",
+   "kg": 100.0,
+   "reps": 3,
+   "rpe": null,
+   "warmup": false,
+   "set": 3
+  },
+  {
+   "exercise": "Back Squat",
+   "kg": 110.0,
+   "reps": 3,
+   "rpe": null,
+   "warmup": false,
+   "set": 4
+  },
+  {
+   "exercise": "Back Squat",
+   "kg": 120.0,
+   "reps": 2,
+   "rpe": null,
+   "warmup": false,
+   "set": 5
+  },
+  {
+   "exercise": "Deadlift",
+   "kg": 60.0,
+   "reps": 5,
+   "rpe": null,
+   "warmup": false,
+   "set": 1
+  },
+  {
+   "exercise": "Deadlift",
+   "kg": 90.0,
+   "reps": 5,
+   "rpe": null,
+   "warmup": false,
+   "set": 2
+  },
+  {
+   "exercise": "Deadlift",
+   "kg": 110.0,
+   "reps": 3,
+   "rpe": null,
+   "warmup": false,
+   "set": 3
+  },
+  {
+   "exercise": "Deadlift",
+   "kg": 120.0,
+   "reps": 3,
+   "rpe": null,
+   "warmup": false,
+   "set": 4
+  },
+  {
+   "exercise": "Military Press",
+   "kg": 30.0,
+   "reps": 7,
+   "rpe": null,
+   "warmup": false,
+   "set": 1
+  },
+  {
+   "exercise": "Military Press",
+   "kg": 35.0,
+   "reps": 7,
+   "rpe": null,
+   "warmup": false,
+   "set": 2
+  },
+  {
+   "exercise": "Military Press",
+   "kg": 40.0,
+   "reps": 4,
+   "rpe": null,
+   "warmup": false,
+   "set": 3
+  },
+  {
+   "exercise": "Lat Pulldown",
+   "kg": 60.0,
+   "reps": 10,
+   "rpe": null,
+   "warmup": false,
+   "set": 1
+  },
+  {
+   "exercise": "Lat Pulldown",
+   "kg": 70.0,
+   "reps": 10,
+   "rpe": null,
+   "warmup": false,
+   "set": 2
+  },
+  {
+   "exercise": "Lat Pulldown",
+   "kg": 80.0,
+   "reps": 8,
+   "rpe": null,
+   "warmup": false,
+   "set": 3
+  },
+  {
+   "exercise": "Rope Cable Triceps Pushdown",
+   "kg": 21.0,
+   "reps": 14,
+   "rpe": null,
+   "warmup": false,
+   "set": 1
+  },
+  {
+   "exercise": "Rope Cable Triceps Pushdown",
+   "kg": 21.0,
+   "reps": 9,
+   "rpe": null,
+   "warmup": false,
+   "set": 2
+  },
+  {
+   "exercise": "Hammer Curl",
+   "kg": 21.0,
+   "reps": 12,
+   "rpe": null,
+   "warmup": false,
+   "set": 1
+  },
+  {
+   "exercise": "Hammer Curl",
+   "kg": 10.0,
+   "reps": 12,
+   "rpe": null,
+   "warmup": false,
+   "set": 2
+  }
+ ]
+}

@@ -487,3 +487,23 @@ def test_reps_at_weight_log_with_numbered_exercises():
         ("Bench Press", 8, 40.0, True), ("Bench Press", 8, 60.0, False), ("Hammer Curl", 6, 21.0, False)]
     assert info["start_local"].startswith("2026-11-07")
     assert detect_format("Exercise,Weight,Reps\nBench,60,5\n") == "csv"
+
+
+def test_recording_gaps_are_not_bridged_with_motion():
+    import pandas as pd
+    from vbt.ingest import downsample, find_gaps
+    fs = 100.0
+    t = np.r_[np.arange(0, 20, 1 / fs), np.arange(80, 100, 1 / fs)]       # watch paused 20 -> 80 s
+    rng = np.random.default_rng(0)
+    df = pd.DataFrame({"seconds_elapsed": t,
+                       "accelerationX": 0.3 * np.sin(2 * np.pi * 0.4 * t) + 0.01 * rng.standard_normal(len(t)),
+                       "accelerationY": 0.0, "accelerationZ": 0.0,
+                       "rotationRateX": 0.5, "rotationRateY": 0.0, "rotationRateZ": 0.0,
+                       "gravityX": 0.0, "gravityY": 0.0, "gravityZ": -1.0})
+    assert len(find_gaps(t)) == 1
+    small, _ = downsample(df)
+    inside = (small.seconds_elapsed > 21) & (small.seconds_elapsed < 79)
+    assert (small.loc[inside, "valid"] == 0).all() and (small.loc[~inside & (small.seconds_elapsed < 19), "valid"] == 1).all()
+    assert np.abs(small.loc[inside, ["accelerationX", "rotationRateX"]].to_numpy()).max() == 0.0
+    full, _ = downsample(df[df.seconds_elapsed < 20])
+    assert "valid" not in full.columns                                    # gap-free: unchanged format

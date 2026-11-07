@@ -50,7 +50,7 @@ def eval_session(sid, root=SESSIONS, stress=True):
     d, meta, log, data = load_session(sid, root)
     logged = logged_sets(log)
     truth = json.loads((d / "sets.json").read_text())["sets"]
-    prior = library.exercise_model(library.load_rows(root, exclude=sid))
+    prior = library.exercise_model(library.load_rows(root, exclude=sid, min_source="trusted"))
     found, _ = detect_sets(data, logged, prior_model=prior)
     ev = evaluate_alignment(found, truth)
     count_diff, verdict_ok = [], []
@@ -87,7 +87,7 @@ def eval_session(sid, root=SESSIONS, stress=True):
 
 
 def eval_classifier(root=SESSIONS):
-    rows = library.load_rows(root)
+    rows = library.load_rows(root, min_source="trusted")
     sessions = sorted({r["session"] for r in rows})
     if len(sessions) < 2:
         return {"note": "needs >= 2 analysed sessions", "n_sessions": len(sessions)}

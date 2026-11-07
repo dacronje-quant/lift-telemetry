@@ -55,6 +55,8 @@ def load_watch_csv(path, units="g", keep_clock=False):
         pass
     if all(f"quaternion{a}" in df.columns for a in "WXYZ"):
         out["quat"] = df[["quaternionW", "quaternionX", "quaternionY", "quaternionZ"]].to_numpy(float)[order]
+    if "valid" in df.columns:                      # 0 = the device recorded nothing here
+        out["valid"] = df["valid"].to_numpy(bool)[order]
     if all(f"orient{a}" in df.columns for a in "XYZ"):
         out["orient"] = df[["orientX", "orientY", "orientZ"]].to_numpy(float)[order]
     return out

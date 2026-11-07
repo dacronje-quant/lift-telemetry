@@ -28,12 +28,41 @@ STORE_HZ = 25.0
 ORIENT = ["orientX", "orientY", "orientZ"]
 
 
+MOTION = ["accelerationX", "accelerationY", "accelerationZ", "rotationRateX", "rotationRateY", "rotationRateZ"]
+
+
+def find_gaps(t, min_gap_s=1.0):
+    """Holes in a recording (the device stopped sampling): [(start_s, end_s), ...]."""
+    t = np.sort(np.asarray(t, float))
+    dt = np.diff(t)
+    if not len(dt):
+        return []
+    thr = max(min_gap_s, 20 * float(np.median(dt)))
+    return [(float(t[i]), float(t[i + 1])) for i in np.flatnonzero(dt > thr)]
+
+
+def coverage(t, gaps):
+    span = float(np.max(t) - np.min(t)) or 1.0
+    lost = sum(b - a for a, b in gaps)
+    return {"recorded_pct": round(100 * (1 - lost / span), 1), "n_gaps": len(gaps),
+            "gaps": [[round(a, 2), round(b, 2)] for a, b in gaps]}
+
+
 def downsample(df, fs=STORE_HZ):
-    """Anti-alias (8 Hz low-pass) and resample canonical columns onto a uniform grid."""
+    """Anti-alias (8 Hz low-pass) and resample canonical columns onto a uniform grid.
+
+    Gaps where the device stopped sampling are never bridged with invented motion:
+    each recorded stretch is filtered on its own, motion (acceleration, rotation rate) is
+    zero inside a gap, orientation is held, and a ``valid`` column (1/0) marks the gap
+    samples. Gap-free recordings come out exactly as before (no ``valid`` column).
+    """
     t = df["seconds_elapsed"].to_numpy(float)
     order = np.argsort(t)
     t = t[order]
     fs_in = 1.0 / np.median(np.diff(t))
+    gaps = find_gaps(t)
+    cuts = np.searchsorted(t, [b for _, b in gaps])       # first index of each new stretch
+    segs = np.split(np.arange(len(t)), cuts)
     tu = np.arange(t[0], t[-1], 1.0 / fs)
     cols = COLS + [c for c in ORIENT + QUAT if c in df.columns]
     df = df.copy()
@@ -52,7 +81,17 @@ def downsample(df, fs=STORE_HZ):
     else:
         filt = lambda x: x  # noqa: E731   source already slow: just interpolate
     for c in cols:
-        out[c] = np.interp(tu, t, filt(df[c].to_numpy(float)[order]))
+        x = df[c].to_numpy(float)[order]
+        y = np.concatenate([filt(x[s]) if len(s) > 30 else x[s] for s in segs])
+        out[c] = np.interp(tu, t, y)
+    if gaps:
+        valid = np.ones(len(tu), bool)
+        for a, b in gaps:
+            valid[(tu > a) & (tu < b)] = False
+        for c in MOTION:
+            if c in out:
+                out[c] = np.where(valid, out[c], 0.0)
+        out["valid"] = valid.astype(int)
     for trip in (["gravityX", "gravityY", "gravityZ"], ORIENT, QUAT):
         if trip[0] in out:
             g = np.column_stack([out[c] for c in trip])
@@ -98,6 +137,8 @@ def ingest(sensor_src, log_src, root="data/sessions", session_id=None, overwrite
             "raw_rate_hz": round(fs_in, 2), "stored_rate_hz": STORE_HZ,
             "duration_s": round(float(small["seconds_elapsed"].iloc[-1] - small["seconds_elapsed"].iloc[0]), 1),
             "first_sample_s": round(float(small["seconds_elapsed"].iloc[0]), 3),
+            "coverage": coverage(df["seconds_elapsed"].to_numpy(float),
+                                 find_gaps(df["seconds_elapsed"].to_numpy(float))),
             "n_raw_samples": int(len(df)), "source": Path(str(sensor_src)).name}
     if start_utc and when and meta["timezone"]:
         try:

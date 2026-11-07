@@ -1,0 +1,102 @@
+{
+ "session_id": "2026-11-07",
+ "title": "FULL BODY A — Sat 7 Nov 2026 — 1h 06m, 468 kcal, 26 sets / 169 reps",
+ "log_source": "text",
+ "log_start_local": "2026-11-07T00:00:00",
+ "sensor": "Apple Watch via Sensor Logger, wrist placement",
+ "sensor_info": {
+  "device": "Watch7.20",
+  "timezone": "Europe/Stockholm",
+  "platform": "watchos",
+  "app": "Sensor Logger",
+  "app_version": "1.68.1",
+  "format": "sensorlogger-watch",
+  "placement": "wrist",
+  "has_gyro": true,
+  "gravity": "device",
+  "has_attitude": true,
+  "heart_rate_samples": 156,
+  "n_samples": 146676
+ },
+ "device": "Watch7.20",
+ "timezone": "Europe/Stockholm",
+ "start_utc": "2026-11-07T09:30:32.050000+00:00",
+ "raw_rate_hz": 100.44,
+ "stored_rate_hz": 25.0,
+ "duration_s": 2407.1,
+ "first_sample_s": 0.665,
+ "coverage": {
+  "recorded_pct": 60.8,
+  "n_gaps": 16,
+  "gaps": [
+   [
+    587.01,
+    601.5
+   ],
+   [
+    610.49,
+    835.64
+   ],
+   [
+    983.03,
+    987.18
+   ],
+   [
+    1003.39,
+    1005.04
+   ],
+   [
+    1010.84,
+    1112.83
+   ],
+   [
+    1264.44,
+    1321.37
+   ],
+   [
+    1489.59,
+    1492.55
+   ],
+   [
+    1521.05,
+    1522.56
+   ],
+   [
+    1533.82,
+    1536.8
+   ],
+   [
+    1552.23,
+    1554.72
+   ],
+   [
+    1565.52,
+    1569.21
+   ],
+   [
+    1580.26,
+    1590.21
+   ],
+   [
+    1741.38,
+    1746.29
+   ],
+   [
+    1755.07,
+    1759.55
+   ],
+   [
+    1768.22,
+    2250.34
+   ],
+   [
+    2381.03,
+    2405.42
+   ]
+  ]
+ },
+ "n_raw_samples": 146676,
+ "source": "rec.zip",
+ "start_local": "2026-11-07T10:30:32.050000+01:00",
+ "log_minus_recording_s": -37832
+}

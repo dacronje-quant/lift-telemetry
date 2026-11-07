@@ -1,0 +1,1331 @@
+{
+"session_id": "2026-11-07",
+"date": "2026-11-07",
+"windows_source": "auto",
+"summary": {
+"recording_s": 2407.1,
+"n_sets": 26,
+"n_seen": 19,
+"n_exercises": 7,
+"first_rep_s": 31.76,
+"last_rep_s": 2374.2,
+"work_span_min": 39.0,
+"logged_reps": 169,
+"sensor_reps": 121,
+"sensor_reps_cmp": 121.0,
+"tut_s": 303.0,
+"work_density_pct": 12.9,
+"volume_kg": 9175.0,
+"median_rest_s": 56.0,
+"n_match": 4,
+"n_ambiguous": 8,
+"n_fewer": 3,
+"n_more": 4,
+"n_not_seen": 7
+},
+"shadow": {
+"mode": "other workouts",
+"n_sets": 26,
+"trained_on_sets": 22,
+"found": 11,
+"false_sets": 0,
+"named": 0,
+"reps_exact": 1,
+"reps_within1": 4,
+"fully_right": 0,
+"readiness_pct": 0.0,
+"reference": "automatic windows (unchecked)"
+},
+"sets": [
+{
+"i": 1,
+"ex": "BP",
+"label": "Bench Press",
+"key": "bench",
+"kg": 40.0,
+"logged_reps": 8,
+"rpe": null,
+"warmup": true,
+"per_unit": false,
+"skipped": false,
+"window": [
+31.71,
+51.63
+],
+"span": [
+31.76,
+51.14
+],
+"auto_score": 1.902,
+"channel": "pos",
+"sensor_reps": 9,
+"clean_reps": 5,
+"sensor_range": [
+4,
+9
+],
+"profile_source": "generic",
+"bouts": [
+9
+],
+"bouts_clean": [
+5
+],
+"flag": "ambiguous",
+"delta": 0,
+"mean_velocity": 0.278,
+"best_velocity": 0.341,
+"velocity_loss_pct": 22.8,
+"tut_s": 17.9,
+"con_s": 5.3,
+"ecc_s": 6.5,
+"features": {
+"g_x": -0.7123,
+"g_y": 0.4995,
+"g_z": 0.1231,
+"g_std_x": 0.3133,
+"g_std_y": 0.2265,
+"g_std_z": 0.2801,
+"rot_range_deg": 56.6188,
+"gyro_rms_x": 1.485,
+"gyro_rms_y": 0.8018,
+"gyro_rms_z": 1.0419,
+"gyro_dom_frac": 0.4461,
+"a_vert_rms": 1.8676,
+"a_horiz_rms": 2.9057,
+"vert_ratio": 0.3913,
+"rom_cm": 18.6266,
+"period_s": 4.2
+},
+"rest_after_s": 18.0
+},
+{
+"i": 2,
+"ex": "BP",
+"label": "Bench Press",
+"key": "bench",
+"kg": 60.0,
+"logged_reps": 8,
+"rpe": null,
+"warmup": false,
+"per_unit": false,
+"skipped": true,
+"features": null,
+"flag": "not seen",
+"delta": null,
+"sensor_reps": 0
+},
+{
+"i": 3,
+"ex": "BP",
+"label": "Bench Press",
+"key": "bench",
+"kg": 70.0,
+"logged_reps": 6,
+"rpe": null,
+"warmup": false,
+"per_unit": false,
+"skipped": false,
+"window": [
+67.11,
+87.23
+],
+"span": [
+69.11,
+87.67
+],
+"auto_score": 2.788,
+"channel": "pos",
+"sensor_reps": 7,
+"clean_reps": 6,
+"sensor_range": [
+7,
+7
+],
+"profile_source": "generic",
+"bouts": [
+7
+],
+"bouts_clean": [
+6
+],
+"flag": "ambiguous",
+"delta": 0,
+"mean_velocity": 0.338,
+"best_velocity": 0.403,
+"velocity_loss_pct": 17.9,
+"tut_s": 18.6,
+"con_s": 8.6,
+"ecc_s": 4.6,
+"features": {
+"g_x": 0.9864,
+"g_y": -0.0511,
+"g_z": 0.0371,
+"g_std_x": 0.0144,
+"g_std_y": 0.0992,
+"g_std_z": 0.1143,
+"rot_range_deg": 10.4597,
+"gyro_rms_x": 0.1925,
+"gyro_rms_y": 0.4294,
+"gyro_rms_z": 0.4943,
+"gyro_dom_frac": 0.4428,
+"a_vert_rms": 2.6181,
+"a_horiz_rms": 0.7004,
+"vert_ratio": 0.789,
+"rom_cm": 43.3218,
+"period_s": 2.8
+},
+"rest_after_s": 235.9
+},
+{
+"i": 4,
+"ex": "BP",
+"label": "Bench Press",
+"key": "bench",
+"kg": 80.0,
+"logged_reps": 5,
+"rpe": null,
+"warmup": false,
+"per_unit": false,
+"skipped": false,
+"window": [
+324.03,
+340.95
+],
+"span": [
+323.53,
+342.24
+],
+"auto_score": 2.58,
+"channel": "pos",
+"sensor_reps": 7,
+"clean_reps": 6,
+"sensor_range": [
+7,
+7
+],
+"profile_source": "generic",
+"bouts": [
+7
+],
+"bouts_clean": [
+6
+],
+"flag": "watch more",
+"delta": 1,
+"mean_velocity": 0.325,
+"best_velocity": 0.379,
+"velocity_loss_pct": 0.0,
+"tut_s": 18.7,
+"con_s": 8.1,
+"ecc_s": 6.4,
+"features": {
+"g_x": 0.9866,
+"g_y": -0.0577,
+"g_z": -0.0299,
+"g_std_x": 0.0082,
+"g_std_y": 0.1065,
+"g_std_z": 0.1049,
+"rot_range_deg": 11.5358,
+"gyro_rms_x": 0.2086,
+"gyro_rms_y": 0.371,
+"gyro_rms_z": 0.4541,
+"gyro_dom_frac": 0.4393,
+"a_vert_rms": 1.7288,
+"a_horiz_rms": 0.6088,
+"vert_ratio": 0.7396,
+"rom_cm": 39.7334,
+"period_s": 2.6
+},
+"rest_after_s": 21.8
+},
+{
+"i": 5,
+"ex": "BP",
+"label": "Bench Press",
+"key": "bench",
+"kg": 90.0,
+"logged_reps": 3,
+"rpe": null,
+"warmup": false,
+"per_unit": false,
+"skipped": true,
+"features": null,
+"flag": "not seen",
+"delta": null,
+"sensor_reps": 0
+},
+{
+"i": 6,
+"ex": "BP",
+"label": "Bench Press",
+"key": "bench",
+"kg": 95.0,
+"logged_reps": 1,
+"rpe": null,
+"warmup": false,
+"per_unit": false,
+"skipped": false,
+"window": [
+363.51,
+369.43
+],
+"span": [
+364.04,
+368.16
+],
+"auto_score": 0.271,
+"channel": "pos",
+"sensor_reps": 4,
+"clean_reps": 3,
+"sensor_range": [
+4,
+4
+],
+"profile_source": "generic",
+"bouts": [
+4
+],
+"bouts_clean": [
+3
+],
+"flag": "watch more",
+"delta": 2,
+"mean_velocity": 0.252,
+"best_velocity": 0.263,
+"velocity_loss_pct": 3.2,
+"tut_s": 4.1,
+"con_s": 1.7,
+"ecc_s": 1.4,
+"features": {
+"g_x": -0.0946,
+"g_y": 0.8763,
+"g_z": -0.3297,
+"g_std_x": 0.0883,
+"g_std_y": 0.1302,
+"g_std_z": 0.2995,
+"rot_range_deg": 27.5831,
+"gyro_rms_x": 1.8839,
+"gyro_rms_y": 0.7594,
+"gyro_rms_z": 0.5691,
+"gyro_dom_frac": 0.5864,
+"a_vert_rms": 1.948,
+"a_horiz_rms": 1.9695,
+"vert_ratio": 0.4972,
+"rom_cm": 36.5135,
+"period_s": 0.8
+},
+"rest_after_s": 71.1
+},
+{
+"i": 7,
+"ex": "BP",
+"label": "Bench Press",
+"key": "bench",
+"kg": 70.0,
+"logged_reps": 9,
+"rpe": null,
+"warmup": false,
+"per_unit": false,
+"skipped": false,
+"window": [
+434.71,
+452.23
+],
+"span": [
+439.28,
+450.22
+],
+"auto_score": 0.649,
+"channel": "pos",
+"sensor_reps": 8,
+"clean_reps": 7,
+"sensor_range": [
+8,
+10
+],
+"profile_source": "generic",
+"bouts": [
+8
+],
+"bouts_clean": [
+7
+],
+"flag": "watch fewer",
+"delta": 1,
+"mean_velocity": 0.214,
+"best_velocity": 0.305,
+"velocity_loss_pct": 38.7,
+"tut_s": 10.9,
+"con_s": 2.9,
+"ecc_s": 4.5,
+"features": {
+"g_x": -0.2528,
+"g_y": 0.8307,
+"g_z": -0.4045,
+"g_std_x": 0.2105,
+"g_std_y": 0.118,
+"g_std_z": 0.1554,
+"rot_range_deg": 29.1534,
+"gyro_rms_x": 0.8157,
+"gyro_rms_y": 1.0428,
+"gyro_rms_z": 0.6492,
+"gyro_dom_frac": 0.4158,
+"a_vert_rms": 1.8383,
+"a_horiz_rms": 2.67,
+"vert_ratio": 0.4078,
+"rom_cm": 12.5943,
+"period_s": 6.98
+},
+"rest_after_s": 38.0
+},
+{
+"i": 8,
+"ex": "SQ",
+"label": "Back Squat",
+"key": "squat",
+"kg": 60.0,
+"logged_reps": 6,
+"rpe": null,
+"warmup": true,
+"per_unit": false,
+"skipped": false,
+"window": [
+486.19,
+507.59
+],
+"span": [
+488.21,
+508.29
+],
+"auto_score": 2.797,
+"channel": "pos",
+"sensor_reps": 7,
+"clean_reps": 5,
+"sensor_range": [
+7,
+7
+],
+"profile_source": "generic",
+"bouts": [
+7
+],
+"bouts_clean": [
+5
+],
+"flag": "ambiguous",
+"delta": 0,
+"mean_velocity": 0.317,
+"best_velocity": 0.353,
+"velocity_loss_pct": 5.0,
+"tut_s": 20.1,
+"con_s": 9.2,
+"ecc_s": 7.2,
+"features": {
+"g_x": 0.9873,
+"g_y": -0.0522,
+"g_z": -0.0276,
+"g_std_x": 0.0076,
+"g_std_y": 0.1125,
+"g_std_z": 0.0949,
+"rot_range_deg": 9.9657,
+"gyro_rms_x": 0.1876,
+"gyro_rms_y": 0.3155,
+"gyro_rms_z": 0.3888,
+"gyro_dom_frac": 0.4359,
+"a_vert_rms": 1.3082,
+"a_horiz_rms": 0.5855,
+"vert_ratio": 0.6908,
+"rom_cm": 33.962,
+"period_s": 2.76
+},
+"rest_after_s": 339.6
+},
+{
+"i": 9,
+"ex": "SQ",
+"label": "Back Squat",
+"key": "squat",
+"kg": 80.0,
+"logged_reps": 6,
+"rpe": null,
+"warmup": false,
+"per_unit": false,
+"skipped": true,
+"features": null,
+"flag": "not seen",
+"delta": null,
+"sensor_reps": 0
+},
+{
+"i": 10,
+"ex": "SQ",
+"label": "Back Squat",
+"key": "squat",
+"kg": 100.0,
+"logged_reps": 3,
+"rpe": null,
+"warmup": false,
+"per_unit": false,
+"skipped": false,
+"window": [
+847.55,
+856.95
+],
+"span": [
+847.86,
+854.94
+],
+"auto_score": 1.578,
+"channel": "pos",
+"sensor_reps": 4,
+"clean_reps": 3,
+"sensor_range": [
+4,
+4
+],
+"profile_source": "generic",
+"bouts": [
+4
+],
+"bouts_clean": [
+3
+],
+"flag": "ambiguous",
+"delta": 0,
+"mean_velocity": 0.246,
+"best_velocity": 0.279,
+"velocity_loss_pct": 3.1,
+"tut_s": 7.1,
+"con_s": 1.9,
+"ecc_s": 3.2,
+"features": {
+"g_x": -0.0801,
+"g_y": 0.4853,
+"g_z": -0.6545,
+"g_std_x": 0.2672,
+"g_std_y": 0.2853,
+"g_std_z": 0.4206,
+"rot_range_deg": 86.7188,
+"gyro_rms_x": 2.3314,
+"gyro_rms_y": 1.0601,
+"gyro_rms_z": 0.7306,
+"gyro_dom_frac": 0.5656,
+"a_vert_rms": 2.9004,
+"a_horiz_rms": 3.6286,
+"vert_ratio": 0.4442,
+"rom_cm": 43.1051,
+"period_s": 3.62
+},
+"rest_after_s": 26.3
+},
+{
+"i": 11,
+"ex": "SQ",
+"label": "Back Squat",
+"key": "squat",
+"kg": 110.0,
+"logged_reps": 3,
+"rpe": null,
+"warmup": false,
+"per_unit": false,
+"skipped": false,
+"window": [
+879.19,
+891.75
+],
+"span": [
+881.2,
+889.74
+],
+"auto_score": 2.019,
+"channel": "pos",
+"sensor_reps": 3,
+"clean_reps": 2,
+"sensor_range": [
+3,
+3
+],
+"profile_source": "generic",
+"bouts": [
+3
+],
+"bouts_clean": [
+2
+],
+"flag": "match",
+"delta": 0,
+"mean_velocity": 0.207,
+"best_velocity": 0.271,
+"velocity_loss_pct": 23.6,
+"tut_s": 8.5,
+"con_s": 3.0,
+"ecc_s": 3.0,
+"features": {
+"g_x": 0.1057,
+"g_y": 0.1214,
+"g_z": -0.2047,
+"g_std_x": 0.6874,
+"g_std_y": 0.3035,
+"g_std_z": 0.6062,
+"rot_range_deg": 78.8317,
+"gyro_rms_x": 0.7891,
+"gyro_rms_y": 1.0648,
+"gyro_rms_z": 0.7197,
+"gyro_dom_frac": 0.4137,
+"a_vert_rms": 1.3519,
+"a_horiz_rms": 1.6156,
+"vert_ratio": 0.4556,
+"rom_cm": 25.5049,
+"period_s": 2.54
+},
+"rest_after_s": 50.5
+},
+{
+"i": 12,
+"ex": "SQ",
+"label": "Back Squat",
+"key": "squat",
+"kg": 120.0,
+"logged_reps": 2,
+"rpe": null,
+"warmup": false,
+"per_unit": false,
+"skipped": false,
+"window": [
+940.71,
+947.87
+],
+"span": [
+940.24,
+948.7
+],
+"auto_score": 2.649,
+"channel": "pos",
+"sensor_reps": 4,
+"clean_reps": 3,
+"sensor_range": [
+4,
+4
+],
+"profile_source": "generic",
+"bouts": [
+4
+],
+"bouts_clean": [
+3
+],
+"flag": "watch more",
+"delta": 1,
+"mean_velocity": 0.28,
+"best_velocity": 0.306,
+"velocity_loss_pct": 12.5,
+"tut_s": 8.5,
+"con_s": 2.3,
+"ecc_s": 2.8,
+"features": {
+"g_x": -0.3993,
+"g_y": 0.6244,
+"g_z": 0.0491,
+"g_std_x": 0.564,
+"g_std_y": 0.2046,
+"g_std_z": 0.2973,
+"rot_range_deg": 67.1148,
+"gyro_rms_x": 2.3624,
+"gyro_rms_y": 1.3197,
+"gyro_rms_z": 1.0058,
+"gyro_dom_frac": 0.5039,
+"a_vert_rms": 2.0127,
+"a_horiz_rms": 3.501,
+"vert_ratio": 0.365,
+"rom_cm": 27.6856,
+"period_s": 3.52
+},
+"rest_after_s": 209.2
+},
+{
+"i": 13,
+"ex": "DL",
+"label": "Deadlift",
+"key": "deadlift",
+"kg": 60.0,
+"logged_reps": 5,
+"rpe": null,
+"warmup": false,
+"per_unit": false,
+"skipped": false,
+"window": [
+1158.19,
+1175.75
+],
+"span": [
+1157.91,
+1173.75
+],
+"auto_score": 2.26,
+"channel": "pos",
+"sensor_reps": 6,
+"clean_reps": 5,
+"sensor_range": [
+6,
+6
+],
+"profile_source": "generic",
+"bouts": [
+6
+],
+"bouts_clean": [
+5
+],
+"flag": "ambiguous",
+"delta": 0,
+"mean_velocity": 0.571,
+"best_velocity": 0.692,
+"velocity_loss_pct": 2.3,
+"tut_s": 15.8,
+"con_s": 7.5,
+"ecc_s": 6.8,
+"features": {
+"g_x": 0.7043,
+"g_y": -0.1256,
+"g_z": -0.6953,
+"g_std_x": 0.0489,
+"g_std_y": 0.0137,
+"g_std_z": 0.0473,
+"rot_range_deg": 6.0045,
+"gyro_rms_x": 0.0555,
+"gyro_rms_y": 0.1961,
+"gyro_rms_z": 0.0747,
+"gyro_dom_frac": 0.601,
+"a_vert_rms": 2.1285,
+"a_horiz_rms": 0.3148,
+"vert_ratio": 0.8712,
+"rom_cm": 73.1751,
+"period_s": 2.96
+},
+"rest_after_s": 170.9
+},
+{
+"i": 14,
+"ex": "DL",
+"label": "Deadlift",
+"key": "deadlift",
+"kg": 90.0,
+"logged_reps": 5,
+"rpe": null,
+"warmup": false,
+"per_unit": false,
+"skipped": false,
+"window": [
+1342.67,
+1359.95
+],
+"span": [
+1344.68,
+1357.95
+],
+"auto_score": 2.554,
+"channel": "pos",
+"sensor_reps": 5,
+"clean_reps": 4,
+"sensor_range": [
+5,
+5
+],
+"profile_source": "generic",
+"bouts": [
+5
+],
+"bouts_clean": [
+4
+],
+"flag": "match",
+"delta": 0,
+"mean_velocity": 0.337,
+"best_velocity": 0.4,
+"velocity_loss_pct": 0.5,
+"tut_s": 13.3,
+"con_s": 6.6,
+"ecc_s": 6.3,
+"features": {
+"g_x": 0.7121,
+"g_y": -0.1882,
+"g_z": -0.6751,
+"g_std_x": 0.0291,
+"g_std_y": 0.0131,
+"g_std_z": 0.0272,
+"rot_range_deg": 4.1441,
+"gyro_rms_x": 0.067,
+"gyro_rms_y": 0.174,
+"gyro_rms_z": 0.0843,
+"gyro_dom_frac": 0.5349,
+"a_vert_rms": 1.3472,
+"a_horiz_rms": 0.3137,
+"vert_ratio": 0.8111,
+"rom_cm": 47.1559,
+"period_s": 3.04
+},
+"rest_after_s": 28.3
+},
+{
+"i": 15,
+"ex": "DL",
+"label": "Deadlift",
+"key": "deadlift",
+"kg": 110.0,
+"logged_reps": 3,
+"rpe": null,
+"warmup": false,
+"per_unit": false,
+"skipped": false,
+"window": [
+1387.35,
+1398.67
+],
+"span": [
+1386.24,
+1400.25
+],
+"auto_score": 2.858,
+"channel": "pos",
+"sensor_reps": 5,
+"clean_reps": 2,
+"sensor_range": [
+5,
+5
+],
+"profile_source": "generic",
+"bouts": [
+5
+],
+"bouts_clean": [
+2
+],
+"flag": "ambiguous",
+"delta": 0,
+"mean_velocity": 0.222,
+"best_velocity": 0.271,
+"velocity_loss_pct": 18.3,
+"tut_s": 14.0,
+"con_s": 3.8,
+"ecc_s": 7.2,
+"features": {
+"g_x": 0.0417,
+"g_y": 0.479,
+"g_z": -0.1222,
+"g_std_x": 0.7557,
+"g_std_y": 0.3264,
+"g_std_z": 0.2763,
+"rot_range_deg": 77.6035,
+"gyro_rms_x": 1.4749,
+"gyro_rms_y": 1.169,
+"gyro_rms_z": 1.2712,
+"gyro_dom_frac": 0.3767,
+"a_vert_rms": 2.1596,
+"a_horiz_rms": 3.1953,
+"vert_ratio": 0.4033,
+"rom_cm": 37.5064,
+"period_s": 4.54
+},
+"rest_after_s": -0.0
+},
+{
+"i": 16,
+"ex": "DL",
+"label": "Deadlift",
+"key": "deadlift",
+"kg": 120.0,
+"logged_reps": 3,
+"rpe": null,
+"warmup": false,
+"per_unit": false,
+"skipped": false,
+"window": [
+1401.55,
+1413.79
+],
+"span": [
+1400.24,
+1413.43
+],
+"auto_score": 2.47,
+"channel": "pos",
+"sensor_reps": 5,
+"clean_reps": 3,
+"sensor_range": [
+5,
+5
+],
+"profile_source": "generic",
+"bouts": [
+5
+],
+"bouts_clean": [
+3
+],
+"flag": "ambiguous",
+"delta": 0,
+"mean_velocity": 0.828,
+"best_velocity": 1.091,
+"velocity_loss_pct": 21.7,
+"tut_s": 13.2,
+"con_s": 3.6,
+"ecc_s": 5.0,
+"features": {
+"g_x": 0.0041,
+"g_y": 0.6486,
+"g_z": -0.2831,
+"g_std_x": 0.6131,
+"g_std_y": 0.2379,
+"g_std_z": 0.2581,
+"rot_range_deg": 59.2516,
+"gyro_rms_x": 2.2196,
+"gyro_rms_y": 1.5295,
+"gyro_rms_z": 1.6741,
+"gyro_dom_frac": 0.4093,
+"a_vert_rms": 3.1273,
+"a_horiz_rms": 4.2415,
+"vert_ratio": 0.4244,
+"rom_cm": 76.0931,
+"period_s": 4.8
+},
+"rest_after_s": 94.7
+},
+{
+"i": 17,
+"ex": "OHP",
+"label": "Military Press",
+"key": "ohp",
+"kg": 30.0,
+"logged_reps": 7,
+"rpe": null,
+"warmup": false,
+"per_unit": false,
+"skipped": false,
+"window": [
+1506.11,
+1529.07
+],
+"span": [
+1508.11,
+1530.1
+],
+"auto_score": 1.729,
+"channel": "pos",
+"sensor_reps": 8,
+"clean_reps": 4,
+"sensor_range": [
+7,
+8
+],
+"profile_source": "generic",
+"bouts": [
+8
+],
+"bouts_clean": [
+4
+],
+"flag": "ambiguous",
+"delta": 0,
+"mean_velocity": 0.283,
+"best_velocity": 0.361,
+"velocity_loss_pct": 28.9,
+"tut_s": 22.0,
+"con_s": 7.8,
+"ecc_s": 10.7,
+"features": {
+"g_x": 0.3131,
+"g_y": 0.023,
+"g_z": -0.4595,
+"g_std_x": 0.6869,
+"g_std_y": 0.3484,
+"g_std_z": 0.3116,
+"rot_range_deg": 107.0191,
+"gyro_rms_x": 0.7662,
+"gyro_rms_y": 0.5066,
+"gyro_rms_z": 0.5986,
+"gyro_dom_frac": 0.4094,
+"a_vert_rms": 1.6136,
+"a_horiz_rms": 1.4595,
+"vert_ratio": 0.5251,
+"rom_cm": 32.8371,
+"period_s": 5.28
+},
+"rest_after_s": 118.0
+},
+{
+"i": 18,
+"ex": "OHP",
+"label": "Military Press",
+"key": "ohp",
+"kg": 35.0,
+"logged_reps": 7,
+"rpe": null,
+"warmup": false,
+"per_unit": false,
+"skipped": true,
+"features": null,
+"flag": "not seen",
+"delta": null,
+"sensor_reps": 0
+},
+{
+"i": 19,
+"ex": "OHP",
+"label": "Military Press",
+"key": "ohp",
+"kg": 40.0,
+"logged_reps": 4,
+"rpe": null,
+"warmup": false,
+"per_unit": false,
+"skipped": false,
+"window": [
+1646.07,
+1659.47
+],
+"span": [
+1648.09,
+1657.51
+],
+"auto_score": 2.394,
+"channel": "pos",
+"sensor_reps": 4,
+"clean_reps": 3,
+"sensor_range": [
+3,
+4
+],
+"profile_source": "generic",
+"bouts": [
+4
+],
+"bouts_clean": [
+3
+],
+"flag": "match",
+"delta": 0,
+"mean_velocity": 0.747,
+"best_velocity": 1.454,
+"velocity_loss_pct": 40.8,
+"tut_s": 9.4,
+"con_s": 2.8,
+"ecc_s": 4.6,
+"features": {
+"g_x": -0.2665,
+"g_y": 0.5122,
+"g_z": -0.128,
+"g_std_x": 0.6984,
+"g_std_y": 0.2799,
+"g_std_z": 0.29,
+"rot_range_deg": 86.1172,
+"gyro_rms_x": 2.1255,
+"gyro_rms_y": 1.1506,
+"gyro_rms_z": 1.7759,
+"gyro_dom_frac": 0.4207,
+"a_vert_rms": 3.5772,
+"a_horiz_rms": 3.8583,
+"vert_ratio": 0.4811,
+"rom_cm": 54.2695,
+"period_s": 4.8
+},
+"rest_after_s": 62.2
+},
+{
+"i": 20,
+"ex": "PD",
+"label": "Lat Pulldown",
+"key": "pulldown",
+"kg": 60.0,
+"logged_reps": 10,
+"rpe": null,
+"warmup": false,
+"per_unit": false,
+"skipped": false,
+"window": [
+1717.75,
+1746.15
+],
+"span": [
+1719.74,
+1744.2
+],
+"auto_score": 1.159,
+"channel": "pos",
+"sensor_reps": 8,
+"clean_reps": 5,
+"sensor_range": [
+7,
+8
+],
+"profile_source": "generic",
+"bouts": [
+8
+],
+"bouts_clean": [
+5
+],
+"flag": "watch fewer",
+"delta": 2,
+"mean_velocity": 0.689,
+"best_velocity": 0.788,
+"velocity_loss_pct": 10.7,
+"tut_s": 24.5,
+"con_s": 9.8,
+"ecc_s": 11.6,
+"features": {
+"g_x": -0.9061,
+"g_y": 0.2255,
+"g_z": 0.0847,
+"g_std_x": 0.1712,
+"g_std_y": 0.1991,
+"g_std_z": 0.2279,
+"rot_range_deg": 42.0188,
+"gyro_rms_x": 0.5198,
+"gyro_rms_y": 0.3273,
+"gyro_rms_z": 0.3608,
+"gyro_dom_frac": 0.4304,
+"a_vert_rms": 1.9178,
+"a_horiz_rms": 1.1103,
+"vert_ratio": 0.6333,
+"rom_cm": 50.0697,
+"period_s": 3.22
+},
+"rest_after_s": 519.3
+},
+{
+"i": 21,
+"ex": "PD",
+"label": "Lat Pulldown",
+"key": "pulldown",
+"kg": 70.0,
+"logged_reps": 10,
+"rpe": null,
+"warmup": false,
+"per_unit": false,
+"skipped": true,
+"features": null,
+"flag": "not seen",
+"delta": null,
+"sensor_reps": 0
+},
+{
+"i": 22,
+"ex": "PD",
+"label": "Lat Pulldown",
+"key": "pulldown",
+"kg": 80.0,
+"logged_reps": 8,
+"rpe": null,
+"warmup": false,
+"per_unit": false,
+"skipped": false,
+"window": [
+2263.35,
+2288.59
+],
+"span": [
+2263.5,
+2289.54
+],
+"auto_score": 2.702,
+"channel": "pos",
+"sensor_reps": 10,
+"clean_reps": 9,
+"sensor_range": [
+10,
+10
+],
+"profile_source": "generic",
+"bouts": [
+10
+],
+"bouts_clean": [
+9
+],
+"flag": "watch more",
+"delta": 1,
+"mean_velocity": 0.598,
+"best_velocity": 0.691,
+"velocity_loss_pct": 31.9,
+"tut_s": 26.0,
+"con_s": 8.1,
+"ecc_s": 16.1,
+"features": {
+"g_x": -0.1303,
+"g_y": 0.6919,
+"g_z": 0.3133,
+"g_std_x": 0.5902,
+"g_std_y": 0.1824,
+"g_std_z": 0.1568,
+"rot_range_deg": 62.1832,
+"gyro_rms_x": 0.4816,
+"gyro_rms_y": 0.6839,
+"gyro_rms_z": 1.5577,
+"gyro_dom_frac": 0.572,
+"a_vert_rms": 1.7666,
+"a_horiz_rms": 1.5913,
+"vert_ratio": 0.5261,
+"rom_cm": 44.2274,
+"period_s": 2.44
+},
+"rest_after_s": 20.4
+},
+{
+"i": 23,
+"ex": "PUSH",
+"label": "Rope Cable Triceps Pushdown",
+"key": "pushdown",
+"kg": 21.0,
+"logged_reps": 14,
+"rpe": null,
+"warmup": false,
+"per_unit": false,
+"skipped": true,
+"features": null,
+"flag": "not seen",
+"delta": null,
+"sensor_reps": 0
+},
+{
+"i": 24,
+"ex": "PUSH",
+"label": "Rope Cable Triceps Pushdown",
+"key": "pushdown",
+"kg": 21.0,
+"logged_reps": 9,
+"rpe": null,
+"warmup": false,
+"per_unit": false,
+"skipped": false,
+"window": [
+2307.95,
+2335.15
+],
+"span": [
+2309.95,
+2333.12
+],
+"auto_score": 2.126,
+"channel": "gx",
+"sensor_reps": 9,
+"clean_reps": 8,
+"sensor_range": [
+9,
+9
+],
+"profile_source": "generic",
+"bouts": [
+9
+],
+"bouts_clean": [
+8
+],
+"flag": "match",
+"delta": 0,
+"mean_velocity": 0.181,
+"best_velocity": 0.236,
+"velocity_loss_pct": 8.0,
+"tut_s": 23.2,
+"con_s": 9.8,
+"ecc_s": 11.2,
+"features": {
+"g_x": -0.2087,
+"g_y": 0.803,
+"g_z": -0.1829,
+"g_std_x": 0.4447,
+"g_std_y": 0.2147,
+"g_std_z": 0.185,
+"rot_range_deg": 57.6321,
+"gyro_rms_x": 0.6804,
+"gyro_rms_y": 0.7446,
+"gyro_rms_z": 1.1869,
+"gyro_dom_frac": 0.4544,
+"a_vert_rms": 1.3311,
+"a_horiz_rms": 1.6874,
+"vert_ratio": 0.441,
+"rom_cm": 31.4195,
+"period_s": 6.2
+},
+"rest_after_s": 13.7
+},
+{
+"i": 25,
+"ex": "CURL",
+"label": "Hammer Curl",
+"key": "curl",
+"kg": 21.0,
+"logged_reps": 12,
+"rpe": null,
+"warmup": false,
+"per_unit": false,
+"skipped": true,
+"features": null,
+"flag": "not seen",
+"delta": null,
+"sensor_reps": 0
+},
+{
+"i": 26,
+"ex": "CURL",
+"label": "Hammer Curl",
+"key": "curl",
+"kg": 10.0,
+"logged_reps": 12,
+"rpe": null,
+"warmup": false,
+"per_unit": false,
+"skipped": false,
+"window": [
+2340.11,
+2376.19
+],
+"span": [
+2346.81,
+2374.2
+],
+"auto_score": 0.892,
+"channel": "gx",
+"sensor_reps": 8,
+"clean_reps": 6,
+"sensor_range": [
+8,
+8
+],
+"profile_source": "generic",
+"bouts": [
+8
+],
+"bouts_clean": [
+6
+],
+"flag": "watch fewer",
+"delta": 4,
+"mean_velocity": 0.401,
+"best_velocity": 0.624,
+"velocity_loss_pct": 16.3,
+"tut_s": 27.4,
+"con_s": 8.9,
+"ecc_s": 13.5,
+"features": {
+"g_x": -0.2546,
+"g_y": 0.6594,
+"g_z": 0.3681,
+"g_std_x": 0.5623,
+"g_std_y": 0.186,
+"g_std_z": 0.1185,
+"rot_range_deg": 65.3517,
+"gyro_rms_x": 0.5645,
+"gyro_rms_y": 0.7486,
+"gyro_rms_z": 1.3321,
+"gyro_dom_frac": 0.5036,
+"a_vert_rms": 1.6599,
+"a_horiz_rms": 1.8141,
+"vert_ratio": 0.4778,
+"rom_cm": 41.0016,
+"period_s": 3.04
+},
+"rest_after_s": null
+}
+]
+}

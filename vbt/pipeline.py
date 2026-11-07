@@ -117,7 +117,7 @@ def windows_for(d, data, logged, sid, redetect=False, root=SESSIONS, benchmark=T
     existing = json.loads(f.read_text()) if f.exists() else None
     if existing and existing.get("source") in TRUSTED and not redetect and not benchmark:
         return existing, None
-    prior = library.exercise_model(library.load_rows(root, exclude=sid))
+    prior = library.exercise_model(library.load_rows(root, exclude=sid, min_source="trusted"))
     found, _ = detect_sets(data, logged, prior_model=prior, placement=placement)
     rec = {"source": "auto", "clock": "Sensor Logger seconds_elapsed",
            "detector": "vbt.align.detect_sets", "prior_model": prior is not None,
@@ -286,7 +286,7 @@ def classifier_block(sets, rep_rows, sid, root):
         out["pca"] = {"xy": [[R(a, 3), R(b, 3)] for a, b in pc],
                       "var": [R(v, 3) for v in (S ** 2 / (S ** 2).sum())[:2]]}
     # cross-session: model trained only on other sessions
-    rows = library.load_rows(root, exclude=sid)
+    rows = library.load_rows(root, exclude=sid, min_source="trusted")
     model = library.exercise_model(rows)
     if model is not None:
         known = [s for s in seen if s["label"] in model.labels]
