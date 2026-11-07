@@ -55,7 +55,7 @@ def eval_session(sid, root=SESSIONS, stress=True):
     ev = evaluate_alignment(found, truth)
     count_diff, verdict_ok = [], []
     for h, f, g in zip(logged, found, truth):
-        if f["skipped"]:
+        if f["skipped"] or g.get("unsure") or g.get("skipped") or g.get("t_start") is None:
             continue
         a = analyze_set(data, g["t_start"], g["t_end"], h["exercise_key"])
         b = analyze_set(data, f["t_start"], f["t_end"], h["exercise_key"])
@@ -63,7 +63,8 @@ def eval_session(sid, root=SESSIONS, stress=True):
         prof = PROFILES.get(h["exercise_key"], PROFILES["auto"])
         v = count_verdict(a["reps"], h["reps"], prof["bouts"])[0] if a["reps"] else "watch fewer"
         verdict_ok.append(v in ("match", "ambiguous"))
-    res = {"session": sid, "n_sets": len(logged), "prior_model": prior is not None,
+    res = {"session": sid, "n_sets": ev["n_scored"], "n_logged": len(logged),
+           "not_recorded_ok": ev["not_recorded_ok"], "prior_model": prior is not None,
            "recall": round(ev["recall"], 3), "mean_iou": round(ev["mean_iou"], 3),
            "missed": [r["set"] for r in ev["rows"] if not r["found"]],
            "rep_count_mae": round(float(np.mean(count_diff)), 3) if count_diff else None,
@@ -122,7 +123,7 @@ def scoreboard(root=SESSIONS, stress=True):
                    "found_pct": round(100 * sum(x["found"] for x in so) / n, 1) if so else None,
                    "named_pct": round(100 * sum(x["named"] for x in so) / n, 1) if so else None,
                    "reps_exact_pct": round(100 * sum(x["reps_exact"] for x in so) / n, 1) if so else None,
-                   "false_sets": sum(x["false_sets"] for x in so),
+                   "false_sets": sum(x["false_sets"] or 0 for x in so),
                    "modes": sorted({x["mode"] for x in so})}
     try:
         commit = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=ROOT,

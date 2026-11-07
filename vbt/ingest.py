@@ -103,10 +103,11 @@ def downsample(df, fs=STORE_HZ):
 
 def ingest(sensor_src, log_src, root="data/sessions", session_id=None, overwrite=False,
            log_format="auto", sensor_format="auto", accel_convention=None, placement=None,
-           units=None):
+           units=None, supersets=None):
     """Create/refresh a session folder. Returns its Path.
 
     log_src: path to the log file, or the log text itself.
+    supersets: [["Exercise A", "Exercise B"], ...] done alternating (see pipeline.logged_sets).
     """
     p = Path(str(log_src)) if len(str(log_src)) < 4096 and "\n" not in str(log_src) else None
     if p is not None and p.exists():
@@ -128,6 +129,8 @@ def ingest(sensor_src, log_src, root="data/sessions", session_id=None, overwrite
     small, fs_in = downsample(df)
     small.to_csv(d / "sensor_25hz.csv.gz", index=False, float_format="%.5f", compression="gzip")
     (d / f"log_source{log_ext}").write_text(log_text)
+    if supersets:
+        info["supersets"] = [list(g) for g in supersets]
     (d / "log.json").write_text(json.dumps({**info, "sets": sets}, indent=1, ensure_ascii=False))
     meta = {"session_id": sid, "title": info.get("title"), "log_source": info["source"],
             "log_start_local": info.get("start_local"),
@@ -145,7 +148,8 @@ def ingest(sensor_src, log_src, root="data/sessions", session_id=None, overwrite
             from zoneinfo import ZoneInfo
             start = start_utc.astimezone(ZoneInfo(meta["timezone"]))
             meta["start_local"] = start.isoformat()
-            meta["log_minus_recording_s"] = round((when - start.replace(tzinfo=None)) / timedelta(seconds=1))
+            if "T" in info["start_local"]:                  # the log gave a time of day
+                meta["log_minus_recording_s"] = round((when - start.replace(tzinfo=None)) / timedelta(seconds=1))
         except Exception:
             pass
     (d / "meta.json").write_text(json.dumps(meta, indent=1, ensure_ascii=False))

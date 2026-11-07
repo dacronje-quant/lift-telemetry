@@ -202,7 +202,7 @@ function drawShadow(){
   if(!SH.length){document.getElementById('shadowText').innerHTML='<p>No workouts tested yet.</p>';return;}
   const s=SH[cur],sh=s.shadow;
   const k=[[`${sh.found}/${sh.n_sets}`,'sets found without the log'],[`${sh.named}/${sh.found}`,'of those named correctly'],
-    [`${sh.reps_exact}/${sh.found}`,`rep count exact (${sh.reps_within1} within ±1)`],[`${sh.false_sets}`,'extra sets not in the log'],
+    [`${sh.reps_exact}/${sh.found}`,`rep count exact (${sh.reps_within1} within ±1)`],[`${sh.false_sets??'?'}`,sh.false_sets==null?'extra sets: unknown (some logged sets unconfirmed)':'extra sets not in the log'],
     [`${Math.round(sh.readiness_pct)}%`,'fully right']];
   document.getElementById('shadowKpis').innerHTML=k.map(([b,t])=>`<div class="kpi"><b>${b}</b><span>${t}</span></div>`).join('');
   const R=sh.rows||[];const miss=R.filter(r=>!r.found).map(r=>'#'+r.set);

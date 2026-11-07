@@ -2,7 +2,7 @@
  "session_id": "2026-11-07",
  "title": "FULL BODY A — Sat 7 Nov 2026 — 1h 06m, 468 kcal, 26 sets / 169 reps",
  "log_source": "text",
- "log_start_local": "2026-11-07T00:00:00",
+ "log_start_local": "2026-11-07",
  "sensor": "Apple Watch via Sensor Logger, wrist placement",
  "sensor_info": {
   "device": "Watch7.20",
@@ -97,6 +97,5 @@
  },
  "n_raw_samples": 146676,
  "source": "rec.zip",
- "start_local": "2026-11-07T10:30:32.050000+01:00",
- "log_minus_recording_s": -37832
+ "start_local": "2026-11-07T10:30:32.050000+01:00"
 }

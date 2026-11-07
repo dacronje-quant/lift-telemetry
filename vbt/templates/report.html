@@ -96,6 +96,7 @@ ol.methods{margin:0;padding-left:1.2em;display:grid;gap:8px;max-width:78ch}
   <h1 id="hdrTitle"></h1>
   <p class="lede" id="hdrLede"></p>
   <div class="kpis" id="kpis"></div>
+  <div class="callout" id="coverageNote" hidden></div>
 </header>
 
 <section id="sec-review">
@@ -280,7 +281,7 @@ document.getElementById('tlHead').textContent=`${Math.round(dur)} minutes of ${M
 /* ---------- review chips ---------- */
 const rv=document.getElementById('reviewChips');
 const lowScore=s=>s.auto_score!=null&&s.auto_score<1.5&&M.windows_source==='auto';
-const toReview=S.filter(s=>s.skipped||s.flag==='watch fewer'||s.flag==='watch more'||lowScore(s));
+const toReview=S.filter(s=>(s.skipped&&s.flag==='not seen')||s.flag==='watch fewer'||s.flag==='watch more'||lowScore(s));
 if(!toReview.length) rv.appendChild(h('span',{class:'note'},'Nothing stands out: every set was found and agrees with the log.'));
 toReview.forEach(s=>{const why=s.skipped?'not found':s.flag==='watch fewer'?`sensor −${s.delta}`:s.flag==='watch more'?`sensor +${s.delta}`:'low detector confidence';
   const b=h('button',{class:'chip'+(s.skipped?' off':''),type:'button'},`<span class="sw" style="background:${col(s.ex)}"></span>#${s.i} ${esc(NAME(s.ex))} · ${why}`);
@@ -328,7 +329,11 @@ document.getElementById('tlReset').addEventListener('click',()=>{view=[T0,TEND];
 /* ---------- drill-down ---------- */
 const chips=document.getElementById('setChips');
 S.forEach((s,i)=>{const b=h('button',{class:'chip'+(s.skipped?' off':''),type:'button',id:'chip'+s.i,'aria-pressed':'false',title:`${NAME(s.ex)} ${setLabel(s)}${s.skipped?' (not found)':''}`},`<span class="sw" style="background:${col(s.ex)}"></span>${s.ex}${s.i}`);if(!s.skipped)b.addEventListener('click',()=>select(i));else b.disabled=true;chips.appendChild(b);});
-function flagPill(s){const m={match:['match','✓ match'],ambiguous:['off1','≈ within ambiguity'],'watch fewer':['off2',`sensor −${s.delta}`],'watch more':['off2',`sensor +${s.delta}`],'not seen':['muted','not found']}[s.flag]||['muted',s.flag];return `<span class="pill ${m[0]}">${m[1]}</span>`;}
+function flagPill(s){const m={match:['match','✓ match'],ambiguous:['off1','≈ within ambiguity'],'watch fewer':['off2',`sensor −${s.delta}`],'watch more':['off2',`sensor +${s.delta}`],'not seen':['muted','not found'],'not recorded':['muted','not recorded'],'unconfirmed':['muted','not matched']}[s.flag]||['muted',s.flag];return `<span class="pill ${m[0]}">${m[1]}</span>`+(s.unsure&&!s.skipped?' <span class="pill muted" title="Exercise identified, but this set could not be fully checked">unconfirmed</span>':'');}
+/* recording coverage: say plainly when the sensor stopped part of the time */
+(function(){const c=M.coverage;if(!c||c.recorded_pct==null||c.recorded_pct>=95)return;const el=document.getElementById('coverageNote');el.hidden=false;
+  const big=(c.gaps||[]).filter(g=>g[1]-g[0]>=30),mins=v=>Math.round(v/60);
+  el.innerHTML=`<div><b>The sensor recorded ${Math.round(c.recorded_pct)}% of this session.</b> It paused ${c.n_gaps} time${c.n_gaps===1?'':'s'}${big.length?` (longest ${mins(Math.max(...big.map(g=>g[1]-g[0])))} min)`:''}; sets done during a pause can't be measured and are shown as <i>not recorded</i>. Sets marked <i>not matched</i> or <i>unconfirmed</i> couldn't be tied to the log with confidence.</div>`;})();
 function sensedTxt(s){return s.skipped?'–':s.per_unit?`${s.bouts.join(' + ')}`:`${s.sensor_reps}`;}
 function cleanTxt(s){return s.skipped?'–':s.per_unit?`${s.bouts_clean.join(' + ')}`:`${s.clean_reps}`;}
 function select(i){if(S[i].skipped)return;current=i;S.forEach((s,j)=>document.getElementById('chip'+s.i).setAttribute('aria-pressed',j===i));drawDrill();drawTimeline();

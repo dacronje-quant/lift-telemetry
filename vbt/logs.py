@@ -76,7 +76,7 @@ def parse_date_line(text):
         if hh:
             fmt = "%b %d %Y %I %M%p" if ap else "%b %d %Y %H %M"
             return datetime.strptime(f"{mon} {day} {year} {hh} {mm}{ap or ''}", fmt).isoformat()
-        return datetime.strptime(f"{mon} {day} {year}", "%b %d %Y").isoformat()
+        return datetime.strptime(f"{mon} {day} {year}", "%b %d %Y").date().isoformat()   # no time given
     except ValueError:
         return None
 

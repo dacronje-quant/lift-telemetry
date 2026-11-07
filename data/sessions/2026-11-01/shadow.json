@@ -1,9 +1,10 @@
 {
 "mode": "same day (leave-one-set-out)",
 "n_sets": 22,
-"trained_on_sets": 0,
+"trained_on_sets": 1,
 "found": 21,
 "false_sets": 1,
+"unmatched_found": 1,
 "named": 17,
 "reps_exact": 9,
 "reps_within1": 11,

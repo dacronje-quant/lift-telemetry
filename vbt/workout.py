@@ -67,6 +67,27 @@ _KEYWORDS = [("kickback", "extension"), ("row", "row"), ("shoulder press", "ohp"
              ("overhead extension", "extension"), ("fly", "fly"), ("flye", "fly")]
 
 
+_EQUIPMENT = {"barbell", "dumbbell", "dumbbells", "db", "bb", "cable", "machine", "smith", "ez", "bar",
+              "kettlebell", "kb", "band", "the", "with", "on", "and", "a"}
+
+
+def exercise_words(name):
+    """The words that identify a movement, ignoring equipment and plurals:
+    'Rope Cable Triceps Pushdown' and 'Triceps Rope Pushdown' -> {'rope', 'tricep', 'pushdown'}."""
+    words = re.sub(r"[^a-z0-9]+", " ", (name or "").lower()).split()
+    return frozenset(w[:-1] if len(w) > 3 and w.endswith("s") and not w.endswith("ss") else w
+                     for w in words if w not in _EQUIPMENT)
+
+
+def same_exercise(a, b):
+    """Same exercise under another app's or day's name. Strict on purpose: 'Bench Press
+    (Barbell)' = 'Bench Press', but 'Hammer Curl' != 'Curl' (different movements)."""
+    if not a or not b:
+        return False
+    wa, wb = exercise_words(a), exercise_words(b)
+    return (a.strip().lower() == b.strip().lower()) or (bool(wa) and wa == wb)
+
+
 def exercise_key(name):
     """Map a logged exercise name (any app) to a PROFILES key ("auto" if unknown).
 

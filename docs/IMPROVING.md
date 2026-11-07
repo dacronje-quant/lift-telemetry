@@ -61,6 +61,11 @@ Tried and rejected (don't repeat without new evidence):
 | Sensor-only mode | `vbt/infer.py` | candidate runs, `is_set` thresholds, join gaps |
 | Report | `vbt/pipeline.py`, `vbt/templates/report.html` | — |
 
+## Partial review
+A reviewed `sets.json` may mark sets `"unsure": true` (exercise or set couldn't be verified;
+not scored anywhere, not learned from) or `"skipped": true, "not_recorded": true` (done while
+the sensor was paused; scored only as "correctly left out"). Learning uses checked sets only.
+
 ## Baseline (2026-11-01, one reviewed session)
 22/22 sets found, mean IoU 0.76; 18/21 when one set is missing from the log; inserting an
 invisible machine set leaves the real sets intact but the fake set is placed on a fidget
@@ -86,7 +91,23 @@ treat the numbers as optimistic until more reviewed sessions exist.
 8. **New log formats**: add a parser to `vbt/logs.py` with a test whenever a new app's export
    shows up.
 
+9. **Recording gaps** (2026-11-07: the watch paused 16x, 39% lost). Gaps are now marked
+   (`valid` column, `meta.coverage`) and never filled with motion. Next: the aligner could use
+   gap positions explicitly (a logged set whose rest-timing points into a gap = "not recorded"),
+   and heart rate, which kept going, could place sets inside motion gaps.
+10. **Supersets / order changes**: declared supersets are interleaved (`--superset "A + B"`).
+   Undeclared order changes still break the ordered alignment; an order-free assignment
+   (match by exercise signature, then by time) would remove the assumption.
+11. **Exercise names differ between apps/days**: grouped by `workout.same_exercise` (same
+   words, equipment ignored). Strict on purpose; variants ("Lat Pulldown" vs "Pulldown (Wide
+   Grip)") stay separate until a user-confirmed alias list exists.
+
 ## Data that would help most
+- **An unbroken recording.** Nov 1 (no gaps) recorded location, barometer, compass and
+  magnetometer too; Nov 7 (16 gaps) only motion + heart rate, and Sensor Logger had updated
+  1.68 -> 1.68.1. Keep the Nov 1 sensor selection and Sensor Logger on screen; don't open
+  another watch app mid-workout.
+- Say when exercises were done as a superset or out of log order.
 - Keep the watch on the same wrist and fit every session.
 - For alternating dumbbell work, note in Hevy whether reps are per arm.
 - Once in a while, ramp a main lift to a heavy single or double pulled at max intent: that

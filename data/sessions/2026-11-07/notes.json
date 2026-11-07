@@ -1,0 +1,6 @@
+{
+ "sections": {
+  "detection": "<p>The watch paused 16 times and recorded 61% of the first 40 minutes; motion stops at 39.7 min, right after the last curl. The longest pause (8 min, 29.5&ndash;37.5 min) swallowed the end of the main lifts and the first pushdown set. Bench, squat and deadlift are visible by wrist angle in what was recorded, but with the gaps they can't be tied to specific logged sets, so they are left <i>not matched</i> rather than guessed.</p><p>The pushdown + curl superset is recorded back to back: curl, pushdown, curl, each told apart by hand travel (0.45 m vs 0.22 m) and wrist turn per rep (64&ndash;78&deg; vs 48&deg;), as on Nov 1.</p>",
+  "counts": "<p>Pushdown 9 @ 21 kg: 10 cycles, 9 clean &ndash; the extra one is the setup pull. Both curl sets are short of the log (10 and 8 vs 12), but the first starts the moment a recording pause ends and the second runs into one, so their counts are marked unconfirmed rather than wrong.</p>"
+ }
+}

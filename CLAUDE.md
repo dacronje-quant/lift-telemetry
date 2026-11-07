@@ -72,6 +72,16 @@ For every new workout:
   (19/22) and were dropped. Also fixed sensor-only choosing a hypothesis that then failed the
   set-vs-noise check (now only hypotheses that pass compete). Bottleneck is rep counting:
   edge cycles and -1 undercounts. Next: learned edge-cycle rejection (needs 2+ checked workouts).
+- 2026-11-07: second workout (Full Body A, 26 sets). The watch paused 16x and stopped
+  motion at 40 min: 61% recorded. Resampling had bridged gaps with invented motion -> gaps now
+  marked (`valid`, `meta.coverage`), motion zeroed, report notice. Pushdown+curl superset
+  (user) -> `--superset`, sets interleaved. Partial review (`unsure`, `not_recorded`): only 1
+  set fully checked (pushdown 9), 2 curls identified but counts unconfirmed, 1 not recorded,
+  22 unsure. Exercise names now grouped across apps/days (`same_exercise`): pushdown is the
+  first exercise with 2 workouts of evidence; its learned signal lost on held-out sets, so
+  generic stays. Detection prior learns from checked sessions only. First cross-day
+  sensor-only test: 1/1 checkable set found and named, reps off by 1 (readiness 0/1).
+  Also: "reps @ weight" logs, day-first dates, workout-name extraction.
 - 2026-11-06 (later): public benchmark added (vbt/public.py, RecoFit dataset, CDLA-P-2.0).
   It exposed a systematic -1 rep undercount: a first rep out of the unrack or a slower last
   rep broke the chain's regularity test and was dropped. Fix: extend the rep chain by one

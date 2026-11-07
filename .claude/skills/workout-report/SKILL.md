@@ -36,8 +36,13 @@ Downloads, e.g. a Drive link, go into a fresh, empty scratch dir:
 ```bash
 pip install -q -r requirements.txt
 python -m vbt.pipeline new --sensor <scratch>/rec.zip --log <scratch>/log.txt \
-    [--placement wrist|bar|hand] [--accel-convention gravity|specific_force] [--units kg|lb] [--id ID]
+    [--placement wrist|bar|hand] [--accel-convention gravity|specific_force] [--units kg|lb] [--id ID] \
+    [--superset "Exercise A + Exercise B"]
 ```
+Supersets (alternating sets) must be declared or the ordered alignment breaks; ask if the log
+has two exercises with very short rests. The user's sensor exports live in a shared Google
+Drive folder (`1FZ8Q0TA4uqDdPVUOVHd4hOwvP2x2_SCG`): list it with the Drive connector, download
+the newest zip with curl as above.
 Creates `data/sessions/<date>/`, detects the logged sets in the recording automatically (using
 every earlier session as training data), analyses them, writes `analysis.json` and
 `reports/<id>.html`. Two workouts on one date: `--id 2026-11-02-pm`.
@@ -49,6 +54,11 @@ set with rep ticks (blue clean, orange flagged). Check first the sets under *Wha
   for a set not in the recording), set `"source": "reviewed"`, re-run `… run <id>`.
 - All right → set `"source": "reviewed"`. Only mark what you actually checked: reviewed
   sessions are ground truth for the benchmark.
+- Recording gaps (`meta.json` → `coverage`; the report shows a notice under 95%): a set done
+  in a gap → `"skipped": true, "not_recorded": true`. A set you can't tie to the log with
+  confidence → `"unsure": true` (with or without a window). Never guess: unsure sets are not
+  scored or learned from. Identify exercises by wrist orientation, hand travel and rotation
+  per rep against checked sets of earlier sessions.
 
 ## 4. Coach's read
 Write `data/sessions/<id>/notes.json` (example: `data/sessions/2026-11-01/notes.json`):

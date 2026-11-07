@@ -25,7 +25,7 @@ from pathlib import Path
 import numpy as np
 
 from .align import candidate_runs
-from .workout import PROFILES, FEATURES, analyze_set, set_features, split_bouts, rep_shape
+from .workout import PROFILES, FEATURES, analyze_set, set_features, split_bouts, rep_shape, same_exercise
 from . import personal as P
 
 MIN_REPS = 3
@@ -205,6 +205,8 @@ def shadow_test(d, data, log_sets, truth, root, placement="wrist"):
     m = _match(inferred, truth)
     rows = []
     for i, (s, g) in enumerate(zip(log_sets, truth)):
+        if g.get("unsure") or g.get("skipped") or g.get("t_start") is None:
+            continue                     # not checkable: unsure, or the sensor didn't record it
         j = m.get(i)
         row = {"set": i + 1, "label": s["exercise"], "logged": s["reps"], "found": j is not None}
         if j is not None:
@@ -212,14 +214,18 @@ def shadow_test(d, data, log_sets, truth, root, placement="wrist"):
             per_side = PROFILES.get(x["key"], PROFILES["auto"])["bouts"] > 1
             units = x["bouts"] if per_side else [x["reps"]]
             err = max(abs(u - s["reps"]) for u in units)
-            row.update(guess=x["guess"], known=x["label"] is not None, named=x["label"] == s["exercise"],
+            row.update(guess=x["guess"], known=x["label"] is not None, named=same_exercise(x["label"], s["exercise"]),
                        sensed=units, rep_err=err,
                        t_start=x["t_start"], t_end=x["t_end"])
         rows.append(row)
     found = [r for r in rows if r["found"]]
     n = len(rows)
     res = {"mode": mode, "n_sets": n, "trained_on_sets": sum(len(e["sets"]) for e in others),
-           "found": len(found), "false_sets": len(inferred) - len(found),
+           "found": len(found),
+           # with unconfirmed sets in the log, an unmatched detection may be one of them: unknown
+           "false_sets": (None if any(g.get("unsure") for g in truth)
+                          else sum(1 for j in range(len(inferred)) if j not in m.values())),
+           "unmatched_found": sum(1 for j in range(len(inferred)) if j not in m.values()),
            "named": sum(r["named"] for r in found),
            "reps_exact": sum(r["rep_err"] == 0 for r in found),
            "reps_within1": sum(r["rep_err"] <= 1 for r in found),

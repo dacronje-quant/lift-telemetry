@@ -507,3 +507,32 @@ def test_recording_gaps_are_not_bridged_with_motion():
     assert np.abs(small.loc[inside, ["accelerationX", "rotationRateX"]].to_numpy()).max() == 0.0
     full, _ = downsample(df[df.seconds_elapsed < 20])
     assert "valid" not in full.columns                                    # gap-free: unchanged format
+
+
+def test_superset_sets_are_interleaved_in_the_order_done():
+    from vbt.pipeline import logged_sets
+    mk = lambda e, r: {"exercise": e, "reps": r, "kg": 20.0, "rpe": None, "warmup": False}   # noqa: E731
+    log = {"sets": [mk("Squat", 5), mk("Pushdown", 14), mk("Pushdown", 9), mk("Hammer Curl", 12),
+                    mk("Hammer Curl", 12), mk("Plank", 1)],
+           "supersets": [["Pushdown", "Hammer Curl"]]}
+    s = logged_sets(log)
+    assert [(x["exercise"], x["log_index"]) for x in s] == [
+        ("Squat", 1), ("Pushdown", 2), ("Hammer Curl", 4), ("Pushdown", 3), ("Hammer Curl", 5), ("Plank", 6)]
+
+
+def test_partial_review_scores_only_checked_sets():
+    from vbt.align import evaluate_alignment
+    truth = [{"t_start": 0, "t_end": 10}, {"t_start": 20, "t_end": 30, "unsure": True},
+             {"skipped": True, "t_start": None, "t_end": None}]
+    found = [{"t_start": 1, "t_end": 10, "skipped": False}, {"t_start": 50, "t_end": 60, "skipped": False},
+             {"skipped": True}]
+    ev = evaluate_alignment(found, truth)
+    assert ev["n_scored"] == 1 and ev["recall"] == 1.0 and ev["not_recorded_ok"] == "1/1"
+
+
+def test_same_exercise_across_app_names():
+    from vbt.infer import same_exercise
+    assert same_exercise("Triceps Rope Pushdown", "Rope Cable Triceps Pushdown")
+    assert same_exercise("Bench Press (Barbell)", "Bench Press")
+    assert not same_exercise("Hammer Curl", "Triceps Rope Pushdown")
+    assert not same_exercise("Leg Extension (Machine)", "Seated Leg Curl (Machine)")

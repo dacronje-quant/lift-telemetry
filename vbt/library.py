@@ -32,7 +32,7 @@ def load_rows(root="data/sessions", exclude=None, min_source=None):
         if min_source == "trusted" and a.get("windows_source") not in TRUSTED:
             continue
         for s in a["sets"]:
-            if s.get("skipped") or not s.get("features"):
+            if s.get("skipped") or not s.get("features") or (min_source == "trusted" and s.get("unsure")):
                 continue
             rows.append({"session": sid, "date": a.get("date"), "label": s["label"],
                          "key": s["key"], "kg": s["kg"], "reps": s["logged_reps"],

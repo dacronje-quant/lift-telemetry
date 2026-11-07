@@ -80,17 +80,51 @@ def short_code(name, taken, key=None):
 
 
 def report_title(title_line):
-    """'Sunday — Full Body C | Enhanced Comeback W1–2' -> 'Full Body C'."""
-    t = title_line.split(" — ")[-1] if " — " in title_line else title_line
-    return t.split(" | ")[0].strip()[:48]
+    """The workout's name from a log's title line, skipping dates and stats.
+
+    'Sunday — Full Body C | Enhanced Comeback W1–2' -> 'Full Body C';
+    'FULL BODY A — Sat 7 Nov 2026 — 1h 06m, 468 kcal' -> 'Full Body A'.
+    """
+    parts = [p.strip() for p in re.split(r"\s+[—–|-]\s+|\s*\|\s*", title_line or "") if p.strip()]
+    day = r"(mon|tue|wed|thu|fri|sat|sun)[a-z]*\.?"
+
+    def is_name(p):
+        low = p.lower()
+        if re.fullmatch(day, low) or re.match(day + r",?\s+\d", low) or re.search(r"\d{4}", low):
+            return False                                   # weekday / date
+        return not re.search(r"\d+\s*(h|m|min|kcal|cal|sets?|reps?|kg|lbs?)\b", low)   # stats
+    name = next((p for p in parts if is_name(p)), parts[0] if parts else "")
+    if name.isupper():
+        name = name.title()
+    return name[:48]
 
 
 def logged_sets(log):
-    """log: dict from log.json (or raw log text for older sessions)."""
+    """Logged sets in the order they were done. log: dict from log.json (or raw text).
+
+    Logs list sets exercise by exercise; a superset (log["supersets"]: [["A", "B"], ...])
+    was done alternating, so its exercises' sets are interleaved A1 B1 A2 B2 ... at the
+    position of the group's first set. Each set keeps "log_index" (1-based, log order).
+    """
     sets = [dict(s) for s in log["sets"]] if isinstance(log, dict) else parse_log(log)[0]
-    for s in sets:
+    for i, s in enumerate(sets):
         s["exercise_key"] = exercise_key(s["exercise"])
         s["label"] = s["exercise"]
+        s["log_index"] = i + 1
+    for group in (log.get("supersets") or []) if isinstance(log, dict) else []:
+        names = [g.strip().lower() for g in group]
+        member = [k for k, s in enumerate(sets) if s["exercise"].strip().lower() in names]
+        if len(member) < 2:
+            continue
+        queues = [[sets[k] for k in member if sets[k]["exercise"].strip().lower() == nm] for nm in names]
+        inter = []
+        while any(queues):
+            for q in queues:
+                if q:
+                    inter.append(q.pop(0))
+        rest = [s for k, s in enumerate(sets) if k not in member]
+        at = sum(1 for k in range(member[0]) if k not in member)
+        sets = rest[:at] + inter + rest[at:]
     return sets
 
 
@@ -121,8 +155,8 @@ def windows_for(d, data, logged, sid, redetect=False, root=SESSIONS, benchmark=T
     found, _ = detect_sets(data, logged, prior_model=prior, placement=placement)
     rec = {"source": "auto", "clock": "Sensor Logger seconds_elapsed",
            "detector": "vbt.align.detect_sets", "prior_model": prior is not None,
-           "sets": [{"log_index": i + 1, **{k: v for k, v in a.items() if k != "window"}}
-                    for i, a in enumerate(found)]}
+           "sets": [{"log_index": h["log_index"], **{k: v for k, v in a.items() if k != "window"}}
+                    for h, a in zip(logged, found)]}
     if not existing or existing.get("source") not in TRUSTED:
         f.write_text(json.dumps(rec, indent=1))
     return (existing if existing and existing.get("source") in TRUSTED else rec), rec
@@ -145,12 +179,14 @@ def analyze_sets(data, logged, wins, groups, placement="wrist"):
     for i, (h, w) in enumerate(zip(logged, wins["sets"])):
         g = groups[h["label"]]
         prof = PROFILES.get(g["key"], PROFILES["auto"])
-        base = {"i": i + 1, "ex": g["id"], "label": h["label"], "key": g["key"],
+        base = {"i": i + 1, "log_index": h.get("log_index", i + 1), "unsure": bool(w.get("unsure")),
+                "ex": g["id"], "label": h["label"], "key": g["key"],
                 "kg": h["kg"], "logged_reps": h["reps"], "rpe": h["rpe"], "warmup": h["warmup"],
                 "per_unit": prof["bouts"] > 1}
         if w.get("skipped") or w.get("t_start") is None:
-            sets.append({**base, "skipped": True, "reps": [], "features": None,
-                         "flag": "not seen", "delta": None, "sensor_reps": 0})
+            flag = "not recorded" if w.get("not_recorded") else "unconfirmed" if w.get("unsure") else "not seen"
+            sets.append({**base, "skipped": True, "reps": [], "features": None, "note": w.get("note"),
+                         "flag": flag, "delta": None, "sensor_reps": 0})
             continue
         t0, t1 = w["t_start"], w["t_end"]
         res = analyze_set(data, t0, t1, g["key"], placement=placement, profile=h.get("profile"))
@@ -420,8 +456,8 @@ def run(sid, root=SESSIONS, redetect=False, html=True, quiet=False):
     # personal profiles learned from OTHER checked workouts (never from this one)
     learned = personal.profiles(root, exclude=sid)
     for s in logged:
-        if (learned.get(s["label"]) or {}).get("profile"):
-            s["profile"] = learned[s["label"]]["profile"]
+        if (personal.lookup(learned, s["label"]) or {}).get("profile"):
+            s["profile"] = personal.lookup(learned, s["label"])["profile"]
     wins, auto = windows_for(d, data, logged, sid, redetect, root, placement=placement)
     if wins.get("source") in TRUSTED and personal.evidence_is_stale(d):
         personal.build_evidence(d, data, logged, wins["sets"], placement)
@@ -459,7 +495,8 @@ def run(sid, root=SESSIONS, redetect=False, html=True, quiet=False):
          "sensor": meta.get("sensor") or "Apple Watch via Sensor Logger, wrist placement",
          "placement": (meta.get("sensor_info") or {}).get("placement", "wrist"),
          "gravity": (meta.get("sensor_info") or {}).get("gravity", "device"),
-         "windows_source": wins.get("source")}
+         "windows_source": wins.get("source"), "coverage": meta.get("coverage"),
+         "supersets": log.get("supersets")}
     out = {"meta": m, "summary": summary, "exercises": exercises, "sets": sets,
            "timeline": timeline(data), "signatures": signatures(sets, groups),
            "classifier": classifier_block(sets, rep_rows, sid, root)}
@@ -557,6 +594,8 @@ def main(argv=None):
     n.add_argument("--placement", choices=["wrist", "bar", "hand", "other"],
                    help="where the sensor was worn (default: wrist for watches)")
     n.add_argument("--id", help="session id (default: the log's date)")
+    n.add_argument("--superset", action="append", default=[], metavar="'A + B'",
+                   help="exercises done as a superset (alternating sets); repeatable")
     n.add_argument("--overwrite", action="store_true")
     r = sub.add_parser("run", help="(re)analyse session(s)")
     r.add_argument("sid", nargs="?")
@@ -569,7 +608,8 @@ def main(argv=None):
     if a.cmd == "new":
         from .ingest import ingest
         d = ingest(a.sensor, a.log, SESSIONS, a.id, a.overwrite, a.log_format, a.sensor_format,
-                   a.accel_convention, a.placement, a.units)
+                   a.accel_convention, a.placement, a.units,
+                   [[x.strip() for x in g.split("+") if x.strip()] for g in a.superset])
         print("session:", d)
         run(d.name)
     elif a.cmd == "run":

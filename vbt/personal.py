@@ -22,7 +22,7 @@ from pathlib import Path
 
 import numpy as np
 
-from .workout import PROFILES, FEATURES, analyze_set, set_features, split_bouts, exercise_key, rep_shape
+from .workout import PROFILES, FEATURES, analyze_set, set_features, split_bouts, exercise_key, rep_shape, same_exercise
 
 TRUSTED = ("manual", "reviewed")
 CANDIDATES = [(c, r) for c in ("pos", "gx", "gy", "gz") for r in ("top", "bottom")]
@@ -50,7 +50,7 @@ def build_evidence(d, data, log_sets, windows, placement="wrist", fs=50.0):
     """Evidence for one checked session. d: session folder; windows: sets.json 'sets'."""
     rows = []
     for i, (s, w) in enumerate(zip(log_sets, windows)):
-        if w.get("skipped") or w.get("t_start") is None:
+        if w.get("skipped") or w.get("unsure") or w.get("t_start") is None:
             continue
         key = s.get("exercise_key") or exercise_key(s["exercise"])
         base = PROFILES.get(key, PROFILES["auto"])
@@ -92,7 +92,23 @@ def load_evidence(root="data/sessions", exclude=None):
         if not sj.exists() or json.loads(sj.read_text()).get("source") not in TRUSTED:
             continue
         out.append(json.loads(p.read_text()))
+    # one exercise, many names (apps and days differ): group under the first name seen
+    names = []
+    for ev in out:
+        for r in ev["sets"]:
+            canon = next((c for c in names if same_exercise(c, r["label"])), None)
+            if canon is None:
+                names.append(r["label"])
+            elif canon != r["label"]:
+                r["name"], r["label"] = r["label"], canon
     return out
+
+
+def lookup(learned, label):
+    """learned[label], also when the exercise was learned under another name."""
+    if label in learned:
+        return learned[label]
+    return next((v for k, v in learned.items() if same_exercise(k, label)), None)
 
 
 def evidence_is_stale(d):

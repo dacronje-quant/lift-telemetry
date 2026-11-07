@@ -26,9 +26,10 @@
 "shadow": {
 "mode": "same day (leave-one-set-out)",
 "n_sets": 22,
-"trained_on_sets": 0,
+"trained_on_sets": 1,
 "found": 21,
 "false_sets": 1,
+"unmatched_found": 1,
 "named": 17,
 "reps_exact": 9,
 "reps_within1": 11,
@@ -39,6 +40,8 @@
 "sets": [
 {
 "i": 1,
+"log_index": 1,
+"unsure": false,
 "ex": "BP",
 "label": "Bench Press (Barbell)",
 "key": "bench",
@@ -101,6 +104,8 @@
 },
 {
 "i": 2,
+"log_index": 2,
+"unsure": false,
 "ex": "BP",
 "label": "Bench Press (Barbell)",
 "key": "bench",
@@ -163,6 +168,8 @@
 },
 {
 "i": 3,
+"log_index": 3,
+"unsure": false,
 "ex": "BP",
 "label": "Bench Press (Barbell)",
 "key": "bench",
@@ -225,6 +232,8 @@
 },
 {
 "i": 4,
+"log_index": 4,
+"unsure": false,
 "ex": "BP",
 "label": "Bench Press (Barbell)",
 "key": "bench",
@@ -287,6 +296,8 @@
 },
 {
 "i": 5,
+"log_index": 5,
+"unsure": false,
 "ex": "DL",
 "label": "Deadlift (Barbell)",
 "key": "deadlift",
@@ -349,6 +360,8 @@
 },
 {
 "i": 6,
+"log_index": 6,
+"unsure": false,
 "ex": "DL",
 "label": "Deadlift (Barbell)",
 "key": "deadlift",
@@ -411,6 +424,8 @@
 },
 {
 "i": 7,
+"log_index": 7,
+"unsure": false,
 "ex": "DL",
 "label": "Deadlift (Barbell)",
 "key": "deadlift",
@@ -473,6 +488,8 @@
 },
 {
 "i": 8,
+"log_index": 8,
+"unsure": false,
 "ex": "DL",
 "label": "Deadlift (Barbell)",
 "key": "deadlift",
@@ -535,6 +552,8 @@
 },
 {
 "i": 9,
+"log_index": 9,
+"unsure": false,
 "ex": "BSS",
 "label": "Bulgarian Split Squat (Dumbbell)",
 "key": "bss",
@@ -599,6 +618,8 @@
 },
 {
 "i": 10,
+"log_index": 10,
+"unsure": false,
 "ex": "BSS",
 "label": "Bulgarian Split Squat (Dumbbell)",
 "key": "bss",
@@ -663,6 +684,8 @@
 },
 {
 "i": 11,
+"log_index": 11,
+"unsure": false,
 "ex": "BSS",
 "label": "Bulgarian Split Squat (Dumbbell)",
 "key": "bss",
@@ -727,6 +750,8 @@
 },
 {
 "i": 12,
+"log_index": 12,
+"unsure": false,
 "ex": "PD",
 "label": "Pulldown (Wide Parellel Grip)",
 "key": "pulldown",
@@ -789,6 +814,8 @@
 },
 {
 "i": 13,
+"log_index": 13,
+"unsure": false,
 "ex": "PD",
 "label": "Pulldown (Wide Parellel Grip)",
 "key": "pulldown",
@@ -851,6 +878,8 @@
 },
 {
 "i": 14,
+"log_index": 14,
+"unsure": false,
 "ex": "PD",
 "label": "Pulldown (Wide Parellel Grip)",
 "key": "pulldown",
@@ -913,6 +942,8 @@
 },
 {
 "i": 15,
+"log_index": 15,
+"unsure": false,
 "ex": "PUSH",
 "label": "Triceps Rope Pushdown",
 "key": "pushdown",
@@ -975,6 +1006,8 @@
 },
 {
 "i": 16,
+"log_index": 16,
+"unsure": false,
 "ex": "PUSH",
 "label": "Triceps Rope Pushdown",
 "key": "pushdown",
@@ -1037,6 +1070,8 @@
 },
 {
 "i": 17,
+"log_index": 17,
+"unsure": false,
 "ex": "PUSH",
 "label": "Triceps Rope Pushdown",
 "key": "pushdown",
@@ -1099,6 +1134,8 @@
 },
 {
 "i": 18,
+"log_index": 18,
+"unsure": false,
 "ex": "CURL",
 "label": "Hammer Curl (Dumbbell)",
 "key": "curl",
@@ -1161,6 +1198,8 @@
 },
 {
 "i": 19,
+"log_index": 19,
+"unsure": false,
 "ex": "CURL",
 "label": "Hammer Curl (Dumbbell)",
 "key": "curl",
@@ -1223,6 +1262,8 @@
 },
 {
 "i": 20,
+"log_index": 20,
+"unsure": false,
 "ex": "CURL",
 "label": "Hammer Curl (Dumbbell)",
 "key": "curl",
@@ -1285,6 +1326,8 @@
 },
 {
 "i": 21,
+"log_index": 21,
+"unsure": false,
 "ex": "LAT",
 "label": "Lateral Raise (Dumbbell)",
 "key": "lateral",
@@ -1347,6 +1390,8 @@
 },
 {
 "i": 22,
+"log_index": 22,
+"unsure": false,
 "ex": "LAT",
 "label": "Lateral Raise (Dumbbell)",
 "key": "lateral",

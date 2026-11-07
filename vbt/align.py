@@ -345,18 +345,28 @@ def evaluate_alignment(found, truth):
 
     A set counts as found when the detected window overlaps its true window and
     overlaps no other true window more. Returns dict with per-set IoU and totals.
+    Truth sets marked "unsure" (a reviewer couldn't confirm them) are not scored; truth
+    sets marked skipped (not in the recording, e.g. the sensor paused) are scored only as
+    "correctly left out" (`not_recorded_ok`), not in recall/IoU.
     """
-    rows = []
+    rows, absent = [], []
     for k, (a, g) in enumerate(zip(found, truth)):
+        if g.get("unsure"):
+            continue
+        if g.get("skipped") or g.get("t_start") is None:
+            absent.append(a is None or bool(a["skipped"]))
+            continue
         if a is None or a["skipped"]:
             rows.append({"set": k + 1, "found": False, "iou": 0.0})
             continue
         inter = max(0.0, min(a["t_end"], g["t_end"]) - max(a["t_start"], g["t_start"]))
         union = max(a["t_end"], g["t_end"]) - min(a["t_start"], g["t_start"])
         best_other = max((min(a["t_end"], h["t_end"]) - max(a["t_start"], h["t_start"])
-                          for q, h in enumerate(truth) if q != k), default=0.0)
+                          for q, h in enumerate(truth) if q != k and h.get("t_start") is not None),
+                         default=0.0)
         rows.append({"set": k + 1, "found": inter > 0 and inter >= best_other,
                      "iou": round(inter / union, 3) if union > 0 else 0.0})
     n = len(rows)
     return {"recall": sum(r["found"] for r in rows) / n if n else 0.0,
-            "mean_iou": float(np.mean([r["iou"] for r in rows])) if n else 0.0, "rows": rows}
+            "mean_iou": float(np.mean([r["iou"] for r in rows])) if n else 0.0, "rows": rows,
+            "n_scored": n, "not_recorded_ok": f"{sum(absent)}/{len(absent)}" if absent else None}
