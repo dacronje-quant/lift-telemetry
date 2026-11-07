@@ -1,10 +1,10 @@
 {
- "when": "2026-11-07T11:11:35+00:00",
- "commit": "ea3a2b3",
+ "when": "2026-11-07T11:17:11+00:00",
+ "commit": "e68072f",
  "n_trusted_sessions": 2,
  "detection": {
-  "recall": 0.957,
-  "mean_iou": 0.721
+  "recall": 1.0,
+  "mean_iou": 0.753
  },
  "sensor_only": {
   "fully_right_pct": 34.8,
@@ -50,17 +50,15 @@
    "session": "2026-11-07",
    "n_sets": 1,
    "n_logged": 26,
-   "not_recorded_ok": "0/1",
+   "not_recorded_ok": "1/1",
    "prior_model": true,
-   "recall": 0.0,
-   "mean_iou": 0.0,
-   "missed": [
-    25
-   ],
-   "rep_count_mae": 3.0,
+   "recall": 1.0,
+   "mean_iou": 0.74,
+   "missed": [],
+   "rep_count_mae": 1.0,
    "verdict_consistent": 1.0,
-   "recall_unlogged_set": 0.0,
-   "recall_invisible_set": 0.0,
+   "recall_unlogged_set": 1.0,
+   "recall_invisible_set": 1.0,
    "invisible_set_skipped": false,
    "sensor_only": {
     "mode": "other workouts",
@@ -79,12 +77,12 @@
  ],
  "classifier_loso": {
   "n_sessions": 2,
-  "n_test_sets": 0,
-  "acc": null,
+  "n_test_sets": 1,
+  "acc": 1.0,
   "per_session": {
    "2026-11-07": {
-    "n": 0,
-    "acc": null
+    "n": 1,
+    "acc": 1.0
    }
   }
  }
