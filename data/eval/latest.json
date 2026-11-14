@@ -1,19 +1,19 @@
 {
- "when": "2026-11-07T11:25:12+00:00",
- "commit": "a420387",
- "n_trusted_sessions": 1,
+ "when": "2026-11-14T10:58:39+00:00",
+ "commit": "b2a7054",
+ "n_trusted_sessions": 2,
  "detection": {
-  "recall": 1.0,
-  "mean_iou": 0.754
+  "recall": 0.954,
+  "mean_iou": 0.728
  },
  "sensor_only": {
-  "fully_right_pct": 36.4,
-  "found_pct": 95.5,
-  "named_pct": 77.3,
-  "reps_exact_pct": 40.9,
-  "false_sets": 1,
+  "fully_right_pct": 9.3,
+  "found_pct": 86.0,
+  "named_pct": 34.9,
+  "reps_exact_pct": 25.6,
+  "false_sets": 3,
   "modes": [
-   "same day (leave-one-set-out)"
+   "other workouts"
   ]
  },
  "sessions": [
@@ -22,32 +22,74 @@
    "n_sets": 22,
    "n_logged": 22,
    "not_recorded_ok": null,
-   "prior_model": false,
+   "prior_model": true,
    "recall": 1.0,
-   "mean_iou": 0.754,
+   "mean_iou": 0.764,
    "missed": [],
-   "rep_count_mae": 0.318,
+   "rep_count_mae": 0.364,
    "verdict_consistent": 0.727,
    "recall_unlogged_set": 0.857,
    "recall_invisible_set": 1.0,
    "invisible_set_skipped": false,
    "sensor_only": {
-    "mode": "same day (leave-one-set-out)",
+    "mode": "other workouts",
     "n_sets": 22,
-    "trained_on_sets": 0,
-    "found": 21,
-    "false_sets": 1,
-    "unmatched_found": 1,
-    "named": 17,
-    "reps_exact": 9,
+    "trained_on_sets": 21,
+    "found": 22,
+    "false_sets": 3,
+    "unmatched_found": 3,
+    "named": 8,
+    "reps_exact": 6,
+    "reps_within1": 9,
+    "fully_right": 3,
+    "readiness_pct": 13.6
+   }
+  },
+  {
+   "session": "2026-11-14",
+   "n_sets": 21,
+   "n_logged": 23,
+   "not_recorded_ok": null,
+   "prior_model": true,
+   "recall": 0.905,
+   "mean_iou": 0.69,
+   "missed": [
+    9,
+    10
+   ],
+   "rep_count_mae": 1.381,
+   "verdict_consistent": 0.81,
+   "recall_unlogged_set": 0.9,
+   "recall_invisible_set": 0.905,
+   "invisible_set_skipped": false,
+   "sensor_only": {
+    "mode": "other workouts",
+    "n_sets": 21,
+    "trained_on_sets": 22,
+    "found": 15,
+    "false_sets": null,
+    "unmatched_found": 3,
+    "named": 7,
+    "reps_exact": 5,
     "reps_within1": 11,
-    "fully_right": 8,
-    "readiness_pct": 36.4
+    "fully_right": 1,
+    "readiness_pct": 4.8
    }
   }
  ],
  "classifier_loso": {
-  "note": "needs >= 2 analysed sessions",
-  "n_sessions": 1
+  "n_sessions": 2,
+  "n_test_sets": 23,
+  "acc": 0.913,
+  "per_session": {
+   "2026-11-01": {
+    "n": 11,
+    "acc": 0.909
+   },
+   "2026-11-14": {
+    "n": 12,
+    "acc": 0.917
+   }
+  }
  }
 }
