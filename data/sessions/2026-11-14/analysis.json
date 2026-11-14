@@ -1,0 +1,1515 @@
+{
+"session_id": "2026-11-14",
+"date": "2026-11-14",
+"windows_source": "reviewed",
+"summary": {
+"recording_s": 3920.3,
+"n_sets": 23,
+"n_seen": 23,
+"n_exercises": 7,
+"first_rep_s": 191.28,
+"last_rep_s": 3893.05,
+"work_span_min": 61.7,
+"logged_reps": 160,
+"sensor_reps": 174,
+"sensor_reps_cmp": 174.0,
+"tut_s": 436.0,
+"work_density_pct": 11.8,
+"volume_kg": 9154.0,
+"median_rest_s": 156.0,
+"n_match": 12,
+"n_ambiguous": 5,
+"n_fewer": 4,
+"n_more": 2,
+"n_not_seen": 0
+},
+"shadow": {
+"mode": "other workouts",
+"n_sets": 21,
+"trained_on_sets": 22,
+"found": 15,
+"false_sets": null,
+"unmatched_found": 3,
+"named": 7,
+"reps_exact": 5,
+"reps_within1": 11,
+"fully_right": 1,
+"readiness_pct": 4.8,
+"reference": "checked windows"
+},
+"excluded_from_learning": false,
+"sets": [
+{
+"i": 1,
+"log_index": 1,
+"unsure": false,
+"ex": "SQ",
+"label": "Squat (Barbell)",
+"key": "squat",
+"kg": 60.0,
+"logged_reps": 6,
+"rpe": null,
+"warmup": true,
+"per_unit": false,
+"skipped": false,
+"window": [
+193,
+210
+],
+"span": [
+191.28,
+210.75
+],
+"auto_score": null,
+"channel": "pos",
+"sensor_reps": 7,
+"clean_reps": 6,
+"sensor_range": [
+7,
+7
+],
+"profile_source": "generic",
+"bouts": [
+7
+],
+"bouts_clean": [
+6
+],
+"flag": "ambiguous",
+"delta": 0,
+"mean_velocity": 0.709,
+"best_velocity": 0.76,
+"velocity_loss_pct": 2.5,
+"tut_s": 19.5,
+"con_s": 6.2,
+"ecc_s": 6.0,
+"features": {
+"g_x": 0.7762,
+"g_y": -0.1083,
+"g_z": -0.6175,
+"g_std_x": 0.0368,
+"g_std_y": 0.0342,
+"g_std_z": 0.0452,
+"rot_range_deg": 5.151,
+"gyro_rms_x": 0.1376,
+"gyro_rms_y": 0.2898,
+"gyro_rms_z": 0.0994,
+"gyro_dom_frac": 0.5501,
+"a_vert_rms": 2.4762,
+"a_horiz_rms": 0.5574,
+"vert_ratio": 0.8163,
+"rom_cm": 64.9839,
+"period_s": 2.66
+},
+"rest_after_s": 95.0
+},
+{
+"i": 2,
+"log_index": 2,
+"unsure": false,
+"ex": "SQ",
+"label": "Squat (Barbell)",
+"key": "squat",
+"kg": 80.0,
+"logged_reps": 4,
+"rpe": null,
+"warmup": true,
+"per_unit": false,
+"skipped": false,
+"window": [
+306,
+322.5
+],
+"span": [
+305.73,
+320.24
+],
+"auto_score": null,
+"channel": "pos",
+"sensor_reps": 4,
+"clean_reps": 4,
+"sensor_range": [
+4,
+4
+],
+"profile_source": "generic",
+"bouts": [
+4
+],
+"bouts_clean": [
+4
+],
+"flag": "match",
+"delta": 0,
+"mean_velocity": 0.519,
+"best_velocity": 0.59,
+"velocity_loss_pct": 21.9,
+"tut_s": 12.3,
+"con_s": 6.3,
+"ecc_s": 1.8,
+"features": {
+"g_x": 0.7741,
+"g_y": -0.1956,
+"g_z": -0.6003,
+"g_std_x": 0.0264,
+"g_std_y": 0.0229,
+"g_std_z": 0.0315,
+"rot_range_deg": 3.8142,
+"gyro_rms_x": 0.0642,
+"gyro_rms_y": 0.1698,
+"gyro_rms_z": 0.0678,
+"gyro_dom_frac": 0.5625,
+"a_vert_rms": 1.6482,
+"a_horiz_rms": 0.3222,
+"vert_ratio": 0.8365,
+"rom_cm": 43.1075,
+"period_s": 4.78
+},
+"rest_after_s": 201.8
+},
+{
+"i": 3,
+"log_index": 3,
+"unsure": false,
+"ex": "SQ",
+"label": "Squat (Barbell)",
+"key": "squat",
+"kg": 105.0,
+"logged_reps": 5,
+"rpe": 7.0,
+"warmup": false,
+"per_unit": false,
+"skipped": false,
+"window": [
+522,
+544
+],
+"span": [
+522.07,
+541.07
+],
+"auto_score": null,
+"channel": "pos",
+"sensor_reps": 5,
+"clean_reps": 5,
+"sensor_range": [
+5,
+5
+],
+"profile_source": "generic",
+"bouts": [
+5
+],
+"bouts_clean": [
+5
+],
+"flag": "match",
+"delta": 0,
+"mean_velocity": 0.55,
+"best_velocity": 0.597,
+"velocity_loss_pct": 10.7,
+"tut_s": 16.3,
+"con_s": 6.1,
+"ecc_s": 6.7,
+"features": {
+"g_x": 0.7398,
+"g_y": -0.1128,
+"g_z": -0.6612,
+"g_std_x": 0.0354,
+"g_std_y": 0.0137,
+"g_std_z": 0.0371,
+"rot_range_deg": 4.8484,
+"gyro_rms_x": 0.0813,
+"gyro_rms_y": 0.1646,
+"gyro_rms_z": 0.0699,
+"gyro_dom_frac": 0.5214,
+"a_vert_rms": 1.4667,
+"a_horiz_rms": 0.3317,
+"vert_ratio": 0.8155,
+"rom_cm": 40.6167,
+"period_s": 3.42
+},
+"rest_after_s": 175.5
+},
+{
+"i": 4,
+"log_index": 4,
+"unsure": false,
+"ex": "SQ",
+"label": "Squat (Barbell)",
+"key": "squat",
+"kg": 105.0,
+"logged_reps": 5,
+"rpe": 7.5,
+"warmup": false,
+"per_unit": false,
+"skipped": false,
+"window": [
+717,
+740.5
+],
+"span": [
+716.62,
+737.44
+],
+"auto_score": null,
+"channel": "pos",
+"sensor_reps": 5,
+"clean_reps": 5,
+"sensor_range": [
+3,
+6
+],
+"profile_source": "generic",
+"bouts": [
+5
+],
+"bouts_clean": [
+5
+],
+"flag": "match",
+"delta": 0,
+"mean_velocity": 0.523,
+"best_velocity": 0.593,
+"velocity_loss_pct": 16.4,
+"tut_s": 15.6,
+"con_s": 6.3,
+"ecc_s": 5.4,
+"features": {
+"g_x": 0.7532,
+"g_y": -0.1425,
+"g_z": -0.6402,
+"g_std_x": 0.0321,
+"g_std_y": 0.0182,
+"g_std_z": 0.0354,
+"rot_range_deg": 5.3017,
+"gyro_rms_x": 0.075,
+"gyro_rms_y": 0.1575,
+"gyro_rms_z": 0.0678,
+"gyro_dom_frac": 0.5244,
+"a_vert_rms": 1.3396,
+"a_horiz_rms": 0.3487,
+"vert_ratio": 0.7935,
+"rom_cm": 37.1351,
+"period_s": 3.88
+},
+"rest_after_s": 281.3
+},
+{
+"i": 5,
+"log_index": 5,
+"unsure": false,
+"ex": "SQ",
+"label": "Squat (Barbell)",
+"key": "squat",
+"kg": 105.0,
+"logged_reps": 5,
+"rpe": 7.5,
+"warmup": false,
+"per_unit": false,
+"skipped": false,
+"window": [
+1019.5,
+1046.5
+],
+"span": [
+1018.73,
+1043.14
+],
+"auto_score": null,
+"channel": "pos",
+"sensor_reps": 5,
+"clean_reps": 5,
+"sensor_range": [
+5,
+5
+],
+"profile_source": "generic",
+"bouts": [
+5
+],
+"bouts_clean": [
+5
+],
+"flag": "match",
+"delta": 0,
+"mean_velocity": 0.533,
+"best_velocity": 0.577,
+"velocity_loss_pct": 9.5,
+"tut_s": 13.3,
+"con_s": 6.4,
+"ecc_s": 0.5,
+"features": {
+"g_x": 0.7648,
+"g_y": -0.1252,
+"g_z": -0.6294,
+"g_std_x": 0.0323,
+"g_std_y": 0.0308,
+"g_std_z": 0.0374,
+"rot_range_deg": 4.5865,
+"gyro_rms_x": 0.0746,
+"gyro_rms_y": 0.1459,
+"gyro_rms_z": 0.0601,
+"gyro_dom_frac": 0.5199,
+"a_vert_rms": 1.247,
+"a_horiz_rms": 0.2788,
+"vert_ratio": 0.8173,
+"rom_cm": 37.5549,
+"period_s": 5.02
+},
+"rest_after_s": 63.8
+},
+{
+"i": 6,
+"log_index": 6,
+"unsure": false,
+"ex": "DL",
+"label": "Deadlift (Barbell)",
+"key": "deadlift",
+"kg": 60.0,
+"logged_reps": 5,
+"rpe": null,
+"warmup": true,
+"per_unit": false,
+"skipped": false,
+"window": [
+1106.5,
+1125.5
+],
+"span": [
+1106.91,
+1124.42
+],
+"auto_score": null,
+"channel": "pos",
+"sensor_reps": 5,
+"clean_reps": 4,
+"sensor_range": [
+5,
+5
+],
+"profile_source": "generic",
+"bouts": [
+5
+],
+"bouts_clean": [
+4
+],
+"flag": "match",
+"delta": 0,
+"mean_velocity": 0.453,
+"best_velocity": 0.494,
+"velocity_loss_pct": 13.5,
+"tut_s": 17.5,
+"con_s": 12.4,
+"ecc_s": 4.2,
+"features": {
+"g_x": -0.9794,
+"g_y": 0.1152,
+"g_z": -0.0873,
+"g_std_x": 0.0249,
+"g_std_y": 0.0677,
+"g_std_z": 0.1212,
+"rot_range_deg": 11.2188,
+"gyro_rms_x": 0.3391,
+"gyro_rms_y": 0.2801,
+"gyro_rms_z": 0.1863,
+"gyro_dom_frac": 0.421,
+"a_vert_rms": 1.879,
+"a_horiz_rms": 0.8215,
+"vert_ratio": 0.6958,
+"rom_cm": 46.0564,
+"period_s": 3.74
+},
+"rest_after_s": 209.8
+},
+{
+"i": 7,
+"log_index": 7,
+"unsure": false,
+"ex": "DL",
+"label": "Deadlift (Barbell)",
+"key": "deadlift",
+"kg": 90.0,
+"logged_reps": 5,
+"rpe": null,
+"warmup": true,
+"per_unit": false,
+"skipped": false,
+"window": [
+1334,
+1357
+],
+"span": [
+1334.25,
+1356.4
+],
+"auto_score": null,
+"channel": "pos",
+"sensor_reps": 6,
+"clean_reps": 4,
+"sensor_range": [
+5,
+6
+],
+"profile_source": "generic",
+"bouts": [
+6
+],
+"bouts_clean": [
+4
+],
+"flag": "ambiguous",
+"delta": 0,
+"mean_velocity": 0.488,
+"best_velocity": 0.514,
+"velocity_loss_pct": 9.7,
+"tut_s": 22.1,
+"con_s": 15.7,
+"ecc_s": 5.5,
+"features": {
+"g_x": -0.9872,
+"g_y": 0.0741,
+"g_z": 0.0045,
+"g_std_x": 0.014,
+"g_std_y": 0.0624,
+"g_std_z": 0.1256,
+"rot_range_deg": 13.7423,
+"gyro_rms_x": 0.3755,
+"gyro_rms_y": 0.2614,
+"gyro_rms_z": 0.1583,
+"gyro_dom_frac": 0.4722,
+"a_vert_rms": 1.597,
+"a_horiz_rms": 0.6958,
+"vert_ratio": 0.6965,
+"rom_cm": 29.7925,
+"period_s": 4.08
+},
+"rest_after_s": 237.6
+},
+{
+"i": 8,
+"log_index": 8,
+"unsure": false,
+"ex": "DL",
+"label": "Deadlift (Barbell)",
+"key": "deadlift",
+"kg": 110.0,
+"logged_reps": 5,
+"rpe": 6.0,
+"warmup": false,
+"per_unit": false,
+"skipped": false,
+"window": [
+1594,
+1616
+],
+"span": [
+1593.97,
+1616.24
+],
+"auto_score": null,
+"channel": "pos",
+"sensor_reps": 5,
+"clean_reps": 4,
+"sensor_range": [
+4,
+5
+],
+"profile_source": "generic",
+"bouts": [
+5
+],
+"bouts_clean": [
+4
+],
+"flag": "match",
+"delta": 0,
+"mean_velocity": 0.458,
+"best_velocity": 0.5,
+"velocity_loss_pct": 10.7,
+"tut_s": 22.3,
+"con_s": 15.0,
+"ecc_s": 5.7,
+"features": {
+"g_x": -0.9878,
+"g_y": 0.0793,
+"g_z": -0.0092,
+"g_std_x": 0.0149,
+"g_std_y": 0.0561,
+"g_std_z": 0.1204,
+"rot_range_deg": 12.7846,
+"gyro_rms_x": 0.2754,
+"gyro_rms_y": 0.2629,
+"gyro_rms_z": 0.1394,
+"gyro_dom_frac": 0.4064,
+"a_vert_rms": 1.5021,
+"a_horiz_rms": 0.7059,
+"vert_ratio": 0.6803,
+"rom_cm": 23.7036,
+"period_s": 4.44
+},
+"rest_after_s": 193.9
+},
+{
+"i": 9,
+"log_index": 9,
+"unsure": false,
+"ex": "DL",
+"label": "Deadlift (Barbell)",
+"key": "deadlift",
+"kg": 110.0,
+"logged_reps": 5,
+"rpe": 7.0,
+"warmup": false,
+"per_unit": false,
+"skipped": false,
+"window": [
+1810,
+1836
+],
+"span": [
+1810.18,
+1835.98
+],
+"auto_score": null,
+"channel": "pos",
+"sensor_reps": 9,
+"clean_reps": 2,
+"sensor_range": [
+9,
+9
+],
+"profile_source": "generic",
+"bouts": [
+9
+],
+"bouts_clean": [
+2
+],
+"flag": "ambiguous",
+"delta": 0,
+"mean_velocity": null,
+"best_velocity": null,
+"velocity_loss_pct": null,
+"tut_s": 25.8,
+"con_s": 16.1,
+"ecc_s": 7.3,
+"features": {
+"g_x": -0.988,
+"g_y": 0.0641,
+"g_z": 0.0098,
+"g_std_x": 0.0139,
+"g_std_y": 0.0623,
+"g_std_z": 0.1245,
+"rot_range_deg": 14.3152,
+"gyro_rms_x": 0.203,
+"gyro_rms_y": 0.2666,
+"gyro_rms_z": 0.1605,
+"gyro_dom_frac": 0.423,
+"a_vert_rms": 1.39,
+"a_horiz_rms": 0.7331,
+"vert_ratio": 0.6547,
+"rom_cm": 21.1967,
+"period_s": 5.54
+},
+"rest_after_s": 83.1
+},
+{
+"i": 10,
+"log_index": 10,
+"unsure": false,
+"ex": "DL",
+"label": "Deadlift (Barbell)",
+"key": "deadlift",
+"kg": 110.0,
+"logged_reps": 3,
+"rpe": 7.0,
+"warmup": false,
+"per_unit": false,
+"skipped": false,
+"window": [
+1918,
+1934
+],
+"span": [
+1919.04,
+1934.3
+],
+"auto_score": null,
+"channel": "pos",
+"sensor_reps": 5,
+"clean_reps": 2,
+"sensor_range": [
+5,
+6
+],
+"profile_source": "generic",
+"bouts": [
+5
+],
+"bouts_clean": [
+2
+],
+"flag": "ambiguous",
+"delta": 0,
+"mean_velocity": null,
+"best_velocity": null,
+"velocity_loss_pct": null,
+"tut_s": 15.3,
+"con_s": 6.1,
+"ecc_s": 5.8,
+"features": {
+"g_x": -0.9891,
+"g_y": 0.0445,
+"g_z": -0.024,
+"g_std_x": 0.0132,
+"g_std_y": 0.0859,
+"g_std_z": 0.1073,
+"rot_range_deg": 14.4966,
+"gyro_rms_x": 0.2753,
+"gyro_rms_y": 0.2243,
+"gyro_rms_z": 0.1873,
+"gyro_dom_frac": 0.4008,
+"a_vert_rms": 1.3616,
+"a_horiz_rms": 0.9171,
+"vert_ratio": 0.5975,
+"rom_cm": 20.2641,
+"period_s": 5.84
+},
+"rest_after_s": 277.5
+},
+{
+"i": 11,
+"log_index": 11,
+"unsure": false,
+"ex": "BP",
+"label": "Bench Press (Barbell)",
+"key": "bench",
+"kg": 40.0,
+"logged_reps": 8,
+"rpe": null,
+"warmup": true,
+"per_unit": false,
+"skipped": false,
+"window": [
+2210.5,
+2224.8
+],
+"span": [
+2211.84,
+2225.62
+],
+"auto_score": null,
+"channel": "pos",
+"sensor_reps": 8,
+"clean_reps": 7,
+"sensor_range": [
+8,
+8
+],
+"profile_source": "generic",
+"bouts": [
+8
+],
+"bouts_clean": [
+7
+],
+"flag": "match",
+"delta": 0,
+"mean_velocity": 0.511,
+"best_velocity": 0.551,
+"velocity_loss_pct": 0.3,
+"tut_s": 13.8,
+"con_s": 6.2,
+"ecc_s": 5.2,
+"features": {
+"g_x": 0.9851,
+"g_y": -0.0641,
+"g_z": 0.0697,
+"g_std_x": 0.016,
+"g_std_y": 0.0965,
+"g_std_z": 0.1049,
+"rot_range_deg": 12.7579,
+"gyro_rms_x": 0.2779,
+"gyro_rms_y": 0.5338,
+"gyro_rms_z": 0.6151,
+"gyro_dom_frac": 0.4311,
+"a_vert_rms": 3.2209,
+"a_horiz_rms": 0.775,
+"vert_ratio": 0.806,
+"rom_cm": 44.4693,
+"period_s": 1.64
+},
+"rest_after_s": 143.8
+},
+{
+"i": 12,
+"log_index": 12,
+"unsure": false,
+"ex": "BP",
+"label": "Bench Press (Barbell)",
+"key": "bench",
+"kg": 60.0,
+"logged_reps": 5,
+"rpe": null,
+"warmup": true,
+"per_unit": false,
+"skipped": false,
+"window": [
+2371,
+2384
+],
+"span": [
+2369.42,
+2384.95
+],
+"auto_score": null,
+"channel": "pos",
+"sensor_reps": 6,
+"clean_reps": 5,
+"sensor_range": [
+6,
+6
+],
+"profile_source": "generic",
+"bouts": [
+6
+],
+"bouts_clean": [
+5
+],
+"flag": "ambiguous",
+"delta": 0,
+"mean_velocity": 0.365,
+"best_velocity": 0.406,
+"velocity_loss_pct": 20.3,
+"tut_s": 15.5,
+"con_s": 8.8,
+"ecc_s": 3.9,
+"features": {
+"g_x": 0.9891,
+"g_y": -0.0261,
+"g_z": 0.0433,
+"g_std_x": 0.0073,
+"g_std_y": 0.096,
+"g_std_z": 0.0988,
+"rot_range_deg": 10.9869,
+"gyro_rms_x": 0.1418,
+"gyro_rms_y": 0.397,
+"gyro_rms_z": 0.4263,
+"gyro_dom_frac": 0.4417,
+"a_vert_rms": 1.6953,
+"a_horiz_rms": 0.5309,
+"vert_ratio": 0.7615,
+"rom_cm": 39.6224,
+"period_s": 2.32
+},
+"rest_after_s": 244.4
+},
+{
+"i": 13,
+"log_index": 13,
+"unsure": false,
+"ex": "BP",
+"label": "Bench Press (Barbell)",
+"key": "bench",
+"kg": 80.0,
+"logged_reps": 6,
+"rpe": 7.5,
+"warmup": false,
+"per_unit": false,
+"skipped": false,
+"window": [
+2630.5,
+2651.5
+],
+"span": [
+2629.3,
+2653.07
+],
+"auto_score": null,
+"channel": "pos",
+"sensor_reps": 7,
+"clean_reps": 7,
+"sensor_range": [
+7,
+7
+],
+"profile_source": "generic",
+"bouts": [
+7
+],
+"bouts_clean": [
+7
+],
+"flag": "watch more",
+"delta": 1,
+"mean_velocity": 0.287,
+"best_velocity": 0.45,
+"velocity_loss_pct": 25.5,
+"tut_s": 23.8,
+"con_s": 10.5,
+"ecc_s": 8.0,
+"features": {
+"g_x": 0.9778,
+"g_y": -0.0301,
+"g_z": 0.0187,
+"g_std_x": 0.0703,
+"g_std_y": 0.1543,
+"g_std_z": 0.1179,
+"rot_range_deg": 10.6695,
+"gyro_rms_x": 0.8834,
+"gyro_rms_y": 0.7672,
+"gyro_rms_z": 0.5133,
+"gyro_dom_frac": 0.4083,
+"a_vert_rms": 1.4495,
+"a_horiz_rms": 2.035,
+"vert_ratio": 0.416,
+"rom_cm": 37.7353,
+"period_s": 2.98
+},
+"rest_after_s": 190.2
+},
+{
+"i": 14,
+"log_index": 14,
+"unsure": false,
+"ex": "BP",
+"label": "Bench Press (Barbell)",
+"key": "bench",
+"kg": 80.0,
+"logged_reps": 6,
+"rpe": 8.0,
+"warmup": false,
+"per_unit": false,
+"skipped": false,
+"window": [
+2844,
+2866.5
+],
+"span": [
+2843.23,
+2861.69
+],
+"auto_score": null,
+"channel": "pos",
+"sensor_reps": 6,
+"clean_reps": 6,
+"sensor_range": [
+6,
+6
+],
+"profile_source": "generic",
+"bouts": [
+6
+],
+"bouts_clean": [
+6
+],
+"flag": "match",
+"delta": 0,
+"mean_velocity": 0.255,
+"best_velocity": 0.309,
+"velocity_loss_pct": 14.3,
+"tut_s": 18.5,
+"con_s": 9.4,
+"ecc_s": 6.8,
+"features": {
+"g_x": 0.9858,
+"g_y": -0.0834,
+"g_z": -0.0024,
+"g_std_x": 0.0103,
+"g_std_y": 0.1196,
+"g_std_z": 0.0827,
+"rot_range_deg": 10.4183,
+"gyro_rms_x": 0.1331,
+"gyro_rms_y": 0.2968,
+"gyro_rms_z": 0.3616,
+"gyro_dom_frac": 0.4568,
+"a_vert_rms": 0.8985,
+"a_horiz_rms": 0.3973,
+"vert_ratio": 0.6934,
+"rom_cm": 31.2144,
+"period_s": 3.02
+},
+"rest_after_s": 231.9
+},
+{
+"i": 15,
+"log_index": 15,
+"unsure": false,
+"ex": "BP",
+"label": "Bench Press (Barbell)",
+"key": "bench",
+"kg": 80.0,
+"logged_reps": 6,
+"rpe": 8.5,
+"warmup": false,
+"per_unit": false,
+"skipped": false,
+"window": [
+3094.5,
+3115
+],
+"span": [
+3093.62,
+3111.02
+],
+"auto_score": null,
+"channel": "pos",
+"sensor_reps": 6,
+"clean_reps": 6,
+"sensor_range": [
+6,
+6
+],
+"profile_source": "generic",
+"bouts": [
+6
+],
+"bouts_clean": [
+6
+],
+"flag": "match",
+"delta": 0,
+"mean_velocity": 0.261,
+"best_velocity": 0.319,
+"velocity_loss_pct": 19.0,
+"tut_s": 17.4,
+"con_s": 8.3,
+"ecc_s": 7.6,
+"features": {
+"g_x": 0.9836,
+"g_y": -0.0926,
+"g_z": 0.0172,
+"g_std_x": 0.019,
+"g_std_y": 0.1049,
+"g_std_z": 0.1107,
+"rot_range_deg": 13.4427,
+"gyro_rms_x": 0.1642,
+"gyro_rms_y": 0.3357,
+"gyro_rms_z": 0.3596,
+"gyro_dom_frac": 0.4183,
+"a_vert_rms": 0.9462,
+"a_horiz_rms": 0.4358,
+"vert_ratio": 0.6847,
+"rom_cm": 32.8654,
+"period_s": 2.8
+},
+"rest_after_s": 60.0
+},
+{
+"i": 16,
+"log_index": 16,
+"unsure": false,
+"ex": "LLC",
+"label": "Lying Leg Curl (Machine)",
+"key": "machine",
+"kg": 35.0,
+"logged_reps": 12,
+"rpe": 6.0,
+"warmup": false,
+"per_unit": false,
+"skipped": false,
+"window": [
+3152.5,
+3185
+],
+"span": [
+3171.01,
+3184.22
+],
+"auto_score": null,
+"channel": "gy",
+"sensor_reps": 10,
+"clean_reps": 5,
+"sensor_range": [
+10,
+11
+],
+"profile_source": "generic",
+"bouts": [
+10
+],
+"bouts_clean": [
+5
+],
+"flag": "watch fewer",
+"delta": 2,
+"mean_velocity": 0.171,
+"best_velocity": 0.218,
+"velocity_loss_pct": 23.1,
+"tut_s": 13.2,
+"con_s": 5.5,
+"ecc_s": 6.2,
+"features": {
+"g_x": -0.677,
+"g_y": 0.3981,
+"g_z": -0.0444,
+"g_std_x": 0.5571,
+"g_std_y": 0.2021,
+"g_std_z": 0.1734,
+"rot_range_deg": 107.9777,
+"gyro_rms_x": 2.0839,
+"gyro_rms_y": 1.0257,
+"gyro_rms_z": 1.4014,
+"gyro_dom_frac": 0.462,
+"a_vert_rms": 2.7572,
+"a_horiz_rms": 3.5815,
+"vert_ratio": 0.435,
+"rom_cm": 33.7109,
+"period_s": 6.42
+},
+"rest_after_s": 146.0
+},
+{
+"i": 17,
+"log_index": 17,
+"unsure": false,
+"ex": "LLC",
+"label": "Lying Leg Curl (Machine)",
+"key": "machine",
+"kg": 35.0,
+"logged_reps": 12,
+"rpe": 6.0,
+"warmup": false,
+"per_unit": false,
+"skipped": false,
+"window": [
+3331,
+3365.5
+],
+"span": [
+3330.18,
+3364.79
+],
+"auto_score": null,
+"channel": "pos",
+"sensor_reps": 25,
+"clean_reps": 24,
+"sensor_range": [
+23,
+25
+],
+"profile_source": "generic",
+"bouts": [
+25
+],
+"bouts_clean": [
+24
+],
+"flag": "watch more",
+"delta": 12,
+"mean_velocity": 0.156,
+"best_velocity": 0.218,
+"velocity_loss_pct": 43.0,
+"tut_s": 34.6,
+"con_s": 14.6,
+"ecc_s": 12.0,
+"features": {
+"g_x": -0.8676,
+"g_y": 0.3867,
+"g_z": 0.0008,
+"g_std_x": 0.2226,
+"g_std_y": 0.1469,
+"g_std_z": 0.1632,
+"rot_range_deg": 29.804,
+"gyro_rms_x": 0.8776,
+"gyro_rms_y": 0.5765,
+"gyro_rms_z": 0.7902,
+"gyro_dom_frac": 0.391,
+"a_vert_rms": 1.2082,
+"a_horiz_rms": 2.3974,
+"vert_ratio": 0.3351,
+"rom_cm": 10.8946,
+"period_s": 4.06
+},
+"rest_after_s": 74.9
+},
+{
+"i": 18,
+"log_index": 18,
+"unsure": false,
+"ex": "PD",
+"label": "Lat Pulldown (Cable)",
+"key": "pulldown",
+"kg": 70.0,
+"logged_reps": 8,
+"rpe": 6.0,
+"warmup": false,
+"per_unit": false,
+"skipped": false,
+"window": [
+3439,
+3461.5
+],
+"span": [
+3439.73,
+3448.93
+],
+"auto_score": null,
+"channel": "pos",
+"sensor_reps": 4,
+"clean_reps": 3,
+"sensor_range": [
+4,
+4
+],
+"profile_source": "generic",
+"bouts": [
+4
+],
+"bouts_clean": [
+3
+],
+"flag": "watch fewer",
+"delta": 4,
+"mean_velocity": 0.408,
+"best_velocity": 0.428,
+"velocity_loss_pct": 5.4,
+"tut_s": 9.2,
+"con_s": 5.7,
+"ecc_s": 3.4,
+"features": {
+"g_x": 0.9761,
+"g_y": 0.1114,
+"g_z": 0.1373,
+"g_std_x": 0.0139,
+"g_std_y": 0.0876,
+"g_std_z": 0.09,
+"rot_range_deg": 11.0412,
+"gyro_rms_x": 0.3541,
+"gyro_rms_y": 0.2877,
+"gyro_rms_z": 0.494,
+"gyro_dom_frac": 0.4349,
+"a_vert_rms": 1.9565,
+"a_horiz_rms": 1.1243,
+"vert_ratio": 0.6351,
+"rom_cm": 60.8376,
+"period_s": 2.58
+},
+"rest_after_s": 165.8
+},
+{
+"i": 19,
+"log_index": 19,
+"unsure": false,
+"ex": "PD",
+"label": "Lat Pulldown (Cable)",
+"key": "pulldown",
+"kg": 70.0,
+"logged_reps": 8,
+"rpe": 7.5,
+"warmup": false,
+"per_unit": false,
+"skipped": false,
+"window": [
+3613.5,
+3634.5
+],
+"span": [
+3614.74,
+3634.81
+],
+"auto_score": null,
+"channel": "pos",
+"sensor_reps": 8,
+"clean_reps": 7,
+"sensor_range": [
+8,
+8
+],
+"profile_source": "generic",
+"bouts": [
+8
+],
+"bouts_clean": [
+7
+],
+"flag": "match",
+"delta": 0,
+"mean_velocity": 0.42,
+"best_velocity": 0.686,
+"velocity_loss_pct": 18.8,
+"tut_s": 20.1,
+"con_s": 12.4,
+"ecc_s": 7.3,
+"features": {
+"g_x": 0.977,
+"g_y": 0.0029,
+"g_z": 0.0316,
+"g_std_x": 0.1191,
+"g_std_y": 0.1268,
+"g_std_z": 0.1191,
+"rot_range_deg": 10.4949,
+"gyro_rms_x": 0.7035,
+"gyro_rms_y": 0.6095,
+"gyro_rms_z": 0.756,
+"gyro_dom_frac": 0.3654,
+"a_vert_rms": 2.9347,
+"a_horiz_rms": 1.7968,
+"vert_ratio": 0.6202,
+"rom_cm": 95.5405,
+"period_s": 2.72
+},
+"rest_after_s": 37.4
+},
+{
+"i": 20,
+"log_index": 20,
+"unsure": false,
+"ex": "PUSH",
+"label": "Triceps Rope Pushdown",
+"key": "pushdown",
+"kg": 21.0,
+"logged_reps": 12,
+"rpe": 7.5,
+"warmup": false,
+"per_unit": false,
+"skipped": false,
+"window": [
+3671.5,
+3695
+],
+"span": [
+3672.17,
+3695.92
+],
+"auto_score": null,
+"channel": "gx",
+"sensor_reps": 12,
+"clean_reps": 12,
+"sensor_range": [
+12,
+12
+],
+"profile_source": "generic",
+"bouts": [
+12
+],
+"bouts_clean": [
+12
+],
+"flag": "match",
+"delta": 0,
+"mean_velocity": 0.294,
+"best_velocity": 0.618,
+"velocity_loss_pct": 11.9,
+"tut_s": 23.8,
+"con_s": 12.3,
+"ecc_s": 10.8,
+"features": {
+"g_x": -0.322,
+"g_y": 0.7134,
+"g_z": -0.3356,
+"g_std_x": 0.4366,
+"g_std_y": 0.1992,
+"g_std_z": 0.2109,
+"rot_range_deg": 48.4769,
+"gyro_rms_x": 0.6161,
+"gyro_rms_y": 1.2218,
+"gyro_rms_z": 1.3913,
+"gyro_dom_frac": 0.4309,
+"a_vert_rms": 1.8553,
+"a_horiz_rms": 2.07,
+"vert_ratio": 0.4726,
+"rom_cm": 38.433,
+"period_s": 3.98
+},
+"rest_after_s": 37.3
+},
+{
+"i": 21,
+"log_index": 21,
+"unsure": false,
+"ex": "PUSH",
+"label": "Triceps Rope Pushdown",
+"key": "pushdown",
+"kg": 21.0,
+"logged_reps": 10,
+"rpe": 9.0,
+"warmup": false,
+"per_unit": false,
+"skipped": false,
+"window": [
+3732.5,
+3756.5
+],
+"span": [
+3733.18,
+3757.15
+],
+"auto_score": null,
+"channel": "gx",
+"sensor_reps": 10,
+"clean_reps": 10,
+"sensor_range": [
+10,
+10
+],
+"profile_source": "generic",
+"bouts": [
+10
+],
+"bouts_clean": [
+10
+],
+"flag": "match",
+"delta": 0,
+"mean_velocity": 0.324,
+"best_velocity": 0.7,
+"velocity_loss_pct": 3.9,
+"tut_s": 24.0,
+"con_s": 12.0,
+"ecc_s": 10.0,
+"features": {
+"g_x": -0.2322,
+"g_y": 0.7462,
+"g_z": -0.3198,
+"g_std_x": 0.4621,
+"g_std_y": 0.1695,
+"g_std_z": 0.2114,
+"rot_range_deg": 49.339,
+"gyro_rms_x": 0.7825,
+"gyro_rms_y": 1.0664,
+"gyro_rms_z": 1.2513,
+"gyro_dom_frac": 0.4036,
+"a_vert_rms": 2.1039,
+"a_horiz_rms": 1.8041,
+"vert_ratio": 0.5384,
+"rom_cm": 47.8803,
+"period_s": 2.46
+},
+"rest_after_s": 38.9
+},
+{
+"i": 22,
+"log_index": 22,
+"unsure": true,
+"ex": "CURL",
+"label": "Hammer Curl (Dumbbell)",
+"key": "curl",
+"kg": 11.0,
+"logged_reps": 12,
+"rpe": 7.0,
+"warmup": false,
+"per_unit": false,
+"skipped": false,
+"window": [
+3795.5,
+3816.5
+],
+"span": [
+3796.06,
+3816.28
+],
+"auto_score": null,
+"channel": "gx",
+"sensor_reps": 10,
+"clean_reps": 10,
+"sensor_range": [
+10,
+10
+],
+"profile_source": "generic",
+"bouts": [
+10
+],
+"bouts_clean": [
+10
+],
+"flag": "watch fewer",
+"delta": 2,
+"mean_velocity": 0.561,
+"best_velocity": 0.662,
+"velocity_loss_pct": 1.4,
+"tut_s": 20.2,
+"con_s": 8.9,
+"ecc_s": 8.4,
+"features": {
+"g_x": -0.3435,
+"g_y": 0.5951,
+"g_z": -0.1976,
+"g_std_x": 0.6101,
+"g_std_y": 0.3196,
+"g_std_z": 0.1198,
+"rot_range_deg": 63.1143,
+"gyro_rms_x": 0.4968,
+"gyro_rms_y": 0.4052,
+"gyro_rms_z": 2.4433,
+"gyro_dom_frac": 0.7304,
+"a_vert_rms": 2.2455,
+"a_horiz_rms": 1.4996,
+"vert_ratio": 0.5996,
+"rom_cm": 49.5484,
+"period_s": 2.06
+},
+"rest_after_s": 54.9
+},
+{
+"i": 23,
+"log_index": 23,
+"unsure": true,
+"ex": "CURL",
+"label": "Hammer Curl (Dumbbell)",
+"key": "curl",
+"kg": 15.0,
+"logged_reps": 7,
+"rpe": 9.0,
+"warmup": false,
+"per_unit": false,
+"skipped": false,
+"window": [
+3870.5,
+3893.5
+],
+"span": [
+3871.19,
+3893.05
+],
+"auto_score": null,
+"channel": "gx",
+"sensor_reps": 6,
+"clean_reps": 6,
+"sensor_range": [
+6,
+6
+],
+"profile_source": "generic",
+"bouts": [
+6
+],
+"bouts_clean": [
+6
+],
+"flag": "watch fewer",
+"delta": 1,
+"mean_velocity": 0.401,
+"best_velocity": 0.47,
+"velocity_loss_pct": 9.2,
+"tut_s": 21.9,
+"con_s": 7.1,
+"ecc_s": 9.2,
+"features": {
+"g_x": -0.4528,
+"g_y": 0.5214,
+"g_z": -0.1283,
+"g_std_x": 0.6293,
+"g_std_y": 0.3215,
+"g_std_z": 0.0848,
+"rot_range_deg": 80.4374,
+"gyro_rms_x": 0.3714,
+"gyro_rms_y": 0.2883,
+"gyro_rms_z": 1.5732,
+"gyro_dom_frac": 0.7046,
+"a_vert_rms": 1.0057,
+"a_horiz_rms": 0.7817,
+"vert_ratio": 0.5627,
+"rom_cm": 36.7163,
+"period_s": 3.24
+},
+"rest_after_s": null
+}
+]
+}

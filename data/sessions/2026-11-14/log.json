@@ -1,0 +1,191 @@
+{
+ "source": "hevy",
+ "title": "Saturday — Full Body A | Strength",
+ "start_local": "2026-11-14T09:40:00",
+ "sets": [
+  {
+   "exercise": "Squat (Barbell)",
+   "kg": 60.0,
+   "reps": 6,
+   "rpe": null,
+   "warmup": true,
+   "set": 1
+  },
+  {
+   "exercise": "Squat (Barbell)",
+   "kg": 80.0,
+   "reps": 4,
+   "rpe": null,
+   "warmup": true,
+   "set": 2
+  },
+  {
+   "exercise": "Squat (Barbell)",
+   "kg": 105.0,
+   "reps": 5,
+   "rpe": 7.0,
+   "warmup": false,
+   "set": 3
+  },
+  {
+   "exercise": "Squat (Barbell)",
+   "kg": 105.0,
+   "reps": 5,
+   "rpe": 7.5,
+   "warmup": false,
+   "set": 4
+  },
+  {
+   "exercise": "Squat (Barbell)",
+   "kg": 105.0,
+   "reps": 5,
+   "rpe": 7.5,
+   "warmup": false,
+   "set": 5
+  },
+  {
+   "exercise": "Deadlift (Barbell)",
+   "kg": 60.0,
+   "reps": 5,
+   "rpe": null,
+   "warmup": true,
+   "set": 1
+  },
+  {
+   "exercise": "Deadlift (Barbell)",
+   "kg": 90.0,
+   "reps": 5,
+   "rpe": null,
+   "warmup": true,
+   "set": 2
+  },
+  {
+   "exercise": "Deadlift (Barbell)",
+   "kg": 110.0,
+   "reps": 5,
+   "rpe": 6.0,
+   "warmup": false,
+   "set": 3
+  },
+  {
+   "exercise": "Deadlift (Barbell)",
+   "kg": 110.0,
+   "reps": 5,
+   "rpe": 7.0,
+   "warmup": false,
+   "set": 4
+  },
+  {
+   "exercise": "Deadlift (Barbell)",
+   "kg": 110.0,
+   "reps": 3,
+   "rpe": 7.0,
+   "warmup": false,
+   "set": 5
+  },
+  {
+   "exercise": "Bench Press (Barbell)",
+   "kg": 40.0,
+   "reps": 8,
+   "rpe": null,
+   "warmup": true,
+   "set": 1
+  },
+  {
+   "exercise": "Bench Press (Barbell)",
+   "kg": 60.0,
+   "reps": 5,
+   "rpe": null,
+   "warmup": true,
+   "set": 2
+  },
+  {
+   "exercise": "Bench Press (Barbell)",
+   "kg": 80.0,
+   "reps": 6,
+   "rpe": 7.5,
+   "warmup": false,
+   "set": 3
+  },
+  {
+   "exercise": "Bench Press (Barbell)",
+   "kg": 80.0,
+   "reps": 6,
+   "rpe": 8.0,
+   "warmup": false,
+   "set": 4
+  },
+  {
+   "exercise": "Bench Press (Barbell)",
+   "kg": 80.0,
+   "reps": 6,
+   "rpe": 8.5,
+   "warmup": false,
+   "set": 5
+  },
+  {
+   "exercise": "Lying Leg Curl (Machine)",
+   "kg": 35.0,
+   "reps": 12,
+   "rpe": 6.0,
+   "warmup": false,
+   "set": 1
+  },
+  {
+   "exercise": "Lying Leg Curl (Machine)",
+   "kg": 35.0,
+   "reps": 12,
+   "rpe": 6.0,
+   "warmup": false,
+   "set": 2
+  },
+  {
+   "exercise": "Lat Pulldown (Cable)",
+   "kg": 70.0,
+   "reps": 8,
+   "rpe": 6.0,
+   "warmup": false,
+   "set": 1
+  },
+  {
+   "exercise": "Lat Pulldown (Cable)",
+   "kg": 70.0,
+   "reps": 8,
+   "rpe": 7.5,
+   "warmup": false,
+   "set": 2
+  },
+  {
+   "exercise": "Triceps Rope Pushdown",
+   "kg": 21.0,
+   "reps": 12,
+   "rpe": 7.5,
+   "warmup": false,
+   "set": 1
+  },
+  {
+   "exercise": "Triceps Rope Pushdown",
+   "kg": 21.0,
+   "reps": 10,
+   "rpe": 9.0,
+   "warmup": false,
+   "set": 2
+  },
+  {
+   "exercise": "Hammer Curl (Dumbbell)",
+   "kg": 11.0,
+   "reps": 12,
+   "rpe": 7.0,
+   "warmup": false,
+   "set": 1
+  },
+  {
+   "exercise": "Hammer Curl (Dumbbell)",
+   "kg": 15.0,
+   "reps": 7,
+   "rpe": 9.0,
+   "warmup": false,
+   "set": 2
+  }
+ ]
+}

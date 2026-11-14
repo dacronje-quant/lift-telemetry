@@ -20,6 +20,8 @@ from scipy.integrate import cumulative_trapezoid
 from .core import vertical_acceleration
 
 G = 9.80665
+GHOST_MIN_PERIOD_S = 3.0   # ghosts only appear when the real reps are this far apart
+GHOST_ROM = 0.06    # a cycle travelling < 6% of the set's typical rep is a filter ghost (0 = off)
 
 # channel: rep-counting signal: "pos" vertical position, "gx"/"gy"/"gz" gravity on a
 #          watch axis (forearm rotation), "auto" = pick the most regular one
@@ -389,6 +391,22 @@ def analyze_set(data, t0, t1, exercise, fs=100.0, placement="wrist", profile=Non
                 rom=float(np.trapezoid(vc, dx=1 / fs)),
                 concentric_s=len(vc) / fs, eccentric_s=ecc / fs,
                 rep_s=(e - s) / fs, rotation_deg=float(np.ptp(ang))))
+    if GHOST_ROM and channel == "pos" and rest == "top" and prof["bouts"] == 1 and len(reps) >= 4:
+        # A slow rep (>= ~4 s, heavy squats and deadlifts) sits at the low edge of the
+        # position band-pass, which splits it into the real cycle and a "ghost" cycle
+        # with no vertical travel (measured 2026-11-14: 0.6-0.8 m vs 0.00-0.01 m,
+        # alternating). Cycles with almost no travel next to real ones are not reps.
+        # Only for lifts resting at the top (the ghost is the standing pause) and reps
+        # >= 3 s apart. Nov 14 exact counts 7 -> 12 of 21; Nov 1 and RecoFit unchanged.
+        # A 10% threshold cost one RecoFit set; rest-at-bottom lifts (deadlift) lost reps.
+        ref = float(np.percentile([r.rom for r in reps], 75))
+        real = [r for r in reps if r.rom >= GHOST_ROM * ref]
+        slow = len(real) >= 3 and float(np.median(np.diff([r.t_turn for r in real]))) >= GHOST_MIN_PERIOD_S
+        if slow and len(real) < len(reps):
+            reps = real
+            for n, r in enumerate(reps, 1):
+                r.n = n
+            turns = np.array([int(np.argmin(np.abs(t - r.t_turn))) for r in reps], int)
     if len(reps) >= 3:
         rom = np.median([r.rom for r in reps])
         mvm = np.median([r.mean_velocity for r in reps])

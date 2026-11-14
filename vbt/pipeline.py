@@ -195,6 +195,10 @@ def analyze_sets(data, logged, wins, groups, placement="wrist"):
         flag, delta, bouts, bouts_clean = count_verdict(reps, h["reps"], prof["bouts"]) if reps \
             else ("watch fewer", h["reps"], [0], [0])
         span = (reps[0]["t_start"], reps[-1]["t_end"]) if reps else (t0, t1)
+        if reps and sum(r["ok"] for r in reps) * 2 < len(reps):
+            # most cycles implausible: the reps weren't isolated (e.g. very slow pulls below
+            # the position filter band), so a velocity here would be a made-up number
+            res = {**res, "mean_velocity": None, "best_mean_velocity": None, "velocity_loss_pct": None}
         feats = set_features(data, *span)
         d = resample(data, t0 - 4, t1 + 4, 25.0, pad=0)
         gh = d["grav"] / np.linalg.norm(d["grav"], axis=1, keepdims=True)

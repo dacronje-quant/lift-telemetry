@@ -1,0 +1,157 @@
+{
+ "source": "reviewed",
+ "clock": "Sensor Logger seconds_elapsed",
+ "reviewer": "Claude, 2026-11-14: every window checked against wrist pose, height trace (0.08-3 Hz) and rotation",
+ "review_note": "10 of 23 automatic windows were wrong or clipped (squats shifted by one set, deadlift sets 4-5, leg curls, pulldown 1). Hammer curl counts disagree with the log and are left unconfirmed.",
+ "sets": [
+  {
+   "log_index": 1,
+   "skipped": false,
+   "t_start": 193,
+   "t_end": 210,
+   "note": "auto window (136-161 s) was warm-up movement with the arm hanging; the squat sets are the five blocks with the bar-on-back wrist pose"
+  },
+  {
+   "log_index": 2,
+   "skipped": false,
+   "t_start": 306,
+   "t_end": 322.5
+  },
+  {
+   "log_index": 3,
+   "skipped": false,
+   "t_start": 522,
+   "t_end": 544
+  },
+  {
+   "log_index": 4,
+   "skipped": false,
+   "t_start": 717,
+   "t_end": 740.5
+  },
+  {
+   "log_index": 5,
+   "skipped": false,
+   "t_start": 1019.5,
+   "t_end": 1046.5,
+   "note": "missed by the detector (it was placed one set early); 5 reps at ~5 s each"
+  },
+  {
+   "log_index": 6,
+   "skipped": false,
+   "t_start": 1106.5,
+   "t_end": 1125.5
+  },
+  {
+   "log_index": 7,
+   "skipped": false,
+   "t_start": 1334,
+   "t_end": 1357
+  },
+  {
+   "log_index": 8,
+   "skipped": false,
+   "t_start": 1594,
+   "t_end": 1616
+  },
+  {
+   "log_index": 9,
+   "skipped": false,
+   "t_start": 1810,
+   "t_end": 1836,
+   "note": "auto window (1784-1800 s) was setup; the set is the 5 slow pulls at 1810-1836 s"
+  },
+  {
+   "log_index": 10,
+   "skipped": false,
+   "t_start": 1918,
+   "t_end": 1934,
+   "note": "auto window (1890-1901 s) was setup; the set is the 3 slow pulls at 1918-1934 s"
+  },
+  {
+   "log_index": 11,
+   "skipped": false,
+   "t_start": 2210.5,
+   "t_end": 2224.8
+  },
+  {
+   "log_index": 12,
+   "skipped": false,
+   "t_start": 2371,
+   "t_end": 2384
+  },
+  {
+   "log_index": 13,
+   "skipped": false,
+   "t_start": 2630.5,
+   "t_end": 2651.5
+  },
+  {
+   "log_index": 14,
+   "skipped": false,
+   "t_start": 2844,
+   "t_end": 2866.5
+  },
+  {
+   "log_index": 15,
+   "skipped": false,
+   "t_start": 3094.5,
+   "t_end": 3115
+  },
+  {
+   "log_index": 16,
+   "skipped": false,
+   "t_start": 3152.5,
+   "t_end": 3185,
+   "note": "auto window (3126-3156 s) was the walk to the machine; same wrist pose and ripple as set 2, with two regrips mid-set"
+  },
+  {
+   "log_index": 17,
+   "skipped": false,
+   "t_start": 3331,
+   "t_end": 3365.5,
+   "note": "auto window covered only the first half"
+  },
+  {
+   "log_index": 18,
+   "skipped": false,
+   "t_start": 3439,
+   "t_end": 3461.5,
+   "note": "auto window stopped after 4 of 8 pulls"
+  },
+  {
+   "log_index": 19,
+   "skipped": false,
+   "t_start": 3613.5,
+   "t_end": 3634.5
+  },
+  {
+   "log_index": 20,
+   "skipped": false,
+   "t_start": 3671.5,
+   "t_end": 3695
+  },
+  {
+   "log_index": 21,
+   "skipped": false,
+   "t_start": 3732.5,
+   "t_end": 3756.5
+  },
+  {
+   "log_index": 22,
+   "skipped": false,
+   "t_start": 3795.5,
+   "t_end": 3816.5,
+   "unsure": true,
+   "note": "hammer curl, window certain; the watch arm shows exactly 10 curls, the log says 12: count unconfirmed"
+  },
+  {
+   "log_index": 23,
+   "skipped": false,
+   "t_start": 3870.5,
+   "t_end": 3893.5,
+   "unsure": true,
+   "note": "hammer curl, window certain; the watch arm shows exactly 6 curls, the log says 7: count unconfirmed"
+  }
+ ]
+}

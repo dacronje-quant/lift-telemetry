@@ -23,6 +23,21 @@ Baseline 2026-11-01 (only one checked workout, so same-day leave-one-set-out, op
 21/22 sets found, 1 false set, 16 named correctly, 9 exact rep counts, readiness 36%.
 
 What limits it now, and the fix each needs:
+- **Slow reps (>= ~4.5 s each: heavy deadlifts, grinding squats)** sit at the 0.2 Hz edge of
+  the position band-pass. Nov 14: deadlift 110 kg sets 4-5 were placed on setup motion and
+  counted 9 and 5 for 5 and 3; their velocity is hidden. A wider band (0.08-0.12 Hz) shows the
+  reps as clean square waves but breaks faster lifts and the chain test (measured: Nov 1
+  consistent 16 -> 12). Needed: pick the band per set from the dominant period, or count on
+  the wide band with its own chain rules. Ghost-cycle rejection (`GHOST_ROM`) already fixes
+  the rest-at-top case (squat); for rest-at-bottom lifts the travel lands on the ghost, so
+  that rule would drop the real reps.
+- **Mid-set pauses** (pulldown set 1 on Nov 14: 4 pulls, 4.8 s pause, 4 pulls -> counted 4):
+  the second chain is more than 4 s from the first and is dropped.
+- **Barely visible machine work** (lying leg curl: 7-8 cm wrist ripple, twice per rep): "auto"
+  channel picks different signals for two sets of the same exercise (10 and 25 for 12).
+- **New exercises** can't be named sensor-only until seen once (Nov 14: squat, leg curl = 7 of
+  21 sets), and names that may be the same lift need the user's word
+  ("Lat Pulldown (Cable)" vs "Pulldown (Wide Parellel Grip)").
 - **Edge cycles counted as reps** (setup pulls, unracking): biggest error. `personal.py` learns
   per exercise whether to skip them (`count_mode`) once two workouts agree; next step is a
   learned "edge cycle" detector from flagged reps in checked sets.
@@ -45,6 +60,11 @@ error -0.40; recognition leave-one-person-out 77% (8 exercises). The gap to 93% 
 algorithmic headroom in rep counting; look per exercise in the tool's output.
 
 Tried and rejected (don't repeat without new evidence):
+- one wider position band for every set (0.15 / 0.10 / 0.08 Hz low cut): fixes slow deadlifts,
+  costs 2-4 consistent sets on Nov 1;
+- half-rate test by autocorrelation (lag 2T vs T): only caught 1 of 6 double-counted sets;
+- ghost-cycle threshold above 6% of typical travel, or without the >= 3 s spacing condition:
+  each cost RecoFit sets (exact 28.9 -> 26.3%);
 - rhythm features (concentric/eccentric share) for recognition: -2 sets on Nov 1;
 - peeling unusual first/last reps by shape, range of motion or tempo: edge reps are real
   reps whose kinematics are poorly estimated; every variant cut exact counts.

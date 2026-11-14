@@ -102,3 +102,18 @@ For every new workout:
   accel). Validated on the Nov 1 watch's raw accelerometer: with gyro, gravity within 0.6°
   median and velocities within 0.004 m/s of Apple's; accelerometer-only, rep counts ±1,
   velocity ~0.07 m/s worse. Sensor placement "bar" counts every lift from height.
+- 2026-11-14: third workout (Full Body A, 23 sets / 7 exercises, full 65 min recording, no
+  gaps). First real cross-day test. Auto windows: 13/23 right; fixed by hand and marked
+  reviewed: squats shifted by one set (warm-up motion taken as set 1), deadlift sets 4-5 and
+  leg curl 1 on setup motion, leg curl 2 and pulldown 1 cut in half. Hammer curls left
+  `unsure` (watch arm 10 and 6 curls vs 12 and 7 logged; same 10-for-12 as Nov 1: ask user).
+  Cause found for squat double counts: the 0.2 Hz position band-pass splits a slow rep into
+  the real cycle and a zero-travel ghost. Fix: ghost-cycle rejection in `analyze_set`
+  (`GHOST_ROM` 6% of typical travel, rest-at-top lifts, reps >= 3 s apart). Same two workouts
+  before -> after: log-guided recall 83.7 -> 95.4% (Nov 14: 66.7 -> 90.5%), IoU 0.63 -> 0.73,
+  sensor-only found 81 -> 86%, reps exact 23 -> 26%, readiness 9.3% unchanged; Nov 1 and
+  RecoFit unchanged (28.9% / 76.3%). Readiness is now cross-day only (Nov 1: 13.6%,
+  Nov 14: 4.8%); the earlier 36% was same-day and optimistic. Velocity is now hidden when
+  fewer than half of a set's cycles are plausible. Open: slow deadlifts, mid-set pauses,
+  leg curl, pulldown naming (see docs/IMPROVING.md). Nothing adopted by vbt.personal:
+  bench, deadlift and pushdown have 2 workouts but no learned signal beats generic held-out.
