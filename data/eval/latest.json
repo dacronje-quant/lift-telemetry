@@ -1,16 +1,16 @@
 {
- "when": "2026-11-22T10:19:14+00:00",
- "commit": "af5cad8",
+ "when": "2026-11-22T10:42:14+00:00",
+ "commit": "0be7b07",
  "n_trusted_sessions": 3,
  "detection": {
   "recall": 1.0,
-  "mean_iou": 0.799
+  "mean_iou": 0.8
  },
  "sensor_only": {
-  "fully_right_pct": 23.9,
-  "found_pct": 86.6,
-  "named_pct": 52.2,
-  "reps_exact_pct": 29.9,
+  "fully_right_pct": 26.9,
+  "found_pct": 88.1,
+  "named_pct": 56.7,
+  "reps_exact_pct": 32.8,
   "false_sets": 9,
   "modes": [
    "other workouts"
@@ -24,7 +24,7 @@
    "not_recorded_ok": null,
    "prior_model": true,
    "recall": 1.0,
-   "mean_iou": 0.757,
+   "mean_iou": 0.76,
    "missed": [],
    "rep_count_mae": 0.409,
    "verdict_consistent": 0.727,
@@ -38,9 +38,9 @@
     "found": 22,
     "false_sets": 5,
     "unmatched_found": 5,
-    "named": 12,
+    "named": 13,
     "reps_exact": 9,
-    "reps_within1": 12,
+    "reps_within1": 13,
     "fully_right": 7,
     "readiness_pct": 31.8
    }
@@ -91,21 +91,21 @@
     "mode": "other workouts",
     "n_sets": 24,
     "trained_on_sets": 43,
-    "found": 19,
+    "found": 20,
     "false_sets": 4,
     "unmatched_found": 4,
-    "named": 12,
-    "reps_exact": 6,
-    "reps_within1": 14,
-    "fully_right": 6,
-    "readiness_pct": 25.0
+    "named": 14,
+    "reps_exact": 8,
+    "reps_within1": 16,
+    "fully_right": 8,
+    "readiness_pct": 33.3
    }
   }
  ],
  "classifier_loso": {
   "n_sessions": 3,
   "n_test_sets": 56,
-  "acc": 0.875,
+  "acc": 0.893,
   "per_session": {
    "2026-11-01": {
     "n": 16,
@@ -113,7 +113,7 @@
    },
    "2026-11-14": {
     "n": 19,
-    "acc": 0.842
+    "acc": 0.895
    },
    "2026-11-22": {
     "n": 21,
