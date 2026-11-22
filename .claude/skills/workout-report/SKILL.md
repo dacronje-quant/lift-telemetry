@@ -88,8 +88,11 @@ Every sentence grounded in numbers on the page; plain words. Re-run the pipeline
   then `python -m vbt.evaluate --record` and `python -m vbt.personal`. Say whether
   log-guided detection and **sensor-only readiness** improved, and which learned exercise
   settings were adopted or are still only promising. The learning page shows both.
-- For any algorithm change, also run `python -m vbt.public --data <scratchpad>/recofit`
-  (downloads the public dataset once per session, ~1.6 GB, outside the repo).
+- Record the scoreboard right after review and before fixing anything: that first
+  `--record` is the workout's **first look** (`data/eval/first_look.json`), the headline
+  number to report. The user's workouts decide what is kept; run the public RecoFit check
+  (`python -m vbt.public --data <scratchpad>/recofit`) only when shared rep-counting code
+  changes (see CLAUDE.md).
 - Then follow the working agreement in `CLAUDE.md`: fix one weakness the new data exposed,
   re-check the scoreboard on all reviewed sessions, `python -m vbt.pipeline run --all`,
   add a log line.

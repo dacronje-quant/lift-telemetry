@@ -7,11 +7,22 @@ Inputs are normalised by `vbt/logs.py` (logs) and `vbt/sensors.py` (sensors); ev
 downstream is source-agnostic.
 
 - **When the user shares a workout, follow `.claude/skills/workout-report/SKILL.md`.**
-- Algorithm changes: measure with `python -m vbt.evaluate` (your workouts) **and**
-  `python -m vbt.public --data <scratch dir>` (RecoFit public data: many people, true rep
-  counts; downloads 1.56 GB outside the repo). Keep a change only if neither gets worse;
-  record both after committing (`--record`). Refresh reports with
+- Algorithm changes: **the user's own workouts decide** (goal: accurate for this user first).
+  Measure with `python -m vbt.evaluate`; keep a change only if no reviewed workout gets
+  worse, and record it after committing (`--record`). Refresh reports with
   `python -m vbt.pipeline run --all`.
+- Public check (RecoFit: many people, true rep counts) is an overfitting alarm, not a veto.
+  Run `python -m vbt.public --data <scratch dir> [--record]` only when the shared
+  rep-counting code changes: `find_turnarounds`, `position` and the filters, or the generic
+  path of `analyze_set` (ghost rules, edge extension, plausibility flags). Skip it for
+  exercise-specific profiles, recognition, alignment, personal learning, scoring and
+  reports (it cannot move; 5 of 5 recorded runs were identical). A RecoFit drop means look
+  closer, not reject: keep a change that helps on >= 2 of the user's workouts even if
+  RecoFit drops a little, and write the trade-off in the log. It uses a 9 MB cached subset
+  (`recofit_subset.pkl.xz`) when present, else downloads 1.56 GB once and writes the cache.
+- Headline accuracy is the **first look**: each workout's sensor-only score the first time
+  it is recorded, before any fix is tuned on it (`data/eval/first_look.json`, written by
+  `evaluate --record`). So always record right after review, before fixing anything.
 - Tests: `python -m pytest -q tests` (fast, synthetic data only).
 - Never commit raw sensor exports; the 25 Hz `sensor_25hz.csv.gz` is the stored copy.
 - `sets.json` `source`: `auto` (detector), `reviewed`/`manual` (human-checked ground truth).
@@ -136,3 +147,10 @@ For every new workout:
   longer adopted (count evidence from 1 workout). Nothing is adopted now. Open: aliases Triceps Pushdown / Triceps Rope Pushdown and Lat Pulldown /
   Pulldown (Wide Parallel Grip) need the user's confirmation. Full approach review with a
   ranked plan: docs/REVIEW-2026-11-22.md.
+- 2026-11-22 (later): public check demoted to an overfitting alarm for shared rep-counting
+  code only (user: accuracy for them first); RecoFit cached as a 9.1 MB subset of the 114
+  sets it uses (identical results, ~20 s vs a 1.56 GB download; not yet stored anywhere
+  persistent: Drive uploads from here are limited to ~3 MB). First look added
+  (`data/eval/first_look.json`, learning page squares): Nov 14 4.8% (1/21), Nov 22 42.9%
+  (6/14 trusted-count sets), backfilled from the shadow tests committed with each workout.
+  Restored the f19e526 scoreboard line (lost when I reset the eval files after a trial run).

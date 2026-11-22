@@ -1,0 +1,28 @@
+{
+ "2026-11-14": {
+  "commit": "b2a7054",
+  "when": "2026-11-14T10:58:39+00:00",
+  "mode": "other workouts",
+  "n_sets": 21,
+  "n_reps_checked": 21,
+  "found": 15,
+  "named": 7,
+  "reps_exact": 5,
+  "fully_right": 1,
+  "readiness_pct": 4.8,
+  "note": "backfilled from shadow.json at b2a7054; recorded in the same commit as that day's fix (ghost-cycle rejection), which left readiness unchanged"
+ },
+ "2026-11-22": {
+  "commit": "f19e526",
+  "when": "2026-11-22T10:00:47+00:00",
+  "mode": "other workouts",
+  "n_sets": 24,
+  "n_reps_checked": 14,
+  "found": 19,
+  "named": 13,
+  "reps_exact": 6,
+  "fully_right": 6,
+  "readiness_pct": 42.9,
+  "note": "backfilled from shadow.json at f19e526 (after review, before the deadlift fix), rescored with the reps_unsure flags added later that day: 14 sets with trusted counts"
+ }
+}

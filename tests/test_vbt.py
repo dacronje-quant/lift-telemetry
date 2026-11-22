@@ -593,3 +593,16 @@ def test_reps_unsure_sets_never_teach_rep_counting(tmp_path):
     assert p["n_sets"] == 7 and p["n_count_sets"] == 4     # prototype uses all, counting only 4
     assert p["n_sessions"] == 2 and not p["learned"]        # counts trusted on 1 workout only
     assert p["count_err_all"] == 1.0                        # unsure sets left out of count mode
+
+
+def test_first_look_is_written_once(tmp_path):
+    from vbt.evaluate import update_first_look
+    so = {"mode": "other workouts", "n_sets": 10, "n_reps_checked": 8, "found": 9, "named": 7,
+          "reps_exact": 4, "fully_right": 3, "readiness_pct": 37.5}
+    sb = {"commit": "aaa", "when": "t1", "sessions": [{"session": "2026-11-30", "sensor_only": so}]}
+    p = tmp_path / "first_look.json"
+    assert update_first_look(sb, p)["2026-11-30"]["readiness_pct"] == 37.5
+    sb2 = {"commit": "bbb", "when": "t2",
+           "sessions": [{"session": "2026-11-30", "sensor_only": {**so, "readiness_pct": 80.0}}]}
+    fl = update_first_look(sb2, p)                       # later, after fixes: not overwritten
+    assert fl["2026-11-30"]["readiness_pct"] == 37.5 and fl["2026-11-30"]["commit"] == "aaa"

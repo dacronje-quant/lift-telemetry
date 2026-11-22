@@ -150,6 +150,30 @@ def scoreboard(root=SESSIONS, stress=True):
             "classifier_loso": eval_classifier(root)}
 
 
+FIRST_LOOK_KEYS = ("n_sets", "n_reps_checked", "found", "named", "reps_exact", "fully_right", "readiness_pct")
+
+
+def update_first_look(sb, path=None):
+    """Keep each workout's FIRST recorded sensor-only score: the closest thing to how the
+    system will do on your next workout, because no fix had been tuned on it yet.
+
+    Written once per session, on its first `--record` as a checked workout; later runs
+    never overwrite it. That is only a true first look if the scoreboard is recorded right
+    after review and before any fix (working agreement, step 3 before step 4).
+    """
+    path = Path(path or EVAL / "first_look.json")
+    fl = json.loads(path.read_text()) if path.exists() else {}
+    for s in sb["sessions"]:
+        so = s.get("sensor_only") or {}
+        if s["session"] in fl or not so.get("n_sets"):
+            continue
+        fl[s["session"]] = {"commit": sb["commit"], "when": sb["when"], "mode": so.get("mode"),
+                            **{k: so.get(k, so["n_sets"] if k == "n_reps_checked" else None)
+                               for k in FIRST_LOOK_KEYS}}
+    path.write_text(json.dumps(fl, indent=1))
+    return fl
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="python -m vbt.evaluate")
     ap.add_argument("--record", action="store_true", help="append to data/eval/history.jsonl")
@@ -162,6 +186,7 @@ def main(argv=None):
         with open(EVAL / "history.jsonl", "a") as f:
             f.write(json.dumps(sb) + "\n")
         (EVAL / "latest.json").write_text(json.dumps(sb, indent=1))
+        update_first_look(sb)
 
 
 if __name__ == "__main__":

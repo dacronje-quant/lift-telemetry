@@ -59,6 +59,10 @@ What limits it now, and the fix each needs:
   makes sense once a few hundred checked sets exist; until then prototypes are the right size.
 
 ## Public benchmark (across people)
+Role since 2026-11-22: an overfitting alarm for the shared rep-counting code, not a veto
+(see CLAUDE.md). The user's own workouts decide; the first-look score
+(`data/eval/first_look.json`) is the headline.
+
 `python -m vbt.public --data <dir outside repo>` scores rep counting and cross-person exercise
 recognition on the RecoFit dataset (Morris et al., CHI 2014; forearm IMU, 50 Hz, true rep
 counts). Published bar: reps within +-1 93%. Ours after 2026-11-06: 76% (exact 29%), mean

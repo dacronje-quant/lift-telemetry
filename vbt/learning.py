@@ -10,6 +10,7 @@ Sources (all already in the repo, nothing recomputed):
 * data/sessions/*/analysis.json    session date, title, windows source
 * data/eval/history.jsonl          scoreboard after each recorded algorithm change
 * data/eval/public_history.jsonl   public-data benchmark (vbt.public: many people, true rep counts)
+* data/eval/first_look.json        each workout's first score, before any fix was tuned on it
 """
 import json
 import sys
@@ -64,7 +65,10 @@ def collect(root=SESSIONS, eval_dir=ROOT / "data/eval"):
                 public.append({"when": r.get("when"), "commit": r.get("commit"),
                                "reps": {k: v for k, v in (r.get("reps") or {}).items() if k != "per_exercise"},
                                "recognition": r.get("recognition")})
+    fp = Path(eval_dir) / "first_look.json"
+    first_look = json.loads(fp.read_text()) if fp.exists() else {}
     return {"sessions": sessions, "exercises": exercises, "eval_history": history, "public": public,
+            "first_look": first_look,
             "rules": {"min_sessions": personal.MIN_SESSIONS, "min_gain": personal.MIN_GAIN}}
 
 

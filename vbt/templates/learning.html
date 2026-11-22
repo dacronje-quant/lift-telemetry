@@ -91,6 +91,7 @@ ol.methods{margin:0;padding-left:1.2em;display:grid;gap:8px;max-width:78ch}
 .dot-legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.85rem;color:var(--ink-2)}
 .dot{display:inline-block;width:10px;height:10px;border-radius:50%;border:2px solid var(--accent);vertical-align:-1px;margin-right:5px}
 .dot.fill{background:var(--accent)}
+.sq{display:inline-block;width:10px;height:10px;background:var(--warn);vertical-align:-1px;margin-right:5px}
 </style>
 
 <div class="wrap">
@@ -103,9 +104,10 @@ ol.methods{margin:0;padding-left:1.2em;display:grid;gap:8px;max-width:78ch}
 
 <section>
   <div class="sec-head"><div class="eyebrow"><b>1</b> · Readiness</div><h2>Sensor only, workout by workout</h2>
-  <p class="note">For every workout the log is hidden and the sensor-only mode finds the sets, names the exercises and counts the reps using only what it learned from <i>other</i> workouts. Readiness is the share of logged sets it gets fully right: found, named correctly, and with the exact rep count.</p></div>
+  <p class="note">For every workout the log is hidden and the sensor-only mode finds the sets, names the exercises and counts the reps using only what it learned from <i>other</i> workouts. Readiness is the share of logged sets it gets fully right: found, named correctly, and with the exact rep count (over the sets whose logged count you trust).</p>
+  <p class="note"><b>First look</b> (squares) is each workout's score the first time it was scored, before any fix was tuned on it. It is the best guide to how the system will do on your <i>next</i> workout. The circles are today's code on the same workout, which has since learned from it and been fixed on it, so they flatter. The first workout (1 Nov) built the system and has no first look.</p></div>
   <div class="panel"><div id="readyChart"></div>
-    <div class="dot-legend" style="margin-top:8px"><span><i class="dot fill"></i>trained on other workouts (the honest score)</span><span><i class="dot"></i>first workout only: same-day sets used, optimistic</span></div></div>
+    <div class="dot-legend" style="margin-top:8px"><span><i class="dot fill"></i>trained on other workouts (the honest score)</span><span><i class="dot"></i>first workout only: same-day sets used, optimistic</span><span><i class="sq"></i>first look: before any fix tuned on that workout</span></div></div>
 </section>
 
 <section>
@@ -125,13 +127,13 @@ ol.methods{margin:0;padding-left:1.2em;display:grid;gap:8px;max-width:78ch}
 
 <section>
   <div class="sec-head"><div class="eyebrow"><b>4</b> · Scoreboard</div><h2>Every recorded algorithm change</h2>
-  <p class="note">One row per benchmark run over all checked workouts. A change is kept only if it doesn't make any workout worse.</p></div>
+  <p class="note">One row per benchmark run over all checked workouts. A change is kept only if it doesn't make any of your workouts worse.</p></div>
   <div class="tw"><table id="evalTable"></table></div>
 </section>
 
 <section>
   <div class="sec-head"><div class="eyebrow"><b>5</b> · Across people</div><h2>Checked against public data</h2>
-  <p class="note">Your workouts show how well it fits you; they can't show whether the methods are sound in general. So every algorithm change is also scored on the RecoFit public dataset (Microsoft, 2014): forearm-worn sensor recordings from many people with true rep counts. The published RecoFit system counted within ±1 rep 93% of the time; that's the bar.</p></div>
+  <p class="note">Your workouts show how well it fits you; they can't show whether the methods are sound in general. So changes to the shared rep-counting code are also scored on the RecoFit public dataset (Microsoft, 2014): forearm-worn sensor recordings from many people with true rep counts. Your workouts decide what is kept; this is an alarm against tuning to a few workouts, not a veto. The published RecoFit system counted within ±1 rep 93% of the time.</p></div>
   <div class="kpis" id="pubKpis"></div>
   <div class="tw"><table id="pubTable"></table></div>
 </section>
@@ -154,6 +156,7 @@ ol.methods{margin:0;padding-left:1.2em;display:grid;gap:8px;max-width:78ch}
 (function(){
 const D=JSON.parse(document.getElementById('data').textContent);
 const SS=D.sessions, SH=SS.filter(s=>s.shadow&&s.shadow.n_sets), EX=D.exercises, EH=D.eval_history||[];
+const FL=D.first_look||{};
 const NS='http://www.w3.org/2000/svg';
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const fmt=(x,n=2)=>x==null||!isFinite(x)?'–':(+x).toFixed(n);
@@ -175,8 +178,10 @@ const checked=SS.filter(s=>['manual','reviewed'].includes(s.windows_source)).len
 const exs=Object.values(EX), nLearned=exs.filter(e=>e.learned).length, nSets=exs.reduce((a,e)=>a+e.n_sets,0);
 const kp=[[`${checked}`,`checked workout${checked===1?'':'s'} of ${SS.length}`],[`${nSets}`,'checked sets learned from'],
   [`${nLearned} / ${exs.length}`,'exercises with a learned setting in use'],
-  [latest?`${Math.round(latest.shadow.readiness_pct)}%`:'–',latest?`latest readiness (${isSame(latest)?'same-day, optimistic':'honest'})`:'no shadow test yet'],
-  [honest.length?`${Math.round(honest[honest.length-1].shadow.readiness_pct)}%`:'–',honest.length?'latest honest readiness':'honest score starts with the 2nd checked workout']];
+  [latest?`${Math.round(latest.shadow.readiness_pct)}%`:'–',latest?`latest readiness (${isSame(latest)?'same-day, optimistic':'today\'s code, honest'})`:'no shadow test yet'],
+  ...(latest&&!isSame(latest)?[]:[[honest.length?`${Math.round(honest[honest.length-1].shadow.readiness_pct)}%`:'–',honest.length?'latest honest readiness':'honest score starts with the 2nd checked workout']]),
+  ...(()=>{const ids=SH.map(s=>s.id).filter(id=>FL[id]);if(!ids.length)return [];const f=FL[ids[ids.length-1]];
+    return [[`${Math.round(f.readiness_pct)}%`,`first look, latest workout (${f.fully_right}/${f.n_reps_checked} before any fix)`]];})()];
 document.getElementById('kpis').innerHTML=kp.map(([b,t])=>`<div class="kpi"><b>${b}</b><span>${t}</span></div>`).join('');
 
 /* readiness chart */
@@ -192,6 +197,10 @@ function drawReady(){const d=document.getElementById('readyChart');d.innerHTML='
   SH.forEach((s,i)=>{const c=el('circle',{cx:x(i),cy:y(s.shadow.readiness_pct),r:6,fill:isSame(s)?'var(--panel)':'var(--accent)',stroke:'var(--accent)','stroke-width':2},svg);
     onTip(c,()=>`<b>${esc(s.date)} · ${esc(s.title||'')}</b><br>${Math.round(s.shadow.readiness_pct)}% fully right<br>${s.shadow.found}/${s.shadow.n_sets} found · ${s.shadow.named} named · ${s.shadow.reps_exact} exact reps<br>${esc(s.shadow.mode)}`);
     el('text',{x:x(i)+10,y:y(s.shadow.readiness_pct)-8},svg).textContent=Math.round(s.shadow.readiness_pct)+'%';});
+  SH.forEach((s,i)=>{const f=FL[s.id];if(!f||f.readiness_pct==null)return;const cy=y(f.readiness_pct);
+    const r=el('rect',{x:x(i)-5,y:cy-5,width:10,height:10,fill:'var(--warn)'},svg);
+    onTip(r,()=>`<b>${esc(s.date)} · first look</b><br>${Math.round(f.readiness_pct)}% fully right (${f.fully_right}/${f.n_reps_checked})<br>before any fix was tuned on this workout<br>commit ${esc(f.commit)}${f.note?'<br>'+esc(f.note):''}`);
+    el('text',{x:x(i)-10,y:cy+4,'text-anchor':'end',style:'fill:var(--warn)'},svg).textContent=Math.round(f.readiness_pct)+'%';});
 }
 
 /* per workout */

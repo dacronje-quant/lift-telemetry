@@ -17,8 +17,16 @@ Two tests:
 * exercise recognition across people: leave-one-person-out, nearest prototype on the 16
   summary features, with and without rep shape.
 The raw data never enters the repo.
+
+Cache (2026-11-22): the benchmark uses 114 of the 3,115 recorded segments (61 min of data).
+Those alone are saved as recofit_subset.pkl.xz (9.1 MB, the same float64 values, so the
+same results) and kept in the user's Sensor Logger Drive folder (SUBSET_DRIVE_ID), so a
+fresh session fetches 10 MB instead of 1.56 GB. Redistributed under CDLA-Permissive-2.0
+with the attribution and licence link stored inside the file. Without the cache the full
+dataset is downloaded once and the cache is written next to it.
 """
 import argparse
+import lzma
 import hashlib
 import json
 import pickle
@@ -41,6 +49,14 @@ URL = ("https://media.githubusercontent.com/media/microsoft/Exercise-Recognition
 SHA256 = "70eea039362555daccb00065e3775ce37fff421f18d533c60933a9d859f33f8a"
 SIZE = 1562300284
 ROOT = Path(__file__).resolve().parents[1]
+SUBSET_NAME = "recofit_subset.pkl.xz"
+SUBSET_DRIVE_ID = None        # set once the cache is uploaded (see module docstring)
+SUBSET_SHA256 = None
+LICENSE = ("RecoFit data: Morris, Saponas, Guillory, Kelner, 'RecoFit: using a wearable sensor to find, "
+           "recognize, and count repetitive exercises', CHI 2014; Microsoft, "
+           "https://github.com/microsoft/Exercise-Recognition-from-Wearable-Sensors. Licence: "
+           "Community Data License Agreement - Permissive 2.0, https://cdla.dev/permissive-2-0/. "
+           "This file is a subset (the strength sets used by lift-telemetry's benchmark), unmodified values.")
 G = 9.80665
 NOT_STRENGTH = ("Punches", "Burpee", "Butterfly", "Kettlebell", "Russian", "Slam", "Wall Ball",
                 "Lawnmower", "V-up", "Crunch", "Jump", "Running", "Walk", "machine", "Plank", "Stretch",
@@ -106,8 +122,53 @@ def strength(rec):
     return not any(k.lower() in rec["activity"].lower() for k in NOT_STRENGTH)
 
 
+def _rep_rows(recs):
+    return [r for r in recs if strength(r) and r["reps"] is not None and np.isfinite(r["reps"]) and r["reps"] > 0]
+
+
+def _recognition_rows(recs, min_people=4):
+    rows = [r for r in recs if strength(r) and len(r["accel"]) > 50 * 8]
+    people = defaultdict(set)
+    for r in rows:
+        people[r["activity"]].add(r["subject"])
+    return [r for r in rows if len(people[r["activity"]]) >= min_people]
+
+
+def make_subset(recs, out):
+    """Write only the segments the two benchmarks use (bench results are identical)."""
+    keep = {id(r) for r in _rep_rows(recs)} | {id(r) for r in _recognition_rows(recs)}
+    sub = [r for r in recs if id(r) in keep]
+    blob = pickle.dumps({"license": LICENSE, "source": URL, "source_sha256": SHA256, "recs": sub}, protocol=4)
+    Path(out).write_bytes(lzma.compress(blob, preset=9 | lzma.PRESET_EXTREME))   # 9.1 MB (gzip: 10.5)
+    return sub
+
+
+def _sha256(path):
+    h = hashlib.sha256()
+    with open(path, "rb") as fh:
+        for chunk in iter(lambda: fh.read(1 << 24), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def load_subset(data_dir):
+    """The cached subset: local copy, else the Drive copy, else None (caller downloads in full)."""
+    f = Path(data_dir) / SUBSET_NAME
+    if not f.exists() and SUBSET_DRIVE_ID:
+        f.parent.mkdir(parents=True, exist_ok=True)
+        subprocess.run(["curl", "-sSL", "--max-time", "300", "-o", str(f),
+                        f"https://drive.usercontent.google.com/download?id={SUBSET_DRIVE_ID}"
+                        "&export=download&confirm=t"], check=False)
+    if not f.exists():
+        return None
+    if SUBSET_SHA256 and _sha256(f) != SUBSET_SHA256:
+        f.unlink()                       # an HTML sign-in page or a stale copy: fall back
+        return None
+    return pickle.loads(lzma.decompress(f.read_bytes()))["recs"]
+
+
 def bench_reps(recs):
-    rows = [r for r in recs if strength(r) and r["reps"] is not None and np.isfinite(r["reps"]) and r["reps"] > 0]
+    rows = _rep_rows(recs)
     err, per = [], defaultdict(list)
     for r in rows:
         d = canonical(r)
@@ -126,11 +187,7 @@ def bench_reps(recs):
 
 def bench_recognition(recs, min_people=4, shape_weight=0.5):
     """Leave-one-person-out nearest prototype, with and without rep shape."""
-    rows = [r for r in recs if strength(r) and len(r["accel"]) > 50 * 8]
-    people = defaultdict(set)
-    for r in rows:
-        people[r["activity"]].add(r["subject"])
-    rows = [r for r in rows if len(people[r["activity"]]) >= min_people]
+    rows = _recognition_rows(recs, min_people)
     X, SH, y, subj = [], [], [], []
     for r in rows:
         d = canonical(r)
@@ -172,15 +229,18 @@ def bench_recognition(recs, min_people=4, shape_weight=0.5):
 def main(argv=None):
     warnings.filterwarnings("ignore")
     ap = argparse.ArgumentParser(prog="python -m vbt.public")
-    ap.add_argument("--data", required=True, help="folder OUTSIDE the repo for the 1.56 GB download")
+    ap.add_argument("--data", required=True,
+                    help="folder OUTSIDE the repo: the 10 MB cached subset, or the 1.56 GB download")
     ap.add_argument("--record", action="store_true")
     a = ap.parse_args(argv)
     d = Path(a.data)
-    pk = d / "recofit_sets.pkl"
-    if pk.exists():
-        recs = pickle.load(open(pk, "rb"))
-    else:
-        recs = convert(fetch(d), pk)
+    recs = load_subset(d)
+    if recs is None:
+        pk = d / "recofit_sets.pkl"
+        full = pickle.load(open(pk, "rb")) if pk.exists() else convert(fetch(d), pk)
+        recs = make_subset(full, d / SUBSET_NAME)
+        print(f"cache written: {d / SUBSET_NAME} ({(d / SUBSET_NAME).stat().st_size / 1e6:.1f} MB)",
+              file=sys.stderr)
     res = {"reps": bench_reps(recs), "recognition": bench_recognition(recs)}
     try:
         commit = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=ROOT, capture_output=True,
