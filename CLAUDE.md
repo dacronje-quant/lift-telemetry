@@ -127,7 +127,12 @@ For every new workout:
   sets.json mtime, so evaluate mixed evidence from old and new code (same code scored 26.9
   vs 23.9%); now keyed on content + code hash and refreshed before run/evaluate. Filter cache:
   evaluate 6.1 -> 4.3 min. `pipeline review` now also writes a whole-session overview.
-  vbt.personal adopted its first setting: Lat Pulldown counted from gy/top (held-out error
-  1.00 -> 0.00). Open: aliases Triceps Pushdown / Triceps Rope Pushdown and Lat Pulldown /
+  Later: the user is very unsure of the logged reps in the supersets (log 15-24) -> new
+  `reps_unsure` flag (window + exercise checked, count untrusted): such sets feed detection
+  and exercise prototypes but never rep-count learning, the count verdict, or exact-reps /
+  readiness (denominator = sets with a trusted count: 57 of 67). Same 57 sets before/after:
+  17 fully right (29.8%); the recorded 26.9 -> 29.8% is the denominator, not a gain.
+  Lat Pulldown's learned gy/top setting (briefly adopted) rested on those counts and is no
+  longer adopted (count evidence from 1 workout). Nothing is adopted now. Open: aliases Triceps Pushdown / Triceps Rope Pushdown and Lat Pulldown /
   Pulldown (Wide Parallel Grip) need the user's confirmation. Full approach review with a
   ranked plan: docs/REVIEW-2026-11-22.md.

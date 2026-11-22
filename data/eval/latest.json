@@ -1,16 +1,18 @@
 {
- "when": "2026-11-22T10:42:14+00:00",
- "commit": "0be7b07",
+ "when": "2026-11-22T10:58:45+00:00",
+ "commit": "2503029",
  "n_trusted_sessions": 3,
  "detection": {
   "recall": 1.0,
   "mean_iou": 0.8
  },
  "sensor_only": {
-  "fully_right_pct": 26.9,
+  "fully_right_pct": 29.8,
   "found_pct": 88.1,
   "named_pct": 56.7,
-  "reps_exact_pct": 32.8,
+  "reps_exact_pct": 36.8,
+  "n_sets": 67,
+  "n_reps_checked": 57,
   "false_sets": 9,
   "modes": [
    "other workouts"
@@ -39,6 +41,7 @@
     "false_sets": 5,
     "unmatched_found": 5,
     "named": 13,
+    "n_reps_checked": 22,
     "reps_exact": 9,
     "reps_within1": 13,
     "fully_right": 7,
@@ -67,6 +70,7 @@
     "false_sets": null,
     "unmatched_found": 5,
     "named": 11,
+    "n_reps_checked": 21,
     "reps_exact": 5,
     "reps_within1": 12,
     "fully_right": 3,
@@ -83,7 +87,7 @@
    "mean_iou": 0.866,
    "missed": [],
    "rep_count_mae": 0.417,
-   "verdict_consistent": 0.708,
+   "verdict_consistent": 0.857,
    "recall_unlogged_set": 0.957,
    "recall_invisible_set": 1.0,
    "invisible_set_skipped": true,
@@ -95,10 +99,11 @@
     "false_sets": 4,
     "unmatched_found": 4,
     "named": 14,
-    "reps_exact": 8,
-    "reps_within1": 16,
-    "fully_right": 8,
-    "readiness_pct": 33.3
+    "n_reps_checked": 14,
+    "reps_exact": 7,
+    "reps_within1": 11,
+    "fully_right": 7,
+    "readiness_pct": 50.0
    }
   }
  ],
