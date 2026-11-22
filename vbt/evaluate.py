@@ -115,6 +115,8 @@ def eval_classifier(root=SESSIONS):
 
 def scoreboard(root=SESSIONS, stress=True):
     warnings.filterwarnings("ignore", category=RuntimeWarning)
+    from .personal import refresh_evidence
+    refresh_evidence(root)          # learned knowledge must come from the code being scored
     ses = [eval_session(s, root, stress) for s in trusted_sessions(root)]
     tot = sum(s["n_sets"] for s in ses) or 1
     agg = {"recall": round(sum(s["recall"] * s["n_sets"] for s in ses) / tot, 3) if ses else None,

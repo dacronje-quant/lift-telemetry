@@ -458,7 +458,9 @@ def run(sid, root=SESSIONS, redetect=False, html=True, quiet=False):
     d, meta, log, data = load_session(sid, root)
     logged = logged_sets(log)
     placement = (meta.get("sensor_info") or {}).get("placement") or "wrist"
-    # personal profiles learned from OTHER checked workouts (never from this one)
+    # personal profiles learned from OTHER checked workouts (never from this one),
+    # their evidence first brought up to date with the current code
+    personal.refresh_evidence(root, exclude=sid)
     learned = personal.profiles(root, exclude=sid)
     for s in logged:
         if (personal.lookup(learned, s["label"]) or {}).get("profile"):
@@ -584,7 +586,60 @@ def review_png(sid, path, root=SESSIONS):
         x.set_ylim(-45, 45)
     fig.tight_layout()
     fig.savefig(path, dpi=45)
+    plt.close(fig)
     return path, a.get("windows_source")
+
+
+def overview_png(sid, path, root=SESSIONS, row_s=600.0):
+    """Whole session, 10 min per row: wrist orientation (gravity x/y/z), motion energy,
+    sharp vertical impacts (a bar touching the floor), the current set windows (log
+    numbers) and the sensor-only guesses. Where windows and guesses disagree is where
+    to look first. (2026-11-22: deadlift sets were found by their floor impacts and
+    the pulldown/pushdown superset by the arm-overhead pose, both only visible here.)"""
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    d, meta, log, data = load_session(sid, root)
+    t = data["t"]
+    g = data["grav"] / np.linalg.norm(data["grav"], axis=1, keepdims=True)
+    a_up = vertical_acceleration(data["acc"], data["grav"])
+    energy = np.convolve(np.linalg.norm(data["acc"], axis=1), np.ones(25) / 25, "same")
+    jolt = np.abs(np.diff(a_up, prepend=a_up[0]))
+    imp = np.flatnonzero(jolt > 20 * np.median(jolt) + 1e-9)    # the sharpest ~1%
+    logged = logged_sets(log)
+    wins = json.loads((d / "sets.json").read_text())["sets"]
+    sh = json.loads((d / "shadow.json").read_text()) if (d / "shadow.json").exists() else {}
+    guesses = [r for r in sh.get("rows", []) if r.get("found")] + sh.get("unmatched", [])
+    rows = int(np.ceil((t[-1] - t[0]) / row_s))
+    fig, axs = plt.subplots(rows, 1, figsize=(24, 2.8 * rows), squeeze=False)
+    for r, ax in enumerate(axs[:, 0]):
+        a0, a1 = t[0] + r * row_s, t[0] + (r + 1) * row_s
+        m = (t >= a0) & (t < a1)
+        for i, c in enumerate("rgb"):
+            ax.plot(t[m], g[m, i], c, lw=.6)
+        ax.plot(t[m], energy[m] / (energy.max() + 1e-9) * 2 - 1, "k", lw=.5, alpha=.5)
+        k = imp[(t[imp] >= a0) & (t[imp] < a1)]
+        ax.plot(t[k], np.full(len(k), -1.08), "|", c="purple", ms=6)
+        for h, w in zip(logged, wins):
+            if w.get("t_start") is None or w["t_end"] < a0 or w["t_start"] > a1:
+                continue
+            ax.axvspan(w["t_start"], w["t_end"], color="C0", alpha=.15)
+            ax.text(w["t_start"], 1.02, f"{h['log_index']} {h['exercise'][:14]}", fontsize=8)
+        for x in guesses:
+            if x.get("t_start") is None or x["t_end"] < a0 or x["t_start"] > a1:
+                continue
+            ax.plot([x["t_start"], x["t_end"]], [-1.18, -1.18], c="orange", lw=3)
+            ax.text(x["t_start"], -1.32, str(x.get("guess") or "?")[:16], fontsize=7, color="darkorange")
+        ax.set_xlim(a0, a1)
+        ax.set_ylim(-1.4, 1.15)
+        ax.set_xticks(np.arange(a0, a1 + 1, 30))
+        ax.grid(alpha=.2)
+    axs[0, 0].set_title(f"{sid}: gravity x (red) y (green) z (blue), motion (grey), impacts (purple), "
+                        "set windows (blue, log number), sensor-only guesses (orange)", loc="left")
+    fig.tight_layout()
+    fig.savefig(path, dpi=55)
+    plt.close(fig)
+    return path
 
 
 def main(argv=None):
@@ -631,6 +686,8 @@ def main(argv=None):
     elif a.cmd == "review":
         p, src = review_png(a.sid, a.png)
         print("review grid:", p, "windows:", src)
+        ov = Path(a.png).with_name(Path(a.png).stem + "_overview.png")
+        print("session overview:", overview_png(a.sid, ov))
 
 
 if __name__ == "__main__":

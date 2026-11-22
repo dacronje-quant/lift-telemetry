@@ -553,3 +553,23 @@ def test_excluded_session_is_not_learned_from(tmp_path):
     assert not is_excluded(d)
     (d / "meta.json").write_text(_j.dumps({"exclude_from_learning": True}))
     assert is_excluded(d)
+
+
+def test_evidence_staleness_follows_content_and_code(tmp_path, monkeypatch):
+    import os
+    from vbt import personal
+    d = tmp_path / "2026-11-02"
+    d.mkdir()
+    (d / "sets.json").write_text(json.dumps({"source": "reviewed", "sets": []}))
+    assert personal.evidence_is_stale(d)                          # no evidence yet
+    (d / "evidence.json").write_text(json.dumps(
+        {"sets_hash": personal._sets_hash(d), "code_hash": personal.code_hash(), "sets": []}))
+    assert not personal.evidence_is_stale(d)
+    os.utime(d / "sets.json", (1, 1))                             # a fresh clone: new mtime, same content
+    assert not personal.evidence_is_stale(d)
+    (d / "sets.json").write_text(json.dumps({"source": "reviewed", "sets": [{"t_start": 1}]}))
+    assert personal.evidence_is_stale(d)                          # windows changed
+    (d / "evidence.json").write_text(json.dumps(
+        {"sets_hash": personal._sets_hash(d), "code_hash": personal.code_hash(), "sets": []}))
+    monkeypatch.setattr(personal, "code_hash", lambda: "other-code")
+    assert personal.evidence_is_stale(d)                          # algorithm changed

@@ -16,6 +16,7 @@ Evidence lives in data/sessions/<id>/evidence.json (one file per checked
 session, rebuilt when its sets.json changes). `profiles()` aggregates it, with
 `exclude=<id>` for honest tests: a session is never tailored with its own sets.
 """
+import hashlib
 import json
 from collections import defaultdict
 from pathlib import Path
@@ -61,9 +62,13 @@ def build_evidence(d, data, log_sets, windows, placement="wrist", fs=50.0):
             if placement == "bar" and ch != "pos":
                 continue
             reps = analyze_set(data, w["t_start"], w["t_end"], key, fs=fs, placement=placement,
-                               profile=prof)["reps"]
+                               profile=prof, ghost_bottom=False)["reps"]
             trials[f"{ch}/{rest}"] = {"err": _count_error(reps, s["reps"], base["bouts"]), "n": len(reps)}
-        gen = analyze_set(data, w["t_start"], w["t_end"], key, fs=fs, placement=placement)
+        # Evidence keeps every cycle of a deadlift (no ghost rejection): measured 2026-11-22
+        # over 3 checked workouts, prototypes from ghost-trimmed deadlift spans cost sensor-only
+        # readiness 26.9 -> 23.9% (Nov 22 set 7 named leg curl), while rejection at counting
+        # time helps (25.4 -> 26.9%). Revisit when more deadlift sets are checked.
+        gen = analyze_set(data, w["t_start"], w["t_end"], key, fs=fs, placement=placement, ghost_bottom=False)
         reps = gen["reps"]
         span = (reps[0]["t_start"], reps[-1]["t_end"]) if reps else (w["t_start"], w["t_end"])
         f = set_features(data, *span)
@@ -78,7 +83,7 @@ def build_evidence(d, data, log_sets, windows, placement="wrist", fs=50.0):
                      "n_all": len(reps), "n_clean": sum(r["ok"] for r in reps),
                      "rep_s": med("rep_s"), "rom_m": med("rom"), "rotation_deg": med("rotation_deg"),
                      "mean_velocity": gen.get("mean_velocity"), "velocity_loss_pct": gen.get("velocity_loss_pct")})
-    ev = {"session": d.name, "placement": placement, "sets_mtime": (d / "sets.json").stat().st_mtime,
+    ev = {"session": d.name, "placement": placement, "sets_hash": _sets_hash(d), "code_hash": code_hash(),
           "features": FEATURES, "sets": rows}
     (d / "evidence.json").write_text(json.dumps(ev, indent=0))
     return ev
@@ -112,14 +117,57 @@ def lookup(learned, label):
     return next((v for k, v in learned.items() if same_exercise(k, label)), None)
 
 
+# Evidence is derived from a session's checked windows AND from the code that analyses
+# them. It used to be keyed on sets.json's file mtime only, so (a) after an algorithm
+# change vbt.evaluate scored new code against evidence built by old code, and (b) a
+# fresh clone rebuilt everything (mtimes differ) while the working copy did not: the
+# same commit scored 26.9% vs 23.9% sensor-only readiness on 2026-11-22. Now keyed on
+# sets.json content + the source of the modules that build evidence.
+_EVIDENCE_CODE = ("core.py", "workout.py", "personal.py")
+
+
+def code_hash():
+    h = hashlib.sha1()
+    for f in _EVIDENCE_CODE:
+        h.update((Path(__file__).parent / f).read_bytes())
+    return h.hexdigest()[:12]
+
+
+def _sets_hash(d):
+    return hashlib.sha1((Path(d) / "sets.json").read_bytes()).hexdigest()[:12]
+
+
 def evidence_is_stale(d):
     e, s = d / "evidence.json", d / "sets.json"
     if not e.exists():
         return True
     try:
-        return json.loads(e.read_text()).get("sets_mtime") != s.stat().st_mtime
+        ev = json.loads(e.read_text())
+        return ev.get("sets_hash") != _sets_hash(d) or ev.get("code_hash") != code_hash()
     except Exception:
         return True
+
+
+def refresh_evidence(root="data/sessions", exclude=None, quiet=True):
+    """Rebuild every checked session's evidence that is stale (new windows or new code).
+
+    Call before anything that learns from other sessions (pipeline.run, vbt.evaluate),
+    so learning never mixes evidence built by different code versions."""
+    from .pipeline import load_session, logged_sets     # lazy: pipeline imports this module
+    rebuilt = []
+    for sj in sorted(Path(root).glob("*/sets.json")):
+        d = sj.parent
+        if d.name == exclude or is_excluded(d) or json.loads(sj.read_text()).get("source") not in TRUSTED:
+            continue
+        if not evidence_is_stale(d):
+            continue
+        _, meta, log, data = load_session(d.name, root)
+        placement = (meta.get("sensor_info") or {}).get("placement") or "wrist"
+        build_evidence(d, data, logged_sets(log), json.loads(sj.read_text())["sets"], placement)
+        rebuilt.append(d.name)
+    if rebuilt and not quiet:
+        print("evidence rebuilt:", ", ".join(rebuilt))
+    return rebuilt
 
 
 def profiles(root="data/sessions", exclude=None):

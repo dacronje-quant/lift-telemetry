@@ -117,3 +117,17 @@ For every new workout:
   fewer than half of a set's cycles are plausible. Open: slow deadlifts, mid-set pauses,
   leg curl, pulldown naming (see docs/IMPROVING.md). Nothing adopted by vbt.personal:
   bench, deadlift and pushdown have 2 workouts but no learned signal beats generic held-out.
+- 2026-11-22: fourth workout (Full Body A, 24 sets / 7 exercises, 61 min, no gaps), reviewed.
+  Auto placement 21/24; fixed by hand: both 120 kg deadlifts (found by their floor-contact
+  spikes, 5 per set) and two undeclared supersets (pulldown + pushdown, hammer curl + lateral
+  raise; pulldown = arm overhead while upright). Fix: ghost-cycle rejection for deadlift at
+  counting time (not in evidence): log-guided recall 94.0 -> 100% (all 4 heavy deadlifts of
+  Nov 14 + 22), IoU 0.756 -> 0.800, readiness 25.4 -> 26.9% (18/67), RecoFit unchanged;
+  cost: Nov 14 one deadlift 5 -> 4. Found and fixed a scoring bug: evidence.json was keyed on
+  sets.json mtime, so evaluate mixed evidence from old and new code (same code scored 26.9
+  vs 23.9%); now keyed on content + code hash and refreshed before run/evaluate. Filter cache:
+  evaluate 6.1 -> 4.3 min. `pipeline review` now also writes a whole-session overview.
+  vbt.personal adopted its first setting: Lat Pulldown counted from gy/top (held-out error
+  1.00 -> 0.00). Open: aliases Triceps Pushdown / Triceps Rope Pushdown and Lat Pulldown /
+  Pulldown (Wide Parallel Grip) need the user's confirmation. Full approach review with a
+  ranked plan: docs/REVIEW-2026-11-22.md.

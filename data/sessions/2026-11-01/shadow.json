@@ -150,15 +150,15 @@
 "label": "Bulgarian Split Squat (Dumbbell)",
 "logged": 7,
 "found": true,
-"guess": "Squat (Barbell)",
+"guess": "Deadlift (Barbell)",
 "known": true,
 "named": false,
 "sensed": [
-12
+10
 ],
-"rep_err": 5,
-"t_start": 1407.36,
-"t_end": 1442.26
+"rep_err": 3,
+"t_start": 1405.9,
+"t_end": 1438.56
 },
 {
 "set": 11,

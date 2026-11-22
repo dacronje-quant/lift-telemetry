@@ -40,7 +40,9 @@ python -m vbt.pipeline new --sensor <scratch>/rec.zip --log <scratch>/log.txt \
     [--superset "Exercise A + Exercise B"]
 ```
 Supersets (alternating sets) must be declared or the ordered alignment breaks; ask if the log
-has two exercises with very short rests. The user's sensor exports live in a shared Google
+has two exercises with very short rests. With each workout, also ask once about exercise names
+not seen before that may be an earlier exercise under another name (`data/aliases.json`) and
+about sets done but not logged. The user's sensor exports live in a shared Google
 Drive folder (`1FZ8Q0TA4uqDdPVUOVHd4hOwvP2x2_SCG`): list it with the Drive connector, download
 the newest zip with curl as above.
 Creates `data/sessions/<date>/`, detects the logged sets in the recording automatically (using
@@ -48,8 +50,16 @@ every earlier session as training data), analyses them, writes `analysis.json` a
 `reports/<id>.html`. Two workouts on one date: `--id 2026-11-02-pm`.
 
 ## 3. Review (don't skip)
-`python -m vbt.pipeline review <id> <scratch>/review.png`, then look at the PNG: one panel per
-set with rep ticks (blue clean, orange flagged). Check first the sets under *What to check first*.
+`python -m vbt.pipeline review <id> <scratch>/review.png`, then look at both PNGs:
+`review_overview.png` (whole session: gravity lanes, impacts, windows, sensor-only guesses;
+start here — where windows and guesses disagree, or a pose block has no window, is where
+sets get misplaced) and `review.png` (one panel per set with rep ticks, blue clean,
+orange flagged). Check first the sets under *What to check first*.
+Poses that identify this user's lifts on the wrist (gravity on watch x): arm hanging (−x)
+= deadlift / curl start / raise start, deadlift reps end in purple floor-impact ticks;
+arm overhead (+x) while upright = pulldown; +x lying = bench. If log order and recording
+disagree from some point on, suspect an undeclared superset (ask the user; Hevy lists
+sets exercise by exercise).
 - Wrong window → edit `sets.json` (`t_start`/`t_end` on the recording clock, `skipped: true`
   for a set not in the recording), set `"source": "reviewed"`, re-run `… run <id>`.
 - All right → set `"source": "reviewed"`. Only mark what you actually checked: reviewed

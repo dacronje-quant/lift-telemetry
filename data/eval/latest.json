@@ -1,17 +1,17 @@
 {
- "when": "2026-11-14T10:58:39+00:00",
- "commit": "b2a7054",
- "n_trusted_sessions": 2,
+ "when": "2026-11-22T10:19:14+00:00",
+ "commit": "af5cad8",
+ "n_trusted_sessions": 3,
  "detection": {
-  "recall": 0.954,
-  "mean_iou": 0.728
+  "recall": 1.0,
+  "mean_iou": 0.799
  },
  "sensor_only": {
-  "fully_right_pct": 9.3,
-  "found_pct": 86.0,
-  "named_pct": 34.9,
-  "reps_exact_pct": 25.6,
-  "false_sets": 3,
+  "fully_right_pct": 23.9,
+  "found_pct": 86.6,
+  "named_pct": 52.2,
+  "reps_exact_pct": 29.9,
+  "false_sets": 9,
   "modes": [
    "other workouts"
   ]
@@ -24,9 +24,9 @@
    "not_recorded_ok": null,
    "prior_model": true,
    "recall": 1.0,
-   "mean_iou": 0.764,
+   "mean_iou": 0.757,
    "missed": [],
-   "rep_count_mae": 0.364,
+   "rep_count_mae": 0.409,
    "verdict_consistent": 0.727,
    "recall_unlogged_set": 0.857,
    "recall_invisible_set": 1.0,
@@ -34,15 +34,15 @@
    "sensor_only": {
     "mode": "other workouts",
     "n_sets": 22,
-    "trained_on_sets": 21,
+    "trained_on_sets": 45,
     "found": 22,
-    "false_sets": 3,
-    "unmatched_found": 3,
-    "named": 8,
-    "reps_exact": 6,
-    "reps_within1": 9,
-    "fully_right": 3,
-    "readiness_pct": 13.6
+    "false_sets": 5,
+    "unmatched_found": 5,
+    "named": 12,
+    "reps_exact": 9,
+    "reps_within1": 12,
+    "fully_right": 7,
+    "readiness_pct": 31.8
    }
   },
   {
@@ -51,44 +51,73 @@
    "n_logged": 23,
    "not_recorded_ok": null,
    "prior_model": true,
-   "recall": 0.905,
-   "mean_iou": 0.69,
-   "missed": [
-    9,
-    10
-   ],
-   "rep_count_mae": 1.381,
-   "verdict_consistent": 0.81,
+   "recall": 1.0,
+   "mean_iou": 0.767,
+   "missed": [],
+   "rep_count_mae": 1.238,
+   "verdict_consistent": 0.762,
    "recall_unlogged_set": 0.9,
-   "recall_invisible_set": 0.905,
+   "recall_invisible_set": 1.0,
    "invisible_set_skipped": false,
    "sensor_only": {
     "mode": "other workouts",
     "n_sets": 21,
-    "trained_on_sets": 22,
-    "found": 15,
+    "trained_on_sets": 46,
+    "found": 17,
     "false_sets": null,
-    "unmatched_found": 3,
-    "named": 7,
+    "unmatched_found": 5,
+    "named": 11,
     "reps_exact": 5,
-    "reps_within1": 11,
-    "fully_right": 1,
-    "readiness_pct": 4.8
+    "reps_within1": 12,
+    "fully_right": 3,
+    "readiness_pct": 14.3
+   }
+  },
+  {
+   "session": "2026-11-22",
+   "n_sets": 24,
+   "n_logged": 24,
+   "not_recorded_ok": null,
+   "prior_model": true,
+   "recall": 1.0,
+   "mean_iou": 0.866,
+   "missed": [],
+   "rep_count_mae": 0.417,
+   "verdict_consistent": 0.708,
+   "recall_unlogged_set": 0.957,
+   "recall_invisible_set": 1.0,
+   "invisible_set_skipped": true,
+   "sensor_only": {
+    "mode": "other workouts",
+    "n_sets": 24,
+    "trained_on_sets": 43,
+    "found": 19,
+    "false_sets": 4,
+    "unmatched_found": 4,
+    "named": 12,
+    "reps_exact": 6,
+    "reps_within1": 14,
+    "fully_right": 6,
+    "readiness_pct": 25.0
    }
   }
  ],
  "classifier_loso": {
-  "n_sessions": 2,
-  "n_test_sets": 23,
-  "acc": 0.913,
+  "n_sessions": 3,
+  "n_test_sets": 56,
+  "acc": 0.875,
   "per_session": {
    "2026-11-01": {
-    "n": 11,
-    "acc": 0.909
+    "n": 16,
+    "acc": 1.0
    },
    "2026-11-14": {
-    "n": 12,
-    "acc": 0.917
+    "n": 19,
+    "acc": 0.842
+   },
+   "2026-11-22": {
+    "n": 21,
+    "acc": 0.81
    }
   }
  }

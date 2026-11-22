@@ -2,13 +2,13 @@
 "mode": "other workouts",
 "n_sets": 24,
 "trained_on_sets": 43,
-"found": 19,
+"found": 20,
 "false_sets": 4,
 "unmatched_found": 4,
-"named": 12,
-"reps_exact": 6,
-"reps_within1": 14,
-"fully_right": 6,
+"named": 14,
+"reps_exact": 8,
+"reps_within1": 16,
+"fully_right": 8,
 "rows": [
 {
 "set": 1,
@@ -106,15 +106,15 @@
 "label": "Deadlift (Barbell)",
 "logged": 5,
 "found": true,
-"guess": "Lying Leg Curl (Machine)",
+"guess": "Deadlift (Barbell)",
 "known": true,
-"named": false,
+"named": true,
 "sensed": [
-8
+5
 ],
-"rep_err": 3,
-"t_start": 1704.27,
-"t_end": 1733.75
+"rep_err": 0,
+"t_start": 1705.63,
+"t_end": 1733.15
 },
 {
 "set": 8,
@@ -150,7 +150,16 @@
 "set": 10,
 "label": "Deadlift (Barbell)",
 "logged": 5,
-"found": false
+"found": true,
+"guess": "Deadlift (Barbell)",
+"known": true,
+"named": true,
+"sensed": [
+5
+],
+"rep_err": 0,
+"t_start": 2301.27,
+"t_end": 2344.47
 },
 {
 "set": 11,
@@ -353,6 +362,6 @@
 "reps": 5
 }
 ],
-"readiness_pct": 25.0,
+"readiness_pct": 33.3,
 "reference": "checked windows"
 }

@@ -1,7 +1,8 @@
 {
 "session": "2026-11-22",
 "placement": "wrist",
-"sets_mtime": 1795341166.3774958,
+"sets_hash": "cc40b5c728d2",
+"code_hash": "a58216cb0362",
 "features": [
 "g_x",
 "g_y",

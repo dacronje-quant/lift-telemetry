@@ -12,6 +12,7 @@ Exercise profiles encode two facts the generic pipeline can't guess:
 import json
 from pathlib import Path
 import re
+from functools import lru_cache
 from dataclasses import dataclass, asdict
 import numpy as np
 from scipy.signal import butter, filtfilt, find_peaks
@@ -22,6 +23,7 @@ from .core import vertical_acceleration
 G = 9.80665
 GHOST_MIN_PERIOD_S = 3.0   # ghosts only appear when the real reps are this far apart
 GHOST_ROM = 0.06    # a cycle travelling < 6% of the set's typical rep is a filter ghost (0 = off)
+GHOST_BOTTOM_LIFTS = ("deadlift",)   # rest-at-bottom lifts that also get ghost rejection
 
 # channel: rep-counting signal: "pos" vertical position, "gx"/"gy"/"gz" gravity on a
 #          watch axis (forearm rotation), "auto" = pick the most regular one
@@ -166,13 +168,20 @@ def count_verdict(reps, logged, n_bouts=1):
     return v, delta, bouts, clean
 
 
+@lru_cache(maxsize=None)
+def _butter(order, wn, btype):
+    """Filter design is pure and ~0.4 ms per call; the aligner asks ~60k times per
+    session for the same few designs (2026-11-22 profile: 22 of 82 s). Cache it."""
+    return butter(order, list(wn) if isinstance(wn, tuple) else wn, btype)
+
+
 def _bp(x, fs, lo=0.2, hi=3.0):
-    b, a = butter(2, [lo / (fs / 2), hi / (fs / 2)], "band")
+    b, a = _butter(2, (lo / (fs / 2), hi / (fs / 2)), "band")
     return filtfilt(b, a, x, axis=0)
 
 
 def _lp(x, fs, fc=6.0):
-    b, a = butter(4, fc / (fs / 2), "low")
+    b, a = _butter(4, fc / (fs / 2), "low")
     return filtfilt(b, a, x, axis=0)
 
 
@@ -321,7 +330,8 @@ def profile_for(exercise, placement="wrist"):
     return prof
 
 
-def analyze_set(data, t0, t1, exercise, fs=100.0, placement="wrist", profile=None, extend=1):
+def analyze_set(data, t0, t1, exercise, fs=100.0, placement="wrist", profile=None, extend=1,
+                ghost_bottom=True):
     """Count reps and compute per-rep kinematics for one set window.
 
     data: dict with t, acc, grav (m/s^2, N x 3) and optional gyro (rad/s, N x 3).
@@ -332,6 +342,8 @@ def analyze_set(data, t0, t1, exercise, fs=100.0, placement="wrist", profile=Non
              find_turnarounds). Right when the window is known to be the set (a log or
              checked windows); sensor-only discovery uses 0, since there the loose ends
              pick up setup motion (Nov 1 readiness 36% -> 27% with it on).
+    ghost_bottom: ghost-cycle rejection also for GHOST_BOTTOM_LIFTS (deadlift). Off only
+             when building personal evidence (see vbt.personal.build_evidence).
     """
     prof = dict(profile) if profile else profile_for(exercise, placement)
     d = resample(data, t0, t1, fs)
@@ -391,7 +403,7 @@ def analyze_set(data, t0, t1, exercise, fs=100.0, placement="wrist", profile=Non
                 rom=float(np.trapezoid(vc, dx=1 / fs)),
                 concentric_s=len(vc) / fs, eccentric_s=ecc / fs,
                 rep_s=(e - s) / fs, rotation_deg=float(np.ptp(ang))))
-    ghost_ok = rest == "top" or exercise == "deadlift"
+    ghost_ok = rest == "top" or (ghost_bottom and exercise in GHOST_BOTTOM_LIFTS)
     if GHOST_ROM and channel == "pos" and ghost_ok and prof["bouts"] == 1 and len(reps) >= 4:
         # A slow rep (>= ~4 s, heavy squats and deadlifts) sits at the low edge of the
         # position band-pass, which splits it into the real cycle and a "ghost" cycle

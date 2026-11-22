@@ -1,5 +1,8 @@
 # Improving detection and analysis
 
+The step-back review of the whole approach (failure breakdown, correctness, efficiency,
+newer methods, ranked plan) is in `docs/REVIEW-2026-11-22.md`.
+
 Every reviewed workout, from any sensor and any log, is a labelled example. The loop:
 
 1. **Add a session** (`python -m vbt.pipeline new …`) and review it (`… review`), fixing
@@ -29,8 +32,11 @@ What limits it now, and the fix each needs:
   reps as clean square waves but breaks faster lifts and the chain test (measured: Nov 1
   consistent 16 -> 12). Needed: pick the band per set from the dominant period, or count on
   the wide band with its own chain rules. Ghost-cycle rejection (`GHOST_ROM`) already fixes
-  the rest-at-top case (squat); for rest-at-bottom lifts the travel lands on the ghost, so
-  that rule would drop the real reps.
+  the rest-at-top case (squat). 2026-11-22 (13 checked deadlift sets, 3 days): the same
+  rule on deadlifts at *counting* time fixed detection of all 4 heavy sets (recall
+  94 -> 100%) and +1 sensor-only set; prototypes built from the trimmed spans cost 2 sets, so
+  evidence keeps every cycle (`ghost_bottom=False`). Kinematics of slow pulls are still poor
+  (velocity unreliable); the per-set band and rest-anchored integration remain open.
 - **Mid-set pauses** (pulldown set 1 on Nov 14: 4 pulls, 4.8 s pause, 4 pulls -> counted 4):
   the second chain is more than 4 s from the first and is dropped.
 - **Barely visible machine work** (lying leg curl: 7-8 cm wrist ripple, twice per rep): "auto"
@@ -60,6 +66,9 @@ error -0.40; recognition leave-one-person-out 77% (8 exercises). The gap to 93% 
 algorithmic headroom in rep counting; look per exercise in the tool's output.
 
 Tried and rejected (don't repeat without new evidence):
+- rest-anchored (ZUPT) height for deadlift counting, stillness from |a| < 0.5-0.8 m/s² and
+  gyro: 3-6 of 13 checked deadlift sets exact depending on the threshold (generic: 2-3);
+  too threshold-sensitive at 25 Hz to adopt (2026-11-22);
 - one wider position band for every set (0.15 / 0.10 / 0.08 Hz low cut): fixes slow deadlifts,
   costs 2-4 consistent sets on Nov 1;
 - half-rate test by autocorrelation (lag 2T vs T): only caught 1 of 6 double-counted sets;
