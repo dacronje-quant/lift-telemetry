@@ -12,14 +12,15 @@ downstream is source-agnostic.
   worse, and record it after committing (`--record`). Refresh reports with
   `python -m vbt.pipeline run --all`.
 - Public check (RecoFit: many people, true rep counts) is an overfitting alarm, not a veto.
-  Run `python -m vbt.public --data <scratch dir> [--record]` only when the shared
+  Run `python -m vbt.public [--record]` (~20 s) only when the shared
   rep-counting code changes: `find_turnarounds`, `position` and the filters, or the generic
   path of `analyze_set` (ghost rules, edge extension, plausibility flags). Skip it for
   exercise-specific profiles, recognition, alignment, personal learning, scoring and
   reports (it cannot move; 5 of 5 recorded runs were identical). A RecoFit drop means look
   closer, not reject: keep a change that helps on >= 2 of the user's workouts even if
-  RecoFit drops a little, and write the trade-off in the log. It uses a 9 MB cached subset
-  (`recofit_subset.pkl.xz`) when present, else downloads 1.56 GB once and writes the cache.
+  RecoFit drops a little, and write the trade-off in the log. Data: the 114 sets it uses,
+  committed as `data/public/recofit_subset.pkl.xz` (9.1 MB, CDLA-P-2.0, attribution in
+  `data/public/README.md`); `--data <dir> --rebuild-cache` rebuilds it from the 1.56 GB file.
 - Headline accuracy is the **first look**: each workout's sensor-only score the first time
   it is recorded, before any fix is tuned on it (`data/eval/first_look.json`, written by
   `evaluate --record`). So always record right after review, before fixing anything.
@@ -154,3 +155,7 @@ For every new workout:
   (`data/eval/first_look.json`, learning page squares): Nov 14 4.8% (1/21), Nov 22 42.9%
   (6/14 trusted-count sets), backfilled from the shadow tests committed with each workout.
   Restored the f19e526 scoreboard line (lost when I reset the eval files after a trial run).
+- 2026-11-22 (later): user chose to commit the RecoFit subset to the repo
+  (`data/public/recofit_subset.pkl.xz`, 9.1 MB, checksum-verified, attribution and licence in
+  `data/public/README.md`). `python -m vbt.public` needs no download now (~20 s); rebuilding
+  from the full file reproduces it byte for byte.

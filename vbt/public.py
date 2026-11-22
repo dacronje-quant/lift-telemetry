@@ -1,7 +1,9 @@
 """Benchmark on public data: the RecoFit dataset (Microsoft, CDLA-Permissive-2.0).
 
-    python -m vbt.public --data /path/outside/repo            # download (1.56 GB) + benchmark
-    python -m vbt.public --data /path/outside/repo --record   # also append to data/eval/public_history.jsonl
+    python -m vbt.public                 # benchmark on the subset stored in data/public/ (~20 s)
+    python -m vbt.public --record        # also append to data/eval/public_history.jsonl
+    python -m vbt.public --data /path/outside/repo --rebuild-cache
+                                         # download the full 1.56 GB and rebuild the subset
 
 Morris et al., "RecoFit: using a wearable sensor to find, recognize, and count repetitive
 exercises", CHI 2014. Data: https://github.com/microsoft/Exercise-Recognition-from-Wearable-Sensors
@@ -10,20 +12,18 @@ so gravity is estimated by vbt.sensors - the same path any third-party IMU takes
 
 Why: the user's own workouts test tailoring; this tests whether the algorithms hold across
 many people and exercises. Published reference: RecoFit counted within +-1 rep 93% of the time.
+Role (CLAUDE.md): an overfitting alarm for the shared rep-counting code, not a veto.
 
 Two tests:
 * rep counting: sets with a true rep count, strength lifts only (cardio, slams, punches and
   floor work excluded); exact / within +-1 / mean error.
 * exercise recognition across people: leave-one-person-out, nearest prototype on the 16
   summary features, with and without rep shape.
-The raw data never enters the repo.
 
-Cache (2026-11-22): the benchmark uses 114 of the 3,115 recorded segments (61 min of data).
-Those alone are saved as recofit_subset.pkl.xz (9.1 MB, the same float64 values, so the
-same results) and kept in the user's Sensor Logger Drive folder (SUBSET_DRIVE_ID), so a
-fresh session fetches 10 MB instead of 1.56 GB. Redistributed under CDLA-Permissive-2.0
-with the attribution and licence link stored inside the file. Without the cache the full
-dataset is downloaded once and the cache is written next to it.
+Data (2026-11-22): the benchmark uses 114 of the 3,115 recorded segments (61 min). Those
+alone, values unmodified, are committed as data/public/recofit_subset.pkl.xz (9.1 MB,
+identical results to the full file), shared under CDLA-Permissive-2.0 with attribution in
+data/public/README.md and inside the file. The full 1.56 GB file never enters the repo.
 """
 import argparse
 import lzma
@@ -50,8 +50,8 @@ SHA256 = "70eea039362555daccb00065e3775ce37fff421f18d533c60933a9d859f33f8a"
 SIZE = 1562300284
 ROOT = Path(__file__).resolve().parents[1]
 SUBSET_NAME = "recofit_subset.pkl.xz"
-SUBSET_DRIVE_ID = None        # set once the cache is uploaded (see module docstring)
-SUBSET_SHA256 = None
+SUBSET = ROOT / "data/public" / SUBSET_NAME
+SUBSET_SHA256 = "07f6966d3b0701e75db43f751af51f651c9409c7d1c07caed61f9e3d4d3958ca"
 LICENSE = ("RecoFit data: Morris, Saponas, Guillory, Kelner, 'RecoFit: using a wearable sensor to find, "
            "recognize, and count repetitive exercises', CHI 2014; Microsoft, "
            "https://github.com/microsoft/Exercise-Recognition-from-Wearable-Sensors. Licence: "
@@ -151,19 +151,14 @@ def _sha256(path):
     return h.hexdigest()
 
 
-def load_subset(data_dir):
-    """The cached subset: local copy, else the Drive copy, else None (caller downloads in full)."""
-    f = Path(data_dir) / SUBSET_NAME
-    if not f.exists() and SUBSET_DRIVE_ID:
-        f.parent.mkdir(parents=True, exist_ok=True)
-        subprocess.run(["curl", "-sSL", "--max-time", "300", "-o", str(f),
-                        f"https://drive.usercontent.google.com/download?id={SUBSET_DRIVE_ID}"
-                        "&export=download&confirm=t"], check=False)
+def load_subset(path=SUBSET):
+    """The committed subset (checksum-verified), or None if it is missing."""
+    f = Path(path)
     if not f.exists():
         return None
-    if SUBSET_SHA256 and _sha256(f) != SUBSET_SHA256:
-        f.unlink()                       # an HTML sign-in page or a stale copy: fall back
-        return None
+    if _sha256(f) != SUBSET_SHA256:
+        raise RuntimeError(f"{f} does not match SUBSET_SHA256; rebuild with --rebuild-cache "
+                           "and update the checksum if the change is intended")
     return pickle.loads(lzma.decompress(f.read_bytes()))["recs"]
 
 
@@ -229,17 +224,23 @@ def bench_recognition(recs, min_people=4, shape_weight=0.5):
 def main(argv=None):
     warnings.filterwarnings("ignore")
     ap = argparse.ArgumentParser(prog="python -m vbt.public")
-    ap.add_argument("--data", required=True,
-                    help="folder OUTSIDE the repo: the 10 MB cached subset, or the 1.56 GB download")
+    ap.add_argument("--data", help="folder OUTSIDE the repo for the 1.56 GB download "
+                                   "(only for --rebuild-cache, or when the committed subset is missing)")
+    ap.add_argument("--rebuild-cache", action="store_true",
+                    help="rebuild data/public/recofit_subset.pkl.xz from the full download")
     ap.add_argument("--record", action="store_true")
     a = ap.parse_args(argv)
-    d = Path(a.data)
-    recs = load_subset(d)
+    recs = None if a.rebuild_cache else load_subset()
     if recs is None:
+        if not a.data:
+            ap.error("data/public/recofit_subset.pkl.xz is missing: pass --data <dir outside the repo> "
+                     "to download the full dataset and rebuild it")
+        d = Path(a.data)
         pk = d / "recofit_sets.pkl"
         full = pickle.load(open(pk, "rb")) if pk.exists() else convert(fetch(d), pk)
-        recs = make_subset(full, d / SUBSET_NAME)
-        print(f"cache written: {d / SUBSET_NAME} ({(d / SUBSET_NAME).stat().st_size / 1e6:.1f} MB)",
+        SUBSET.parent.mkdir(parents=True, exist_ok=True)
+        recs = make_subset(full, SUBSET)
+        print(f"subset written: {SUBSET} ({SUBSET.stat().st_size / 1e6:.1f} MB, sha256 {_sha256(SUBSET)})",
               file=sys.stderr)
     res = {"reps": bench_reps(recs), "recognition": bench_recognition(recs)}
     try:

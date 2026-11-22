@@ -91,7 +91,7 @@ Every sentence grounded in numbers on the page; plain words. Re-run the pipeline
 - Record the scoreboard right after review and before fixing anything: that first
   `--record` is the workout's **first look** (`data/eval/first_look.json`), the headline
   number to report. The user's workouts decide what is kept; run the public RecoFit check
-  (`python -m vbt.public --data <scratchpad>/recofit`) only when shared rep-counting code
+  (`python -m vbt.public`, ~20 s, data in the repo) only when shared rep-counting code
   changes (see CLAUDE.md).
 - Then follow the working agreement in `CLAUDE.md`: fix one weakness the new data exposed,
   re-check the scoreboard on all reviewed sessions, `python -m vbt.pipeline run --all`,

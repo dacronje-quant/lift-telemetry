@@ -63,7 +63,7 @@ Role since 2026-11-22: an overfitting alarm for the shared rep-counting code, no
 (see CLAUDE.md). The user's own workouts decide; the first-look score
 (`data/eval/first_look.json`) is the headline.
 
-`python -m vbt.public --data <dir outside repo>` scores rep counting and cross-person exercise
+`python -m vbt.public` (data: `data/public/`, a 9.1 MB subset) scores rep counting and cross-person exercise
 recognition on the RecoFit dataset (Morris et al., CHI 2014; forearm IMU, 50 Hz, true rep
 counts). Published bar: reps within +-1 93%. Ours after 2026-11-06: 76% (exact 29%), mean
 error -0.40; recognition leave-one-person-out 77% (8 exercises). The gap to 93% is the main
