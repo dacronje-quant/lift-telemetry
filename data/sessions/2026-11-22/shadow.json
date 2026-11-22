@@ -5,10 +5,10 @@
 "found": 19,
 "false_sets": 4,
 "unmatched_found": 4,
-"named": 13,
-"reps_exact": 7,
+"named": 12,
+"reps_exact": 6,
 "reps_within1": 14,
-"fully_right": 7,
+"fully_right": 6,
 "rows": [
 {
 "set": 1,
@@ -106,15 +106,15 @@
 "label": "Deadlift (Barbell)",
 "logged": 5,
 "found": true,
-"guess": "Deadlift (Barbell)",
+"guess": "Lying Leg Curl (Machine)",
 "known": true,
-"named": true,
+"named": false,
 "sensed": [
-5
+8
 ],
-"rep_err": 0,
-"t_start": 1705.63,
-"t_end": 1733.15
+"rep_err": 3,
+"t_start": 1704.27,
+"t_end": 1733.75
 },
 {
 "set": 8,
@@ -161,9 +161,9 @@
 "known": true,
 "named": true,
 "sensed": [
-9
+10
 ],
-"rep_err": 1,
+"rep_err": 0,
 "t_start": 2598.09,
 "t_end": 2623.71
 },
@@ -176,9 +176,9 @@
 "known": true,
 "named": true,
 "sensed": [
-8
+9
 ],
-"rep_err": 2,
+"rep_err": 1,
 "t_start": 2721.97,
 "t_end": 2744.59
 },
@@ -206,9 +206,9 @@
 "known": true,
 "named": true,
 "sensed": [
-8
+9
 ],
-"rep_err": 0,
+"rep_err": 1,
 "t_start": 3012.67,
 "t_end": 3039.93
 },
@@ -341,9 +341,9 @@
 "reps": 3
 },
 {
-"t_start": 1910.49,
-"t_end": 1919.15,
-"guess": "Lateral Raise (Dumbbell)",
+"t_start": 1908.97,
+"t_end": 1917.91,
+"guess": "Lying Leg Curl (Machine)",
 "reps": 3
 },
 {
@@ -353,6 +353,6 @@
 "reps": 5
 }
 ],
-"readiness_pct": 29.2,
+"readiness_pct": 25.0,
 "reference": "checked windows"
 }

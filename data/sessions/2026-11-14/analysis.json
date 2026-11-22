@@ -11,30 +11,30 @@
 "last_rep_s": 3893.05,
 "work_span_min": 61.7,
 "logged_reps": 160,
-"sensor_reps": 174,
-"sensor_reps_cmp": 174.0,
-"tut_s": 436.0,
-"work_density_pct": 11.8,
+"sensor_reps": 169,
+"sensor_reps_cmp": 169.0,
+"tut_s": 424.0,
+"work_density_pct": 11.5,
 "volume_kg": 9154.0,
 "median_rest_s": 156.0,
 "n_match": 12,
-"n_ambiguous": 5,
-"n_fewer": 4,
+"n_ambiguous": 4,
+"n_fewer": 5,
 "n_more": 2,
 "n_not_seen": 0
 },
 "shadow": {
 "mode": "other workouts",
 "n_sets": 21,
-"trained_on_sets": 22,
-"found": 15,
+"trained_on_sets": 46,
+"found": 17,
 "false_sets": null,
-"unmatched_found": 3,
-"named": 7,
+"unmatched_found": 5,
+"named": 11,
 "reps_exact": 5,
-"reps_within1": 11,
-"fully_right": 1,
-"readiness_pct": 4.8,
+"reps_within1": 12,
+"fully_right": 3,
+"readiness_pct": 14.3,
 "reference": "checked windows"
 },
 "excluded_from_learning": false,
@@ -485,7 +485,7 @@
 "rom_cm": 29.7925,
 "period_s": 4.08
 },
-"rest_after_s": 237.6
+"rest_after_s": 240.0
 },
 {
 "i": 8,
@@ -505,49 +505,49 @@
 1616
 ],
 "span": [
-1593.97,
+1596.38,
 1616.24
 ],
 "auto_score": null,
 "channel": "pos",
-"sensor_reps": 5,
+"sensor_reps": 4,
 "clean_reps": 4,
 "sensor_range": [
-4,
-5
+3,
+4
 ],
 "profile_source": "generic",
 "bouts": [
-5
+4
 ],
 "bouts_clean": [
 4
 ],
-"flag": "match",
-"delta": 0,
+"flag": "watch fewer",
+"delta": 1,
 "mean_velocity": 0.458,
 "best_velocity": 0.5,
 "velocity_loss_pct": 10.7,
-"tut_s": 22.3,
-"con_s": 15.0,
-"ecc_s": 5.7,
+"tut_s": 19.9,
+"con_s": 14.0,
+"ecc_s": 4.7,
 "features": {
-"g_x": -0.9878,
-"g_y": 0.0793,
-"g_z": -0.0092,
-"g_std_x": 0.0149,
-"g_std_y": 0.0561,
-"g_std_z": 0.1204,
-"rot_range_deg": 12.7846,
-"gyro_rms_x": 0.2754,
-"gyro_rms_y": 0.2629,
-"gyro_rms_z": 0.1394,
-"gyro_dom_frac": 0.4064,
-"a_vert_rms": 1.5021,
-"a_horiz_rms": 0.7059,
-"vert_ratio": 0.6803,
-"rom_cm": 23.7036,
-"period_s": 4.44
+"g_x": -0.987,
+"g_y": 0.0826,
+"g_z": -0.0197,
+"g_std_x": 0.0155,
+"g_std_y": 0.058,
+"g_std_z": 0.1223,
+"rot_range_deg": 12.0481,
+"gyro_rms_x": 0.2605,
+"gyro_rms_y": 0.2668,
+"gyro_rms_z": 0.1416,
+"gyro_dom_frac": 0.3989,
+"a_vert_rms": 1.5514,
+"a_horiz_rms": 0.7297,
+"vert_ratio": 0.6801,
+"rom_cm": 24.8712,
+"period_s": 4.34
 },
 "rest_after_s": 193.9
 },
@@ -570,50 +570,50 @@
 ],
 "span": [
 1810.18,
-1835.98
+1832.64
 ],
 "auto_score": null,
 "channel": "pos",
-"sensor_reps": 9,
-"clean_reps": 2,
+"sensor_reps": 5,
+"clean_reps": 4,
 "sensor_range": [
-9,
-9
+5,
+5
 ],
 "profile_source": "generic",
 "bouts": [
-9
+5
 ],
 "bouts_clean": [
-2
+4
 ],
-"flag": "ambiguous",
+"flag": "match",
 "delta": 0,
-"mean_velocity": null,
-"best_velocity": null,
-"velocity_loss_pct": null,
-"tut_s": 25.8,
-"con_s": 16.1,
-"ecc_s": 7.3,
+"mean_velocity": 0.35,
+"best_velocity": 0.354,
+"velocity_loss_pct": 0.9,
+"tut_s": 16.2,
+"con_s": 13.9,
+"ecc_s": 1.0,
 "features": {
-"g_x": -0.988,
-"g_y": 0.0641,
-"g_z": 0.0098,
-"g_std_x": 0.0139,
-"g_std_y": 0.0623,
-"g_std_z": 0.1245,
-"rot_range_deg": 14.3152,
-"gyro_rms_x": 0.203,
-"gyro_rms_y": 0.2666,
-"gyro_rms_z": 0.1605,
-"gyro_dom_frac": 0.423,
-"a_vert_rms": 1.39,
-"a_horiz_rms": 0.7331,
-"vert_ratio": 0.6547,
-"rom_cm": 21.1967,
-"period_s": 5.54
+"g_x": -0.9886,
+"g_y": 0.0616,
+"g_z": 0.0113,
+"g_std_x": 0.0134,
+"g_std_y": 0.0602,
+"g_std_z": 0.122,
+"rot_range_deg": 14.4135,
+"gyro_rms_x": 0.2012,
+"gyro_rms_y": 0.2613,
+"gyro_rms_z": 0.1612,
+"gyro_dom_frac": 0.4189,
+"a_vert_rms": 1.4496,
+"a_horiz_rms": 0.7647,
+"vert_ratio": 0.6546,
+"rom_cm": 20.6022,
+"period_s": 5.56
 },
-"rest_after_s": 83.1
+"rest_after_s": 86.4
 },
 {
 "i": 10,

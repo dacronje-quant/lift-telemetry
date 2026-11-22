@@ -1,21 +1,21 @@
 {
 "mode": "other workouts",
 "n_sets": 21,
-"trained_on_sets": 22,
-"found": 15,
+"trained_on_sets": 46,
+"found": 17,
 "false_sets": null,
-"unmatched_found": 3,
-"named": 7,
+"unmatched_found": 5,
+"named": 11,
 "reps_exact": 5,
-"reps_within1": 11,
-"fully_right": 1,
+"reps_within1": 12,
+"fully_right": 3,
 "rows": [
 {
 "set": 1,
 "label": "Squat (Barbell)",
 "logged": 6,
 "found": true,
-"guess": "Bulgarian Split Squat (Dumbbell)",
+"guess": "Lat Pulldown (Cable)",
 "known": true,
 "named": false,
 "sensed": [
@@ -30,57 +30,75 @@
 "label": "Squat (Barbell)",
 "logged": 4,
 "found": true,
-"guess": "Pulldown (Wide Parellel Grip)",
+"guess": "Squat (Barbell)",
 "known": true,
-"named": false,
+"named": true,
 "sensed": [
-4
+5
 ],
-"rep_err": 0,
-"t_start": 307.52,
-"t_end": 323.62
+"rep_err": 1,
+"t_start": 304.7,
+"t_end": 327.46
 },
 {
 "set": 3,
 "label": "Squat (Barbell)",
 "logged": 5,
 "found": true,
-"guess": "Lateral Raise (Dumbbell)",
+"guess": "Squat (Barbell)",
 "known": true,
-"named": false,
+"named": true,
 "sensed": [
-6
+3
 ],
-"rep_err": 1,
-"t_start": 534.0,
-"t_end": 554.1
+"rep_err": 2,
+"t_start": 521.08,
+"t_end": 534.78
 },
 {
 "set": 4,
 "label": "Squat (Barbell)",
 "logged": 5,
-"found": false
+"found": true,
+"guess": "Lat Pulldown (Cable)",
+"known": true,
+"named": false,
+"sensed": [
+3
+],
+"rep_err": 2,
+"t_start": 732.08,
+"t_end": 743.66
 },
 {
 "set": 5,
 "label": "Squat (Barbell)",
 "logged": 5,
 "found": true,
-"guess": "Pulldown (Wide Parellel Grip)",
+"guess": "Squat (Barbell)",
 "known": true,
-"named": false,
+"named": true,
 "sensed": [
-7
+6
 ],
-"rep_err": 2,
-"t_start": 1020.66,
-"t_end": 1053.68
+"rep_err": 1,
+"t_start": 1017.64,
+"t_end": 1050.84
 },
 {
 "set": 6,
 "label": "Deadlift (Barbell)",
 "logged": 5,
-"found": false
+"found": true,
+"guess": "Lat Pulldown (Cable)",
+"known": true,
+"named": false,
+"sensed": [
+18
+],
+"rep_err": 13,
+"t_start": 1102.44,
+"t_end": 1158.96
 },
 {
 "set": 7,
@@ -91,9 +109,9 @@
 "known": true,
 "named": true,
 "sensed": [
-6
+5
 ],
-"rep_err": 1,
+"rep_err": 0,
 "t_start": 1336.18,
 "t_end": 1360.4
 },
@@ -121,9 +139,9 @@
 "known": true,
 "named": true,
 "sensed": [
-11
+6
 ],
-"rep_err": 6,
+"rep_err": 1,
 "t_start": 1809.18,
 "t_end": 1841.88
 },
@@ -159,15 +177,15 @@
 "label": "Bench Press (Barbell)",
 "logged": 6,
 "found": true,
-"guess": "Hammer Curl (Dumbbell)",
+"guess": "Lat Pulldown (Cable)",
 "known": true,
 "named": false,
 "sensed": [
-4
+11
 ],
-"rep_err": 2,
-"t_start": 2634.94,
-"t_end": 2648.86
+"rep_err": 5,
+"t_start": 2628.32,
+"t_end": 2658.6
 },
 {
 "set": 14,
@@ -189,7 +207,7 @@
 "label": "Bench Press (Barbell)",
 "logged": 6,
 "found": true,
-"guess": "Pulldown (Wide Parellel Grip)",
+"guess": "Lat Pulldown (Cable)",
 "known": true,
 "named": false,
 "sensed": [
@@ -231,9 +249,9 @@
 "label": "Lat Pulldown (Cable)",
 "logged": 8,
 "found": true,
-"guess": "Pulldown (Wide Parellel Grip)",
+"guess": "Lat Pulldown (Cable)",
 "known": true,
-"named": false,
+"named": true,
 "sensed": [
 8
 ],
@@ -276,13 +294,19 @@
 {
 "t_start": 347.9,
 "t_end": 366.28,
-"guess": "Triceps Rope Pushdown",
+"guess": "Triceps Pushdown",
 "reps": 4
+},
+{
+"t_start": 536.28,
+"t_end": 547.46,
+"guess": "Lat Pulldown (Cable)",
+"reps": 3
 },
 {
 "t_start": 1072.06,
 "t_end": 1101.22,
-"guess": "Triceps Rope Pushdown",
+"guess": "Triceps Pushdown",
 "reps": 5
 },
 {
@@ -290,8 +314,14 @@
 "t_end": 1797.44,
 "guess": "Bulgarian Split Squat (Dumbbell)",
 "reps": 4
+},
+{
+"t_start": 2016.56,
+"t_end": 2036.0,
+"guess": "Triceps Rope Pushdown",
+"reps": 6
 }
 ],
-"readiness_pct": 4.8,
+"readiness_pct": 14.3,
 "reference": "checked windows"
 }

@@ -391,14 +391,20 @@ def analyze_set(data, t0, t1, exercise, fs=100.0, placement="wrist", profile=Non
                 rom=float(np.trapezoid(vc, dx=1 / fs)),
                 concentric_s=len(vc) / fs, eccentric_s=ecc / fs,
                 rep_s=(e - s) / fs, rotation_deg=float(np.ptp(ang))))
-    if GHOST_ROM and channel == "pos" and rest == "top" and prof["bouts"] == 1 and len(reps) >= 4:
+    ghost_ok = rest == "top" or exercise == "deadlift"
+    if GHOST_ROM and channel == "pos" and ghost_ok and prof["bouts"] == 1 and len(reps) >= 4:
         # A slow rep (>= ~4 s, heavy squats and deadlifts) sits at the low edge of the
         # position band-pass, which splits it into the real cycle and a "ghost" cycle
         # with no vertical travel (measured 2026-11-14: 0.6-0.8 m vs 0.00-0.01 m,
         # alternating). Cycles with almost no travel next to real ones are not reps.
         # Only for lifts resting at the top (the ghost is the standing pause) and reps
         # >= 3 s apart. Nov 14 exact counts 7 -> 12 of 21; Nov 1 and RecoFit unchanged.
-        # A 10% threshold cost one RecoFit set; rest-at-bottom lifts (deadlift) lost reps.
+        # A 10% threshold cost one RecoFit set.
+        # Deadlift (rests at the bottom) added 2026-11-22 with 13 checked sets over 3 days:
+        # heavy pulls (110-120 kg) split into ghosts too, and the inflated counts made
+        # log-guided detection miss both heavy sets on Nov 14 and Nov 22. Recall
+        # 94.0 -> 100%, IoU 0.756 -> 0.800, deadlift rep MAE 1.9 -> 1.3; cost: one Nov 14
+        # set 5 -> 4. Other rest-at-bottom lifts stay excluded (no evidence yet).
         ref = float(np.percentile([r.rom for r in reps], 75))
         real = [r for r in reps if r.rom >= GHOST_ROM * ref]
         slow = len(real) >= 3 and float(np.median(np.diff([r.t_turn for r in real]))) >= GHOST_MIN_PERIOD_S

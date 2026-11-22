@@ -11,14 +11,14 @@
 "last_rep_s": 2784.32,
 "work_span_min": 45.5,
 "logged_reps": 178,
-"sensor_reps": 205,
-"sensor_reps_cmp": 184.5,
-"tut_s": 517.0,
+"sensor_reps": 204,
+"sensor_reps_cmp": 183.5,
+"tut_s": 515.0,
 "work_density_pct": 18.9,
 "volume_kg": 6572.0,
 "median_rest_s": 93.0,
-"n_match": 9,
-"n_ambiguous": 7,
+"n_match": 10,
+"n_ambiguous": 6,
 "n_fewer": 5,
 "n_more": 1,
 "n_not_seen": 0
@@ -26,15 +26,15 @@
 "shadow": {
 "mode": "other workouts",
 "n_sets": 22,
-"trained_on_sets": 21,
+"trained_on_sets": 45,
 "found": 22,
-"false_sets": 3,
-"unmatched_found": 3,
-"named": 8,
-"reps_exact": 6,
-"reps_within1": 9,
-"fully_right": 3,
-"readiness_pct": 13.6,
+"false_sets": 5,
+"unmatched_found": 5,
+"named": 13,
+"reps_exact": 9,
+"reps_within1": 13,
+"fully_right": 7,
+"readiness_pct": 31.8,
 "reference": "checked windows"
 },
 "excluded_from_learning": false,
@@ -421,7 +421,7 @@
 "rom_cm": 55.2308,
 "period_s": 2.98
 },
-"rest_after_s": 144.9
+"rest_after_s": 147.3
 },
 {
 "i": 7,
@@ -441,49 +441,49 @@
 965
 ],
 "span": [
-943.4,
+945.84,
 966.02
 ],
 "auto_score": null,
 "channel": "pos",
-"sensor_reps": 6,
+"sensor_reps": 5,
 "clean_reps": 5,
 "sensor_range": [
-6,
-6
+5,
+5
 ],
 "profile_source": "generic",
 "bouts": [
-6
+5
 ],
 "bouts_clean": [
 5
 ],
-"flag": "ambiguous",
+"flag": "match",
 "delta": 0,
 "mean_velocity": 0.416,
 "best_velocity": 0.447,
 "velocity_loss_pct": 13.4,
-"tut_s": 22.6,
-"con_s": 17.3,
-"ecc_s": 4.5,
+"tut_s": 20.2,
+"con_s": 16.2,
+"ecc_s": 3.6,
 "features": {
-"g_x": -0.9756,
-"g_y": 0.0916,
-"g_z": -0.0429,
-"g_std_x": 0.0636,
-"g_std_y": 0.078,
-"g_std_z": 0.1668,
-"rot_range_deg": 12.2227,
-"gyro_rms_x": 0.4388,
-"gyro_rms_y": 0.3967,
-"gyro_rms_z": 0.2674,
-"gyro_dom_frac": 0.3979,
-"a_vert_rms": 1.912,
-"a_horiz_rms": 1.0541,
-"vert_ratio": 0.6446,
-"rom_cm": 31.6757,
-"period_s": 4.14
+"g_x": -0.9734,
+"g_y": 0.096,
+"g_z": -0.0565,
+"g_std_x": 0.067,
+"g_std_y": 0.081,
+"g_std_z": 0.1705,
+"rot_range_deg": 11.2675,
+"gyro_rms_x": 0.4586,
+"gyro_rms_y": 0.4065,
+"gyro_rms_z": 0.2791,
+"gyro_dom_frac": 0.4008,
+"a_vert_rms": 1.9764,
+"a_horiz_rms": 1.1031,
+"vert_ratio": 0.6418,
+"rom_cm": 31.2439,
+"period_s": 4.12
 },
 "rest_after_s": 150.6
 },
