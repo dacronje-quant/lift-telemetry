@@ -208,7 +208,8 @@ def shadow_test(d, data, log_sets, truth, root, placement="wrist"):
         if g.get("unsure") or g.get("skipped") or g.get("t_start") is None:
             continue                     # not checkable: unsure, or the sensor didn't record it
         j = m.get(i)
-        row = {"set": i + 1, "label": s["exercise"], "logged": s["reps"], "found": j is not None}
+        row = {"set": i + 1, "label": s["exercise"], "logged": s["reps"], "found": j is not None,
+               "reps_checked": not g.get("reps_unsure")}
         if j is not None:
             x = inferred[j]
             per_side = PROFILES.get(x["key"], PROFILES["auto"])["bouts"] > 1
@@ -220,6 +221,10 @@ def shadow_test(d, data, log_sets, truth, root, placement="wrist"):
         rows.append(row)
     found = [r for r in rows if r["found"]]
     n = len(rows)
+    # a set whose logged count the user isn't sure of (reps_unsure) is scored on found and
+    # named only; exact reps and readiness are over the sets with a trusted count
+    counted = [r for r in found if r["reps_checked"]]
+    n_rc = sum(r["reps_checked"] for r in rows)
     res = {"mode": mode, "n_sets": n, "trained_on_sets": sum(len(e["sets"]) for e in others),
            "found": len(found),
            # with unconfirmed sets in the log, an unmatched detection may be one of them: unknown
@@ -227,13 +232,14 @@ def shadow_test(d, data, log_sets, truth, root, placement="wrist"):
                           else sum(1 for j in range(len(inferred)) if j not in m.values())),
            "unmatched_found": sum(1 for j in range(len(inferred)) if j not in m.values()),
            "named": sum(r["named"] for r in found),
-           "reps_exact": sum(r["rep_err"] == 0 for r in found),
-           "reps_within1": sum(r["rep_err"] <= 1 for r in found),
-           "fully_right": sum(r["named"] and r["rep_err"] == 0 for r in found),
+           "n_reps_checked": n_rc,
+           "reps_exact": sum(r["rep_err"] == 0 for r in counted),
+           "reps_within1": sum(r["rep_err"] <= 1 for r in counted),
+           "fully_right": sum(r["named"] and r["rep_err"] == 0 for r in counted),
            "rows": rows,
            "unmatched": [{k: v for k, v in x.items() if k in ("t_start", "t_end", "guess", "reps")}
                          for j, x in enumerate(inferred) if j not in m.values()]}
-    res["readiness_pct"] = round(100 * res["fully_right"] / n, 1) if n else None
+    res["readiness_pct"] = round(100 * res["fully_right"] / n_rc, 1) if n_rc else None
     return res
 
 

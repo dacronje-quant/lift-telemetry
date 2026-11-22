@@ -56,8 +56,12 @@ def build_evidence(d, data, log_sets, windows, placement="wrist", fs=50.0):
             continue
         key = s.get("exercise_key") or exercise_key(s["exercise"])
         base = PROFILES.get(key, PROFILES["auto"])
+        # reps_unsure: window and exercise checked, the logged count is not (the user wasn't
+        # sure, e.g. supersets on 2026-11-22). The set still teaches what the exercise looks
+        # like (prototype, tempo, range); it never teaches or scores rep counting.
+        reps_ok = not w.get("reps_unsure")
         trials = {}
-        for ch, rest in CANDIDATES:
+        for ch, rest in (CANDIDATES if reps_ok else []):
             prof = {**base, "channel": ch, "rest": rest}
             if placement == "bar" and ch != "pos":
                 continue
@@ -75,7 +79,7 @@ def build_evidence(d, data, log_sets, windows, placement="wrist", fs=50.0):
         ok = [r for r in reps if r["ok"]] or reps
         med = lambda k: float(np.median([r[k] for r in ok])) if ok else None  # noqa: E731
         rows.append({"index": i + 1, "label": s["exercise"], "key": key, "kg": s.get("kg"),
-                     "reps": s["reps"], "rpe": s.get("rpe"), "bouts": base["bouts"],
+                     "reps": s["reps"] if reps_ok else None, "reps_unsure": not reps_ok, "rpe": s.get("rpe"), "bouts": base["bouts"],
                      "generic": f"{base['channel']}/{base['rest']}" if base["channel"] != "auto" else None,
                      "trials": trials, "features": [None if not np.isfinite(f[k]) else round(float(f[k]), 5)
                                                     for k in FEATURES],
@@ -178,39 +182,45 @@ def profiles(root="data/sessions", exclude=None):
     """
     by = defaultdict(list)
     sessions = defaultdict(set)
+    count_sessions = defaultdict(set)
     for ev in load_evidence(root, exclude):
         for r in ev["sets"]:
             by[r["label"]].append(r)
             sessions[r["label"]].add(ev["session"])
+            if r.get("reps") is not None:
+                count_sessions[r["label"]].add(ev["session"])
     out = {}
     for label, rows in by.items():
         key = rows[0]["key"]
         base = PROFILES.get(key, PROFILES["auto"])
-        combos = sorted({c for r in rows for c in r["trials"]})
-        mean_err = {c: float(np.mean([r["trials"][c]["err"] for r in rows if c in r["trials"]])) for c in combos}
-        exact = {c: float(np.mean([r["trials"][c]["err"] == 0 for r in rows if c in r["trials"]])) for c in combos}
         generic = rows[0]["generic"]
-        best = min(combos, key=lambda c: (mean_err[c], -exact[c], c != generic))
+        # rep counting is learned only from sets whose logged count is trusted
+        cnt = [r for r in rows if r.get("reps") is not None and r.get("trials")]
+        combos = sorted({c for r in cnt for c in r["trials"]})
+        mean_err = {c: float(np.mean([r["trials"][c]["err"] for r in cnt if c in r["trials"]])) for c in combos}
+        exact = {c: float(np.mean([r["trials"][c]["err"] == 0 for r in cnt if c in r["trials"]])) for c in combos}
+        best = min(combos, key=lambda c: (mean_err[c], -exact[c], c != generic)) if combos else None
         gen_err = mean_err.get(generic) if generic else None
-        held_gen, held_learned = _held_out(rows, generic)
+        held_gen, held_learned = _held_out(cnt, generic)
         # Adopt only what generalises: evidence from >= 2 workouts, and choosing the
         # signal on the other sets must beat the generic one on held-out sets.
-        adopt = (len(rows) >= MIN_SETS and len(sessions[label]) >= MIN_SESSIONS and best != generic
-                 and held_learned is not None
+        adopt = (best is not None and len(cnt) >= MIN_SETS and len(count_sessions[label]) >= MIN_SESSIONS
+                 and best != generic and held_learned is not None
                  and (held_gen is None or held_learned <= held_gen - MIN_GAIN))
         # Without a log, should edge cycles (setup pull, unrack) count as reps? Learn it from
         # how your logged counts compare with all vs clean cycles, once >= 2 workouts agree.
-        cm = [r for r in rows if r.get("n_all") is not None]
+        cm = [r for r in cnt if r.get("n_all") is not None]
         per = rows[0]["bouts"] if rows[0].get("bouts") else 1
         err_all = float(np.mean([abs(r["n_all"] / per - r["reps"]) for r in cm])) if cm else None
         err_clean = float(np.mean([abs(r["n_clean"] / per - r["reps"]) for r in cm])) if cm else None
         count_mode = "all"
-        if cm and len(sessions[label]) >= MIN_SESSIONS and err_clean < err_all - MIN_GAIN:
+        if cm and len(count_sessions[label]) >= MIN_SESSIONS and err_clean < err_all - MIN_GAIN:
             count_mode = "clean"
         X = np.array([[np.nan if v is None else v for v in r["features"]] for r in rows], float)
         info = {"key": key, "n_sets": len(rows), "n_sessions": len(sessions[label]),
                 "generic_signal": generic, "generic_err": gen_err,
-                "best_signal": best, "best_err": mean_err[best], "best_exact": exact[best],
+                "n_count_sets": len(cnt),
+                "best_signal": best, "best_err": mean_err.get(best), "best_exact": exact.get(best),
                 "held_out_err_generic": held_gen, "held_out_err_learned": held_learned,
                 "learned": bool(adopt),
                 "count_mode": count_mode, "count_err_all": err_all, "count_err_clean": err_clean,

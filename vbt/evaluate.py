@@ -62,6 +62,8 @@ def eval_session(sid, root=SESSIONS, stress=True):
         a = analyze_set(data, g["t_start"], g["t_end"], h["exercise_key"])
         b = analyze_set(data, f["t_start"], f["t_end"], h["exercise_key"])
         count_diff.append(abs(a["rep_count"] - b["rep_count"]))
+        if g.get("reps_unsure"):
+            continue                     # logged count not trusted: no verdict against it
         prof = PROFILES.get(h["exercise_key"], PROFILES["auto"])
         v = count_verdict(a["reps"], h["reps"], prof["bouts"])[0] if a["reps"] else "watch fewer"
         verdict_ok.append(v in ("match", "ambiguous"))
@@ -123,10 +125,14 @@ def scoreboard(root=SESSIONS, stress=True):
            "mean_iou": round(sum(s["mean_iou"] * s["n_sets"] for s in ses) / tot, 3) if ses else None}
     so = [s["sensor_only"] for s in ses if s.get("sensor_only", {}).get("n_sets")]
     n = sum(x["n_sets"] for x in so) or 1
-    sensor_only = {"fully_right_pct": round(100 * sum(x["fully_right"] for x in so) / n, 1) if so else None,
+    # readiness and exact reps only over sets whose logged count is trusted (reps_unsure)
+    nr = sum(x.get("n_reps_checked", x["n_sets"]) for x in so) or 1
+    sensor_only = {"fully_right_pct": round(100 * sum(x["fully_right"] for x in so) / nr, 1) if so else None,
                    "found_pct": round(100 * sum(x["found"] for x in so) / n, 1) if so else None,
                    "named_pct": round(100 * sum(x["named"] for x in so) / n, 1) if so else None,
-                   "reps_exact_pct": round(100 * sum(x["reps_exact"] for x in so) / n, 1) if so else None,
+                   "reps_exact_pct": round(100 * sum(x["reps_exact"] for x in so) / nr, 1) if so else None,
+                   "n_sets": sum(x["n_sets"] for x in so),
+                   "n_reps_checked": sum(x.get("n_reps_checked", x["n_sets"]) for x in so),
                    "false_sets": sum(x["false_sets"] or 0 for x in so),
                    "modes": sorted({x["mode"] for x in so})}
     try:

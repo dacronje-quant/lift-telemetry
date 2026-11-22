@@ -573,3 +573,23 @@ def test_evidence_staleness_follows_content_and_code(tmp_path, monkeypatch):
         {"sets_hash": personal._sets_hash(d), "code_hash": personal.code_hash(), "sets": []}))
     monkeypatch.setattr(personal, "code_hash", lambda: "other-code")
     assert personal.evidence_is_stale(d)                          # algorithm changed
+
+
+def test_reps_unsure_sets_never_teach_rep_counting(tmp_path):
+    from vbt.personal import profiles
+    # two workouts, but on the second the user wasn't sure of the counts (reps_unsure):
+    # their trials are empty and reps None, so the alternative signal has 1 workout only
+    _fake_evidence(tmp_path, "2026-11-01", 4, generic_err=1, alt_err=0)
+    d = tmp_path / "2026-11-02"
+    d.mkdir(parents=True)
+    (d / "sets.json").write_text(json.dumps({"source": "reviewed", "sets": []}))
+    from vbt.workout import FEATURES
+    rows = [{"index": i + 1, "label": "Bench Press (Barbell)", "key": "bench", "reps": None,
+             "reps_unsure": True, "bouts": 1, "generic": "pos/top", "trials": {},
+             "features": [0.1 * i] * len(FEATURES), "n_all": 9, "n_clean": 2,
+             "rep_s": 2.5, "rom_m": 0.4, "rotation_deg": 10} for i in range(3)]
+    (d / "evidence.json").write_text(json.dumps({"session": "2026-11-02", "sets": rows}))
+    p = profiles(tmp_path)["Bench Press (Barbell)"]
+    assert p["n_sets"] == 7 and p["n_count_sets"] == 4     # prototype uses all, counting only 4
+    assert p["n_sessions"] == 2 and not p["learned"]        # counts trusted on 1 workout only
+    assert p["count_err_all"] == 1.0                        # unsure sets left out of count mode

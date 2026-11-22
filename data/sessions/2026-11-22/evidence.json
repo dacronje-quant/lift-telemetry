@@ -1,8 +1,8 @@
 {
 "session": "2026-11-22",
 "placement": "wrist",
-"sets_hash": "cc40b5c728d2",
-"code_hash": "a58216cb0362",
+"sets_hash": "7c98a6465998",
+"code_hash": "c0e7760154fa",
 "features": [
 "g_x",
 "g_y",
@@ -28,6 +28,7 @@
 "key": "squat",
 "kg": 60.0,
 "reps": 5,
+"reps_unsure": false,
 "rpe": null,
 "bouts": 1,
 "generic": "pos/top",
@@ -183,6 +184,7 @@
 "key": "squat",
 "kg": 80.0,
 "reps": 4,
+"reps_unsure": false,
 "rpe": null,
 "bouts": 1,
 "generic": "pos/top",
@@ -338,6 +340,7 @@
 "key": "squat",
 "kg": 100.0,
 "reps": 3,
+"reps_unsure": false,
 "rpe": null,
 "bouts": 1,
 "generic": "pos/top",
@@ -493,6 +496,7 @@
 "key": "squat",
 "kg": 110.0,
 "reps": 5,
+"reps_unsure": false,
 "rpe": 7.0,
 "bouts": 1,
 "generic": "pos/top",
@@ -648,6 +652,7 @@
 "key": "squat",
 "kg": 110.0,
 "reps": 5,
+"reps_unsure": false,
 "rpe": 7.5,
 "bouts": 1,
 "generic": "pos/top",
@@ -803,6 +808,7 @@
 "key": "squat",
 "kg": 110.0,
 "reps": 5,
+"reps_unsure": false,
 "rpe": 8.0,
 "bouts": 1,
 "generic": "pos/top",
@@ -958,6 +964,7 @@
 "key": "deadlift",
 "kg": 60.0,
 "reps": 5,
+"reps_unsure": false,
 "rpe": null,
 "bouts": 1,
 "generic": "pos/bottom",
@@ -1113,6 +1120,7 @@
 "key": "deadlift",
 "kg": 100.0,
 "reps": 4,
+"reps_unsure": false,
 "rpe": null,
 "bouts": 1,
 "generic": "pos/bottom",
@@ -1268,6 +1276,7 @@
 "key": "deadlift",
 "kg": 120.0,
 "reps": 5,
+"reps_unsure": false,
 "rpe": 7.0,
 "bouts": 1,
 "generic": "pos/bottom",
@@ -1423,6 +1432,7 @@
 "key": "deadlift",
 "kg": 120.0,
 "reps": 5,
+"reps_unsure": false,
 "rpe": 7.0,
 "bouts": 1,
 "generic": "pos/bottom",
@@ -1578,6 +1588,7 @@
 "key": "bench",
 "kg": 60.0,
 "reps": 10,
+"reps_unsure": false,
 "rpe": 6.0,
 "bouts": 1,
 "generic": "pos/top",
@@ -1733,6 +1744,7 @@
 "key": "bench",
 "kg": 60.0,
 "reps": 10,
+"reps_unsure": false,
 "rpe": 7.0,
 "bouts": 1,
 "generic": "pos/top",
@@ -1888,6 +1900,7 @@
 "key": "bench",
 "kg": 60.0,
 "reps": 8,
+"reps_unsure": false,
 "rpe": 9.0,
 "bouts": 1,
 "generic": "pos/top",
@@ -2043,6 +2056,7 @@
 "key": "bench",
 "kg": 60.0,
 "reps": 8,
+"reps_unsure": false,
 "rpe": 9.5,
 "bouts": 1,
 "generic": "pos/top",
@@ -2197,44 +2211,12 @@
 "label": "Lat Pulldown (Cable)",
 "key": "pulldown",
 "kg": 70.0,
-"reps": 8,
+"reps": null,
+"reps_unsure": true,
 "rpe": null,
 "bouts": 1,
 "generic": "pos/top",
-"trials": {
-"pos/top": {
-"err": 1,
-"n": 7
-},
-"pos/bottom": {
-"err": 1,
-"n": 7
-},
-"gx/top": {
-"err": 8,
-"n": 0
-},
-"gx/bottom": {
-"err": 0,
-"n": 8
-},
-"gy/top": {
-"err": 0,
-"n": 8
-},
-"gy/bottom": {
-"err": 0,
-"n": 9
-},
-"gz/top": {
-"err": 3,
-"n": 5
-},
-"gz/bottom": {
-"err": 1,
-"n": 7
-}
-},
+"trials": {},
 "features": [
 0.95979,
 -0.13659,
@@ -2352,44 +2334,12 @@
 "label": "Triceps Pushdown",
 "key": "pushdown",
 "kg": 20.0,
-"reps": 10,
+"reps": null,
+"reps_unsure": true,
 "rpe": null,
 "bouts": 1,
 "generic": "gx/top",
-"trials": {
-"pos/top": {
-"err": 0,
-"n": 11
-},
-"pos/bottom": {
-"err": 0,
-"n": 10
-},
-"gx/top": {
-"err": 1,
-"n": 9
-},
-"gx/bottom": {
-"err": 2,
-"n": 8
-},
-"gy/top": {
-"err": 3,
-"n": 7
-},
-"gy/bottom": {
-"err": 2,
-"n": 8
-},
-"gz/top": {
-"err": 2,
-"n": 8
-},
-"gz/bottom": {
-"err": 0,
-"n": 10
-}
-},
+"trials": {},
 "features": [
 -0.32077,
 0.44533,
@@ -2507,44 +2457,12 @@
 "label": "Lat Pulldown (Cable)",
 "key": "pulldown",
 "kg": 55.0,
-"reps": 8,
+"reps": null,
+"reps_unsure": true,
 "rpe": null,
 "bouts": 1,
 "generic": "pos/top",
-"trials": {
-"pos/top": {
-"err": 0,
-"n": 9
-},
-"pos/bottom": {
-"err": 0,
-"n": 10
-},
-"gx/top": {
-"err": 0,
-"n": 11
-},
-"gx/bottom": {
-"err": 0,
-"n": 11
-},
-"gy/top": {
-"err": 0,
-"n": 10
-},
-"gy/bottom": {
-"err": 1,
-"n": 18
-},
-"gz/top": {
-"err": 0,
-"n": 8
-},
-"gz/bottom": {
-"err": 0,
-"n": 10
-}
-},
+"trials": {},
 "features": [
 0.97417,
 -0.0725,
@@ -2662,44 +2580,12 @@
 "label": "Triceps Pushdown",
 "key": "pushdown",
 "kg": 17.5,
-"reps": 10,
+"reps": null,
+"reps_unsure": true,
 "rpe": null,
 "bouts": 1,
 "generic": "gx/top",
-"trials": {
-"pos/top": {
-"err": 0,
-"n": 10
-},
-"pos/bottom": {
-"err": 0,
-"n": 10
-},
-"gx/top": {
-"err": 0,
-"n": 10
-},
-"gx/bottom": {
-"err": 1,
-"n": 9
-},
-"gy/top": {
-"err": 0,
-"n": 10
-},
-"gy/bottom": {
-"err": 0,
-"n": 11
-},
-"gz/top": {
-"err": 0,
-"n": 10
-},
-"gz/bottom": {
-"err": 0,
-"n": 11
-}
-},
+"trials": {},
 "features": [
 -0.28901,
 0.44553,
@@ -2817,44 +2703,12 @@
 "label": "Lat Pulldown (Cable)",
 "key": "pulldown",
 "kg": 55.0,
-"reps": 7,
+"reps": null,
+"reps_unsure": true,
 "rpe": null,
 "bouts": 1,
 "generic": "pos/top",
-"trials": {
-"pos/top": {
-"err": 0,
-"n": 8
-},
-"pos/bottom": {
-"err": 0,
-"n": 11
-},
-"gx/top": {
-"err": 0,
-"n": 9
-},
-"gx/bottom": {
-"err": 1,
-"n": 6
-},
-"gy/top": {
-"err": 0,
-"n": 11
-},
-"gy/bottom": {
-"err": 0,
-"n": 9
-},
-"gz/top": {
-"err": 2,
-"n": 5
-},
-"gz/bottom": {
-"err": 2,
-"n": 5
-}
-},
+"trials": {},
 "features": [
 0.93729,
 0.21229,
@@ -2972,44 +2826,12 @@
 "label": "Triceps Pushdown",
 "key": "pushdown",
 "kg": 17.5,
-"reps": 8,
+"reps": null,
+"reps_unsure": true,
 "rpe": null,
 "bouts": 1,
 "generic": "gx/top",
-"trials": {
-"pos/top": {
-"err": 2,
-"n": 11
-},
-"pos/bottom": {
-"err": 2,
-"n": 10
-},
-"gx/top": {
-"err": 1,
-"n": 9
-},
-"gx/bottom": {
-"err": 1,
-"n": 10
-},
-"gy/top": {
-"err": 1,
-"n": 10
-},
-"gy/bottom": {
-"err": 1,
-"n": 11
-},
-"gz/top": {
-"err": 0,
-"n": 8
-},
-"gz/bottom": {
-"err": 0,
-"n": 10
-}
-},
+"trials": {},
 "features": [
 -0.292,
 0.49505,
@@ -3127,44 +2949,12 @@
 "label": "Hammer Curl (Dumbbell)",
 "key": "curl",
 "kg": 10.0,
-"reps": 10,
+"reps": null,
+"reps_unsure": true,
 "rpe": null,
 "bouts": 1,
 "generic": "gx/bottom",
-"trials": {
-"pos/top": {
-"err": 1,
-"n": 13
-},
-"pos/bottom": {
-"err": 1,
-"n": 12
-},
-"gx/top": {
-"err": 0,
-"n": 11
-},
-"gx/bottom": {
-"err": 0,
-"n": 10
-},
-"gy/top": {
-"err": 0,
-"n": 11
-},
-"gy/bottom": {
-"err": 0,
-"n": 10
-},
-"gz/top": {
-"err": 1,
-"n": 13
-},
-"gz/bottom": {
-"err": 0,
-"n": 12
-}
-},
+"trials": {},
 "features": [
 -0.42238,
 0.5214,
@@ -3282,44 +3072,12 @@
 "label": "Lateral Raise (Dumbbell)",
 "key": "lateral",
 "kg": 8.0,
-"reps": 10,
+"reps": null,
+"reps_unsure": true,
 "rpe": null,
 "bouts": 1,
 "generic": "pos/bottom",
-"trials": {
-"pos/top": {
-"err": 2,
-"n": 8
-},
-"pos/bottom": {
-"err": 2,
-"n": 8
-},
-"gx/top": {
-"err": 3,
-"n": 7
-},
-"gx/bottom": {
-"err": 1,
-"n": 9
-},
-"gy/top": {
-"err": 1,
-"n": 9
-},
-"gy/bottom": {
-"err": 0,
-"n": 10
-},
-"gz/top": {
-"err": 1,
-"n": 9
-},
-"gz/bottom": {
-"err": 1,
-"n": 9
-}
-},
+"trials": {},
 "features": [
 -0.47754,
 0.39553,
@@ -3437,44 +3195,12 @@
 "label": "Hammer Curl (Dumbbell)",
 "key": "curl",
 "kg": 12.5,
-"reps": 6,
+"reps": null,
+"reps_unsure": true,
 "rpe": null,
 "bouts": 1,
 "generic": "gx/bottom",
-"trials": {
-"pos/top": {
-"err": 1,
-"n": 9
-},
-"pos/bottom": {
-"err": 1,
-"n": 5
-},
-"gx/top": {
-"err": 0,
-"n": 7
-},
-"gx/bottom": {
-"err": 0,
-"n": 6
-},
-"gy/top": {
-"err": 2,
-"n": 4
-},
-"gy/bottom": {
-"err": 0,
-"n": 6
-},
-"gz/top": {
-"err": 0,
-"n": 7
-},
-"gz/bottom": {
-"err": 2,
-"n": 4
-}
-},
+"trials": {},
 "features": [
 -0.51862,
 0.46922,
@@ -3592,44 +3318,12 @@
 "label": "Lateral Raise (Dumbbell)",
 "key": "lateral",
 "kg": 8.0,
-"reps": 10,
+"reps": null,
+"reps_unsure": true,
 "rpe": null,
 "bouts": 1,
 "generic": "pos/bottom",
-"trials": {
-"pos/top": {
-"err": 0,
-"n": 10
-},
-"pos/bottom": {
-"err": 1,
-"n": 9
-},
-"gx/top": {
-"err": 1,
-"n": 9
-},
-"gx/bottom": {
-"err": 1,
-"n": 9
-},
-"gy/top": {
-"err": 0,
-"n": 13
-},
-"gy/bottom": {
-"err": 2,
-"n": 8
-},
-"gz/top": {
-"err": 0,
-"n": 11
-},
-"gz/bottom": {
-"err": 0,
-"n": 12
-}
-},
+"trials": {},
 "features": [
 -0.46272,
 0.41754,

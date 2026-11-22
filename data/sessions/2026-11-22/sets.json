@@ -92,62 +92,72 @@
    "log_index": 15,
    "skipped": false,
    "t_start": 3141.0,
-   "t_end": 3161.0
+   "t_end": 3161.0,
+   "reps_unsure": true
   },
   {
    "log_index": 18,
    "skipped": false,
    "t_start": 3179.0,
-   "t_end": 3203.0
+   "t_end": 3203.0,
+   "reps_unsure": true
   },
   {
    "log_index": 16,
    "skipped": false,
    "t_start": 3243.0,
-   "t_end": 3272.0
+   "t_end": 3272.0,
+   "reps_unsure": true
   },
   {
    "log_index": 19,
    "skipped": false,
    "t_start": 3282.0,
-   "t_end": 3306.0
+   "t_end": 3306.0,
+   "reps_unsure": true
   },
   {
    "log_index": 17,
    "skipped": false,
    "t_start": 3346.0,
-   "t_end": 3377.0
+   "t_end": 3377.0,
+   "reps_unsure": true
   },
   {
    "log_index": 20,
    "skipped": false,
    "t_start": 3394.0,
-   "t_end": 3418.0
+   "t_end": 3418.0,
+   "reps_unsure": true
   },
   {
    "log_index": 21,
    "skipped": false,
    "t_start": 3449.0,
-   "t_end": 3483.0
+   "t_end": 3483.0,
+   "reps_unsure": true
   },
   {
    "log_index": 23,
    "skipped": false,
    "t_start": 3486.0,
-   "t_end": 3513.0
+   "t_end": 3513.0,
+   "reps_unsure": true
   },
   {
    "log_index": 22,
    "skipped": false,
    "t_start": 3590.0,
-   "t_end": 3618.0
+   "t_end": 3618.0,
+   "reps_unsure": true
   },
   {
    "log_index": 24,
    "skipped": false,
    "t_start": 3626.0,
-   "t_end": 3662.0
+   "t_end": 3662.0,
+   "reps_unsure": true
   }
  ],
- "note": "Reviewed 2026-11-22: deadlift 120 kg sets located by floor-contact spikes (5 each); pulldown+pushdown and hammer curl+lateral raise done as supersets (wrist orientation: arm up = pulldown). Unlogged bout 3070-3103 s not a logged set."
+ "note": "Reviewed 2026-11-22: deadlift 120 kg sets located by floor-contact spikes (5 each); pulldown+pushdown and hammer curl+lateral raise done as supersets (wrist orientation: arm up = pulldown). Unlogged bout 3070-3103 s not a logged set. Superset sets (log 15-24: pulldown, pushdown, hammer curl, lateral raise): the user is very unsure of the logged rep counts -> reps_unsure (windows and exercises checked; counts not used as ground truth)."
 }

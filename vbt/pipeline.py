@@ -181,6 +181,7 @@ def analyze_sets(data, logged, wins, groups, placement="wrist"):
         g = groups[h["label"]]
         prof = PROFILES.get(g["key"], PROFILES["auto"])
         base = {"i": i + 1, "log_index": h.get("log_index", i + 1), "unsure": bool(w.get("unsure")),
+                "reps_unsure": bool(w.get("reps_unsure")),
                 "ex": g["id"], "label": h["label"], "key": g["key"],
                 "kg": h["kg"], "logged_reps": h["reps"], "rpe": h["rpe"], "warmup": h["warmup"],
                 "per_unit": prof["bouts"] > 1}
@@ -194,6 +195,8 @@ def analyze_sets(data, logged, wins, groups, placement="wrist"):
         reps = res["reps"]
         flag, delta, bouts, bouts_clean = count_verdict(reps, h["reps"], prof["bouts"]) if reps \
             else ("watch fewer", h["reps"], [0], [0])
+        if w.get("reps_unsure") and flag in ("watch fewer", "watch more"):
+            flag = "log unsure"          # the user isn't sure of the logged count: no verdict
         span = (reps[0]["t_start"], reps[-1]["t_end"]) if reps else (t0, t1)
         if reps and sum(r["ok"] for r in reps) * 2 < len(reps):
             # most cycles implausible: the reps weren't isolated (e.g. very slow pulls below
