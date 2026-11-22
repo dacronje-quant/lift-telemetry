@@ -1,0 +1,153 @@
+{
+ "source": "reviewed",
+ "clock": "Sensor Logger seconds_elapsed",
+ "detector": "vbt.align.detect_sets",
+ "prior_model": true,
+ "sets": [
+  {
+   "log_index": 1,
+   "skipped": false,
+   "t_start": 226.8,
+   "t_end": 245.4
+  },
+  {
+   "log_index": 2,
+   "skipped": false,
+   "t_start": 347.0,
+   "t_end": 362.6
+  },
+  {
+   "log_index": 3,
+   "skipped": false,
+   "t_start": 557.9,
+   "t_end": 573.4
+  },
+  {
+   "log_index": 4,
+   "skipped": false,
+   "t_start": 820.0,
+   "t_end": 850.0
+  },
+  {
+   "log_index": 5,
+   "skipped": false,
+   "t_start": 1065.6,
+   "t_end": 1093.3
+  },
+  {
+   "log_index": 6,
+   "skipped": false,
+   "t_start": 1400.2,
+   "t_end": 1427.9
+  },
+  {
+   "log_index": 7,
+   "skipped": false,
+   "t_start": 1703.0,
+   "t_end": 1730.0
+  },
+  {
+   "log_index": 8,
+   "skipped": false,
+   "t_start": 1855.0,
+   "t_end": 1880.0
+  },
+  {
+   "log_index": 9,
+   "skipped": false,
+   "t_start": 2028.0,
+   "t_end": 2062.0
+  },
+  {
+   "log_index": 10,
+   "skipped": false,
+   "t_start": 2313.0,
+   "t_end": 2350.0
+  },
+  {
+   "log_index": 11,
+   "skipped": false,
+   "t_start": 2594.3,
+   "t_end": 2618.6
+  },
+  {
+   "log_index": 12,
+   "skipped": false,
+   "t_start": 2721.0,
+   "t_end": 2745.6
+  },
+  {
+   "log_index": 13,
+   "skipped": false,
+   "t_start": 2862.8,
+   "t_end": 2888.5
+  },
+  {
+   "log_index": 14,
+   "skipped": false,
+   "t_start": 3011.7,
+   "t_end": 3036.6
+  },
+  {
+   "log_index": 15,
+   "skipped": false,
+   "t_start": 3141.0,
+   "t_end": 3161.0
+  },
+  {
+   "log_index": 18,
+   "skipped": false,
+   "t_start": 3179.0,
+   "t_end": 3203.0
+  },
+  {
+   "log_index": 16,
+   "skipped": false,
+   "t_start": 3243.0,
+   "t_end": 3272.0
+  },
+  {
+   "log_index": 19,
+   "skipped": false,
+   "t_start": 3282.0,
+   "t_end": 3306.0
+  },
+  {
+   "log_index": 17,
+   "skipped": false,
+   "t_start": 3346.0,
+   "t_end": 3377.0
+  },
+  {
+   "log_index": 20,
+   "skipped": false,
+   "t_start": 3394.0,
+   "t_end": 3418.0
+  },
+  {
+   "log_index": 21,
+   "skipped": false,
+   "t_start": 3449.0,
+   "t_end": 3483.0
+  },
+  {
+   "log_index": 23,
+   "skipped": false,
+   "t_start": 3486.0,
+   "t_end": 3513.0
+  },
+  {
+   "log_index": 22,
+   "skipped": false,
+   "t_start": 3590.0,
+   "t_end": 3618.0
+  },
+  {
+   "log_index": 24,
+   "skipped": false,
+   "t_start": 3626.0,
+   "t_end": 3662.0
+  }
+ ],
+ "note": "Reviewed 2026-11-22: deadlift 120 kg sets located by floor-contact spikes (5 each); pulldown+pushdown and hammer curl+lateral raise done as supersets (wrist orientation: arm up = pulldown). Unlogged bout 3070-3103 s not a logged set."
+}

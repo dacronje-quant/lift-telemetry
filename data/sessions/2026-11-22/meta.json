@@ -1,0 +1,37 @@
+{
+ "session_id": "2026-11-22",
+ "title": "Saturday — Full Body A | Strength",
+ "log_source": "hevy",
+ "log_start_local": "2026-11-22T09:33:00",
+ "sensor": "Apple Watch via Sensor Logger, wrist placement",
+ "sensor_info": {
+  "device": "Watch7.20",
+  "timezone": "Europe/Stockholm",
+  "platform": "watchos",
+  "app": "Sensor Logger",
+  "app_version": "1.69",
+  "placement": "wrist",
+  "format": "sensorlogger-watch",
+  "has_gyro": true,
+  "gravity": "device",
+  "has_attitude": true,
+  "heart_rate_samples": 9,
+  "n_samples": 369541
+ },
+ "device": "Watch7.20",
+ "timezone": "Europe/Stockholm",
+ "start_utc": "2026-11-22T08:36:12.627000+00:00",
+ "raw_rate_hz": 100.45,
+ "stored_rate_hz": 25.0,
+ "duration_s": 3678.9,
+ "first_sample_s": 0.552,
+ "coverage": {
+  "recorded_pct": 100.0,
+  "n_gaps": 0,
+  "gaps": []
+ },
+ "n_raw_samples": 369541,
+ "source": "rec.zip",
+ "start_local": "2026-11-22T09:36:12.627000+01:00",
+ "log_minus_recording_s": -193
+}

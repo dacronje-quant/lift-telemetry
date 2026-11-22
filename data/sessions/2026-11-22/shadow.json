@@ -1,0 +1,358 @@
+{
+"mode": "other workouts",
+"n_sets": 24,
+"trained_on_sets": 43,
+"found": 19,
+"false_sets": 4,
+"unmatched_found": 4,
+"named": 13,
+"reps_exact": 7,
+"reps_within1": 14,
+"fully_right": 7,
+"rows": [
+{
+"set": 1,
+"label": "Squat (Barbell)",
+"logged": 5,
+"found": true,
+"guess": "Bulgarian Split Squat (Dumbbell)",
+"known": true,
+"named": false,
+"sensed": [
+9,
+1
+],
+"rep_err": 4,
+"t_start": 227.91,
+"t_end": 259.47
+},
+{
+"set": 2,
+"label": "Squat (Barbell)",
+"logged": 4,
+"found": true,
+"guess": "Squat (Barbell)",
+"known": true,
+"named": true,
+"sensed": [
+5
+],
+"rep_err": 1,
+"t_start": 348.11,
+"t_end": 363.89
+},
+{
+"set": 3,
+"label": "Squat (Barbell)",
+"logged": 3,
+"found": true,
+"guess": "Squat (Barbell)",
+"known": true,
+"named": true,
+"sensed": [
+3
+],
+"rep_err": 0,
+"t_start": 558.95,
+"t_end": 572.37
+},
+{
+"set": 4,
+"label": "Squat (Barbell)",
+"logged": 5,
+"found": true,
+"guess": "Squat (Barbell)",
+"known": true,
+"named": true,
+"sensed": [
+5
+],
+"rep_err": 0,
+"t_start": 820.37,
+"t_end": 847.31
+},
+{
+"set": 5,
+"label": "Squat (Barbell)",
+"logged": 5,
+"found": true,
+"guess": "Squat (Barbell)",
+"known": true,
+"named": true,
+"sensed": [
+6
+],
+"rep_err": 1,
+"t_start": 1060.85,
+"t_end": 1092.29
+},
+{
+"set": 6,
+"label": "Squat (Barbell)",
+"logged": 5,
+"found": true,
+"guess": "Squat (Barbell)",
+"known": true,
+"named": true,
+"sensed": [
+5
+],
+"rep_err": 0,
+"t_start": 1401.15,
+"t_end": 1426.89
+},
+{
+"set": 7,
+"label": "Deadlift (Barbell)",
+"logged": 5,
+"found": true,
+"guess": "Deadlift (Barbell)",
+"known": true,
+"named": true,
+"sensed": [
+5
+],
+"rep_err": 0,
+"t_start": 1705.63,
+"t_end": 1733.15
+},
+{
+"set": 8,
+"label": "Deadlift (Barbell)",
+"logged": 4,
+"found": true,
+"guess": "Bulgarian Split Squat (Dumbbell)",
+"known": true,
+"named": false,
+"sensed": [
+8
+],
+"rep_err": 4,
+"t_start": 1853.09,
+"t_end": 1885.21
+},
+{
+"set": 9,
+"label": "Deadlift (Barbell)",
+"logged": 5,
+"found": true,
+"guess": "Bulgarian Split Squat (Dumbbell)",
+"known": true,
+"named": false,
+"sensed": [
+10
+],
+"rep_err": 5,
+"t_start": 2030.11,
+"t_end": 2064.13
+},
+{
+"set": 10,
+"label": "Deadlift (Barbell)",
+"logged": 5,
+"found": false
+},
+{
+"set": 11,
+"label": "Bench Press (Barbell)",
+"logged": 10,
+"found": true,
+"guess": "Bench Press (Barbell)",
+"known": true,
+"named": true,
+"sensed": [
+9
+],
+"rep_err": 1,
+"t_start": 2598.09,
+"t_end": 2623.71
+},
+{
+"set": 12,
+"label": "Bench Press (Barbell)",
+"logged": 10,
+"found": true,
+"guess": "Bench Press (Barbell)",
+"known": true,
+"named": true,
+"sensed": [
+8
+],
+"rep_err": 2,
+"t_start": 2721.97,
+"t_end": 2744.59
+},
+{
+"set": 13,
+"label": "Bench Press (Barbell)",
+"logged": 8,
+"found": true,
+"guess": "Bench Press (Barbell)",
+"known": true,
+"named": true,
+"sensed": [
+8
+],
+"rep_err": 0,
+"t_start": 2863.81,
+"t_end": 2887.49
+},
+{
+"set": 14,
+"label": "Bench Press (Barbell)",
+"logged": 8,
+"found": true,
+"guess": "Bench Press (Barbell)",
+"known": true,
+"named": true,
+"sensed": [
+8
+],
+"rep_err": 0,
+"t_start": 3012.67,
+"t_end": 3039.93
+},
+{
+"set": 15,
+"label": "Lat Pulldown (Cable)",
+"logged": 8,
+"found": false
+},
+{
+"set": 16,
+"label": "Triceps Pushdown",
+"logged": 10,
+"found": true,
+"guess": "Triceps Rope Pushdown",
+"known": true,
+"named": false,
+"sensed": [
+13
+],
+"rep_err": 3,
+"t_start": 3158.85,
+"t_end": 3203.39
+},
+{
+"set": 17,
+"label": "Lat Pulldown (Cable)",
+"logged": 8,
+"found": false
+},
+{
+"set": 18,
+"label": "Triceps Pushdown",
+"logged": 10,
+"found": true,
+"guess": "Triceps Rope Pushdown",
+"known": true,
+"named": false,
+"sensed": [
+11
+],
+"rep_err": 1,
+"t_start": 3276.37,
+"t_end": 3306.81
+},
+{
+"set": 19,
+"label": "Lat Pulldown (Cable)",
+"logged": 7,
+"found": true,
+"guess": "Lat Pulldown (Cable)",
+"known": true,
+"named": true,
+"sensed": [
+8
+],
+"rep_err": 1,
+"t_start": 3343.05,
+"t_end": 3369.81
+},
+{
+"set": 20,
+"label": "Triceps Pushdown",
+"logged": 8,
+"found": true,
+"guess": "Triceps Rope Pushdown",
+"known": true,
+"named": false,
+"sensed": [
+9
+],
+"rep_err": 1,
+"t_start": 3399.77,
+"t_end": 3419.79
+},
+{
+"set": 21,
+"label": "Hammer Curl (Dumbbell)",
+"logged": 10,
+"found": true,
+"guess": "Hammer Curl (Dumbbell)",
+"known": true,
+"named": true,
+"sensed": [
+10
+],
+"rep_err": 0,
+"t_start": 3451.45,
+"t_end": 3481.33
+},
+{
+"set": 22,
+"label": "Lateral Raise (Dumbbell)",
+"logged": 10,
+"found": false
+},
+{
+"set": 23,
+"label": "Hammer Curl (Dumbbell)",
+"logged": 6,
+"found": false
+},
+{
+"set": 24,
+"label": "Lateral Raise (Dumbbell)",
+"logged": 10,
+"found": true,
+"guess": "Lateral Raise (Dumbbell)",
+"known": true,
+"named": true,
+"sensed": [
+9
+],
+"rep_err": 1,
+"t_start": 3627.89,
+"t_end": 3645.65
+}
+],
+"unmatched": [
+{
+"t_start": 478.49,
+"t_end": 495.29,
+"guess": "Triceps Rope Pushdown",
+"reps": 3
+},
+{
+"t_start": 1362.43,
+"t_end": 1372.39,
+"guess": "Lateral Raise (Dumbbell)",
+"reps": 3
+},
+{
+"t_start": 1910.49,
+"t_end": 1919.15,
+"guess": "Lateral Raise (Dumbbell)",
+"reps": 3
+},
+{
+"t_start": 2552.15,
+"t_end": 2583.69,
+"guess": "Lying Leg Curl (Machine)",
+"reps": 5
+}
+],
+"readiness_pct": 29.2,
+"reference": "checked windows"
+}
